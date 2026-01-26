@@ -17,6 +17,7 @@ CodingLLM_PM_Documents/
 │
 ├── 02_implementation/     # 구현 문서
 │   ├── roadmap_ko.md
+│   ├── resource_plan_ko.md
 │   ├── cost_analysis_ko.md
 │   └── api_reference_ko.md
 │
@@ -53,6 +54,7 @@ CodingLLM_PM_Documents/
 | `01_strategy/competitive_strategy_ko.md` | 경쟁 전략 - 상세 경쟁사 분석 |
 | `01_strategy/regulatory_environment_ko.md` | 규제 환경 - AI 규제 및 컴플라이언스 |
 | `02_implementation/roadmap_ko.md` | 구현 로드맵 - Phase 1/2 기능 명세 |
+| `02_implementation/resource_plan_ko.md` | 투입 인력 및 로드맵 - Phase별 인력/일정 계획 |
 | `02_implementation/cost_analysis_ko.md` | 비용 분석 - TCO 및 ROI |
 | `02_implementation/api_reference_ko.md` | API 레퍼런스 - 엔드포인트 명세 |
 | `03_development/` | 개발 진행 자료 - 테스트, 벤치마크 |

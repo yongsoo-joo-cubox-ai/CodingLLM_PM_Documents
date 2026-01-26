@@ -277,6 +277,7 @@ $ coder models health
 
 ## 관련 문서
 
+- [[implementation/resource_plan_ko|투입 인력 및 로드맵]]: Phase별 인력 투입 및 상세 일정
 - [[strategy/executive_summary_ko|경영진 요약]]: 전략 분석 보고서
 - [[strategy/regulatory_environment_ko|규제 환경]]: 국내 규제 환경
 - [[implementation/cost_analysis_ko|비용 분석]]: 인프라 비용 상세 분석
