@@ -52,11 +52,24 @@
 
 | 모델 | 크기 | GPU 요구량 | 라이선스 | 검증 상태 |
 |------|------|-----------|----------|----------|
-| **Qwen2.5-Coder-32B-Instruct** | 32B | 64GB | Apache 2.0 | ✅ 검증 완료 |
-| GPT-OSS 20B | 20B | 48GB | - | ✅ 검증 완료 |
+| Qwen2.5-Coder-32B-Instruct-AWQ | 32B | 64GB | Apache 2.0 | ✅ 검증 완료 (품질 54%) |
+| **GPT-OSS 20B** | 20B | 48GB | Apache 2.0 | ✅ 검증 완료 **(품질 94%, 권장)** |
 | Qwen2.5-Coder-7B-Instruct | 7B | 16GB | Apache 2.0 | 🔄 테스트 중 |
 
-> **출처**: [HuggingFace - Qwen2.5-Coder-32B-Instruct](https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct)
+> **출처**: [HuggingFace - Qwen2.5-Coder-32B-Instruct](https://huggingface.co/Qwen/Qwen2.5-Coder-32B-Instruct), [OpenAI GPT-OSS](https://github.com/openai/gpt-oss)
+
+> ⚠️ **모델 선택 가이드**: 모델 크기가 품질을 보장하지 않음. 벤치마크 결과 GPT-OSS 20B(94%)가 Qwen32B(54%)보다 xFrame5 코드 생성에서 우수. 상세: `03_development/2026-01-15_project_intro/model_benchmark.md`
+
+### 경량 모델 지원 현황
+
+| 모델 크기 | 용도 | 품질 | 비고 |
+|----------|------|------|------|
+| **1B (Gemma3:1b)** | ❌ 부적합 | 낮음 | 프롬프트 이해 불가, 엉뚱한 응답 |
+| **4B (Gemma3:4b)** | △ QA 전용 | 중간 | 정답 제공하나 응답 불완전, 2분+ 지연 |
+| **7B 이상** | ✅ 기본 사용 | 중-상 | 코드 생성 가능, 복잡한 작업은 20B+ 권장 |
+
+> **테스트 환경**: MacBook Pro (Intel i7, 16GB RAM, GPU 없음, Ollama)
+> **상세**: `03_development/2026-01-24_progress/lightweight_model_qa.md`
 
 ---
 
