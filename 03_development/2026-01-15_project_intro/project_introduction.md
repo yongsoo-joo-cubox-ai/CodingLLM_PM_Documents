@@ -1,0 +1,65 @@
+### 0. 프로그램 소개 (2026.1.15)
+- AI 에이전트를 호출하여 코드 생성해 주는 API 서버 (REST)
+- 사용자는 단순 프롬프트 입력(예, Task 관리 화면 만들어줘)
+- 서버가 하는 일
+	- A - API  서버
+		- 1) 사용자 프롬프트에서 사용자 의도 파악 - 생성인지, 질문인지, 처리불가능한 요청인지 등
+		- 2) 제공된 프롬프트에서 데이터 모델 추출 - 없으면 추론하여 생성
+		- 3) xFrame5 인 경우, xFrame5 Knowledge base에 대한 semantic search 실행
+		- 4) semantic search 결과 유사도 높은 것들 추출 - knowledge 중 threshold 값 이상인 것만 필터링(small / medium / large 에 따라 threshold 다름)
+		- 5) knowledge에 따라 생성해야 하는 artifacts 정의
+		- 6) prompt templates 에서 relevant한 것들만 추출 후 prompt template + knowledge 결합
+		- 7) AI 엔진에 생성 요청 (Server Sent Event Stream 방식)
+		- 8) AI 엔진의 응답 수신 및 분석
+		- 9) 응답이 progress나 에이전트의 질문은 클라이언트로 중계
+		- 10) 응답이 최종 결과물인 경우 응답 내용 분석
+		- 11) knowledge base 검색 및 post processing 통해 문법 오류, 누락 코드, 네이밍 변환 등
+		- 12) 코드 블록 추출 후 최종 결과물 전송
+
+	- B - Admin
+		- 사용자 관리
+		- LLM 설정 - AI 에이전트(vLLM/Ollama/llama.cpp), 모델, 서버 URL, 토큰 사이즈 등
+		- Knowledge base 관리
+		- Prompt Template 관리
+		- 코드 생성 로그 조회
+- 기술 스택
+	- FE : React + ??
+	- BE : Rust 기반
+	- Model : vLLM + LLM 모델(허깅페이스)
+	- DB : PostgreSQL
+- 테스트 중인 모델
+	- 모델
+		- gpt-oss:20b
+		- qwen3-coder:30b
+		- gemma3:27b
+		- qwen2.5-coder:7b
+		- Mistral-7B-Instruct-v0.3
+	- 양자화
+		- AWQ Marlin 사용 - 미지원 시 GPTQ 등 대체 양자화 적용 예정
+	- 테스트 결과(26.01.14)
+		- 같은 Qwen2.5의 7B와 32B 모델 사이의 비교
+			- 속도: 7b > 32b
+			- 품질: 7b < 32b
+		- 지극히 상식적인 결과이긴 합니다만 성과는 32b를 사용해도 무리가 없다는 점을 확인했다는 점일 것 같습니다. 품질 차이가 같은 Qwen2.5라도 상당한 차이를 보입니다.
+		- 그러나 Opus4.5, GPT OSS 20B와 비교하면 
+			- Opus4.5 100점 기준
+				- GPT OSS 20B 94점
+				- Qwen2.5 Coder 32B 54점
+		- 물론 GPT OSS가 절대적으로  더 좋다는 의미라기 보다는 현재 구현된 prompt와 knowledge base가 GPT OSS와 궁합이 더 좋다고 해석할 수 있습니다.
+		- 동시사용자를 가정한 로드 테스트도 진행해 봤습니다.
+			- 동시사용자: 1인 사용시 25초 -> 1분에 10인 사용 시 65초  
+			    => 프롬프트를 여러 개 처리할 때 코드 생성효율 - 초당 처리 요청수(RPS) 기준- 이 더 좋아짐
+		- 결론적으로 여전히 vLLM+GPT OSS 조합이 현재까지는 최상일 듯 합니다.
+- 추가 테스트 모델
+	- **Qwen2.5-Coder-32B-Instruct-AWQ**
+		- 코드 생성/리뷰
+		- `[http://172.100.100.3:8000](http://172.100.100.3:8000/)`
+		- Chat Completions API 지원
+	- ~~**GPT-NeoX-20B**~~
+		- 범용 텍스트 생성
+		- `[http://172.100.100.3:8001](http://172.100.100.3:8001/)`
+		- Completions API만 지원
+	- **GPT-OSS-20B**
+		- 범용 텍스트 생성
+		- `[http://172.100.100.3:8001](http://172.100.100.3:8001/)`
+		- Completions, Chat Completions API 지원

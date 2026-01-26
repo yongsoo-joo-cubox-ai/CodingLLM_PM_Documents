@@ -1,0 +1,100 @@
+아래는 일반 그리드(Grid) 에서 아이템(셀) 데이터를 루핑(Loop) 처리하는 방법에 대한 설명입니다.
+※ 멀티라인 그리드 / 트리 그리드는 제외하고 설명합니다.
+
+1. 관련 속성 / API / 이벤트
+관련 API
+
+getrowcount()
+그리드의 전체 행(Row) 개수를 반환
+
+getcolumncount()
+그리드의 전체 열(Column) 개수를 반환
+
+getitemtext(row, column)
+특정 행/열의 아이템 값을 조회
+
+setitemtext(row, column, value)
+특정 행/열의 아이템 값을 설정
+
+refresh()
+그리드 변경 내용을 화면에 반영
+
+성능 관련 옵션 (중요)
+
+아이템을 루핑하면서 다수 변경할 경우
+→ setitemtext() 호출 시 즉시 repaint 하지 않고
+→ 루핑 종료 후 refresh()를 한 번만 호출하는 것이 성능상 유리
+
+2. 그리드 아이템 루핑 기본 예제
+
+아래 샘플은 모든 행/열을 순회하면서 아이템 값을 읽는 예제입니다.
+
+// "그리드 아이템 Loop" 버튼 이벤트
+function btn_itemloop_on_click(objInst)
+{
+	var row, column, row_count, column_count, row_data_arr, column_data_arr;
+
+	// 행/열 개수 조회
+	row_count = this.grdList.getrowcount();
+	column_count = this.grdList.getcolumncount();
+
+	// 행별 데이터 저장 배열
+	row_data_arr = [];
+
+	// 행 Loop
+	for (row = 0; row < row_count; row++) {
+
+		// 컬럼별 데이터 저장 배열
+		column_data_arr = [];
+
+		// 열 Loop
+		for (column = 0; column < column_count; column++) {
+
+			// 아이템 값 조회
+			column_data_arr.push(this.grdList.getitemtext(row, column));
+		}
+
+		// 행 단위 데이터 저장
+		row_data_arr.push(column_data_arr.join(","));
+	}
+
+	// 결과 출력
+	screen.alert(row_data_arr.join("\n"));
+}
+
+3. 루핑하면서 아이템 값 변경 예제 (권장 방식)
+
+다수의 아이템 값을 변경할 경우 루핑 중 repaint를 막고,
+마지막에 refresh()를 호출합니다.
+
+function btn_on_mouseup()
+{
+	// 모든 행 Loop
+	for(var nRow = 0; nRow < grd.getrowcount(); nRow++) {
+		// 아이템 값 설정 (repaint false)
+		grd.val(nRow, 0, "test", false, false);
+	}
+
+	// 루핑 종료 후 한번만 화면 갱신
+	grd.refresh();
+}
+
+4. 정리
+
+기본 루핑 구조
+
+getrowcount() + getcolumncount()
+
+이중 for문(row → column)
+
+조회 시 → getitemtext()
+
+수정 시 → setitemtext() / val()
+
+대량 처리 시 필수
+
+루핑 중 repaint ❌
+
+루핑 후 refresh() ⭕
+
+이 방식이 xFrame5 일반 그리드에서 공식적으로 권장되는 아이템 루핑 처리 방법입니다.

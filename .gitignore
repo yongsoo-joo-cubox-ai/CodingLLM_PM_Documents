@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Archives (xFrame5 압축 파일 - 별도 보관)
+archives/*.zip
+
+# Obsidian
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json

@@ -1,0 +1,87 @@
+xFrame5 일반 그리드(Grid) 에서 데이터 필터를 적용하는 방법은
+applyfilter, applyfilterex, applymultifilter API를 사용합니다.
+(※ 멀티라인 그리드 / 트리 그리드 내용은 제외하고 설명합니다)
+
+관련 API / 속성
+■ 주요 API
+
+applyfilter
+단일 컬럼에 대해 기본 조건으로 필터 적용
+
+applyfilterex
+단일 컬럼에 대해 상세 조건(비교 방식 등)으로 필터 적용
+
+applymultifilter
+여러 컬럼 값을 동시에 조건으로 필터 적용
+
+refresh
+bRefresh=false 사용 시, 변경 사항을 화면에 반영
+
+1. 단일 컬럼 필터 (applyfilterex)
+특징
+
+컬럼별로 필터 조건 지정
+
+여러 컬럼에 반복 적용 가능
+
+기존 필터 유지 상태에서 추가 적용 가능
+
+샘플 소스
+// 그리드(이름:grdNomal)는 3개의 칼럼으로 구성되어 있다.
+// 그리드의 각 칼럼에 대해서 필터 버튼을 숨기면서,
+// 아래의 기준으로 필터링을 수행한다.
+grdNomal.applyfilterex(0, "100", true, false);
+grdNomal.applyfilterex(1, "홍길동", true, false);
+grdNomal.applyfilterex(2, "Y", true, false);
+
+// 화면 반영
+grdNomal.refresh();
+
+
+2. 값 없음(공백) 기준 필터
+설명
+
+값이 없는 데이터만 필터링할 경우
+bNotEmpty=false, strFilterText="" 로 설정
+
+샘플 개념
+grdNomal.applyfilterex(1, "", false, false);
+grdNomal.refresh();
+
+
+3. 다중 컬럼 필터 (applymultifilter)
+특징
+
+여러 컬럼을 동시에 조건으로 필터링
+
+문자열 옵션 방식으로 조건 정의
+
+주요 파라미터
+
+strFilterOption : 다중 필터 조건 문자열
+
+bShowFilterBtn : 필터 버튼 표시 여부
+
+샘플 소스
+grdNomal.applymultifilter("COL1=100;COL2=홍길동", true);
+
+
+4. 성능 관련 주의사항
+
+필터를 여러 번 반복 적용할 경우
+→ bRefresh=false로 설정
+→ 모든 필터 적용 후 refresh() 1회 호출 권장
+
+동일 컬럼에 다른 조건으로 다시 적용하면 기존 조건은 덮어쓰기
+
+정리
+
+단일 컬럼 필터 → applyfilter / applyfilterex
+
+여러 컬럼 필터 → applymultifilter
+
+공백 데이터 필터 → bNotEmpty=false + ""
+
+대량 필터 처리 시 refresh() 호출 위치 중요
+
+다음으로 필터 초기화 방법이나 필터 버튼 제어 방법도 필요하시면 이어서 설명해 드리겠습니다.
