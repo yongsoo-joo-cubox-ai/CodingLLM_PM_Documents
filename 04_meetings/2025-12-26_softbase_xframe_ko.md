@@ -59,7 +59,7 @@
 - 참고자료(주용수M 작성)
     - 요구사항을 기반으로 한 시스템 아키텍처 (Conceptual Model)
         
-        ![Gemini_Generated_Image_kge70ukge70ukge7.png](SOFTBase%20xFrame%20%EB%82%B4%20%EC%83%9D%EC%84%B1%ED%98%95%20AI%20%EA%B8%B0%EB%8A%A5%20%EB%8F%84%EC%9E%85%20%EA%B4%80%EB%A0%A8%20%EB%85%BC%EC%9D%98/Gemini_Generated_Image_kge70ukge70ukge7.png)
+        ![image.png](image.png)
         
         - **Client Side:** **xFrame Dev Studio** (UI 툴).
             - 개발자가 Tool 내에서 화면을 정의하고 UI를 구성.
@@ -92,4 +92,3 @@
 
 - [[strategy/executive_summary_ko|경영진 요약]]: 프로젝트 개요
 - [[implementation/roadmap_ko|로드맵]]: 구현 계획
-- [[meetings/2024-12-26_rag_discussion_ko|RAG 검토 회의]]: 내부 검토 회의

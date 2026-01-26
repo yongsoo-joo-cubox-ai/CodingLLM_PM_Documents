@@ -2,8 +2,8 @@
 .DS_Store
 **/.DS_Store
 
-# Archives (xFrame5 압축 파일 - 별도 보관)
-archives/*.zip
+# 대용량 파일 (xFrame5 압축 파일)
+05_knowledge_base/*.zip
 
 # Obsidian
 .obsidian/workspace.json

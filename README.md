@@ -22,8 +22,6 @@ CodingLLM_PM_Documents/
 ├── 03_development/        # 개발 진행 자료
 ├── 04_meetings/           # 회의록
 ├── 05_knowledge_base/     # 기술 참고자료
-├── archives/              # 아카이브 (Git 제외)
-├── assets/                # 이미지 등 첨부파일
 └── .obsidian/             # Obsidian 설정
 ```
 
@@ -56,7 +54,6 @@ CodingLLM_PM_Documents/
 
 | 문서 | 설명 |
 |------|------|
-| [[04_meetings/2024-12-26_rag_discussion_ko\|2024-12-26_rag_discussion]] | RAG 기반 코딩 어시스턴스 검토 회의 |
 | [[04_meetings/2025-12-26_softbase_xframe_ko\|2025-12-26_softbase_xframe]] | SOFTBase xFrame AI 기능 도입 논의 |
 
 ### 05_knowledge_base/ - 기술 참고자료
@@ -66,14 +63,6 @@ CodingLLM_PM_Documents/
 | xFrame5 | 압축 아카이브로 보관 (332MB, ~26,000 파일) |
 
 상세: [[05_knowledge_base/README\|Knowledge Base 인덱스]]
-
-### archives/ - 아카이브
-
-> Git에서 제외됩니다. 별도 백업 필요.
-
-| 파일 | 용량 | 설명 |
-|------|------|------|
-| `xframe5_knowledge_base.zip` | ~50MB | xFrame5 도움말 (RAG용) |
 
 ---
 

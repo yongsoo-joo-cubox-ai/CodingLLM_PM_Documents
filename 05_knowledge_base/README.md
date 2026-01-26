@@ -6,7 +6,8 @@
 
 ## xFrame5 Knowledge Base (아카이브)
 
-> **위치:** `archives/xframe5_knowledge_base.zip`
+> **위치:** 현재 폴더 (`05_knowledge_base/xframe5_knowledge_base.zip`)
+> **참고:** 대용량 파일로 `.gitignore`에 의해 Git에서 제외됩니다.
 
 xFrame5 프레임워크의 도움말 문서가 압축 보관되어 있습니다. RAG(Retrieval-Augmented Generation) 시스템 구축에 사용됩니다.
 
@@ -17,7 +18,7 @@ xFrame5 프레임워크의 도움말 문서가 압축 보관되어 있습니다.
 | **용량** | 332MB (압축 전) |
 | **파일 수** | ~26,000개 |
 | **용도** | xFrame5 프레임워크 Knowledge Base (RAG용) |
-| **압축 파일** | `archives/xframe5_knowledge_base.zip` |
+| **압축 파일** | `05_knowledge_base/xframe5_knowledge_base.zip` |
 
 ### 폴더 구조
 
@@ -74,8 +75,8 @@ xFrame5/
 ### 압축 해제 방법
 
 ```bash
-cd /path/to/CodingLLM_PM_Documents/archives
-unzip xframe5_knowledge_base.zip -d ../05_knowledge_base/
+cd /path/to/CodingLLM_PM_Documents/05_knowledge_base
+unzip xframe5_knowledge_base.zip
 ```
 
 ### 활용 예시

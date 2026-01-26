@@ -36,16 +36,12 @@ CodingLLM_PM_Documents/
 │       └── cli_test/
 │
 ├── 04_meetings/           # 회의록
-│   ├── 2024-12-26_rag_discussion_ko.md
 │   └── 2025-12-26_softbase_xframe_ko.md
 │
 ├── 05_knowledge_base/     # 기술 참고자료
-│   └── README.md          # xFrame5 아카이브 내용 기록
+│   ├── README.md          # xFrame5 아카이브 내용 기록
+│   └── xframe5_knowledge_base.zip  # 대용량 (Git 제외)
 │
-├── archives/              # 아카이브 (Git 제외)
-│   └── xframe5_knowledge_base.zip
-│
-├── assets/                # 이미지 등 첨부파일
 └── .obsidian/             # Obsidian 설정
 ```
 
@@ -87,6 +83,3 @@ GET  /_health                  # 헬스 체크
 - `_ko` suffix 유지 (향후 다국어 대비)
 - Obsidian으로 문서 관리 중 (`.obsidian/` 폴더 존재)
 
-## 아카이브 폴더
-
-`archives/` 폴더는 `.gitignore`에 의해 Git에서 제외됩니다. 대용량 파일(xFrame5 Knowledge Base 등)이 보관되며, 별도 백업이 필요합니다.
