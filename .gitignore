@@ -2,8 +2,6 @@
 .DS_Store
 **/.DS_Store
 
-# 대용량 파일 (xFrame5 압축 파일)
-05_knowledge_base/*.zip
 
 # Obsidian
 .obsidian/
