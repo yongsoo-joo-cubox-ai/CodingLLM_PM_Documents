@@ -1,6 +1,13 @@
 # Phase 2 기술 스택 및 스터디 로드맵
 
-**작성일**: 2026-01-28 | **대상**: 시선AI R&D팀 | **기간**: 4-6월 (3.6 FTE)
+| 항목 | 내용 |
+|------|------|
+| **문서번호** | SAI-IMPL-2026-004 |
+| **작성일** | 2026년 1월 28일 |
+| **개정일** | 2026년 2월 12일 |
+| **버전** | v2.0 |
+| **보안등급** | 대외비 |
+| **작성** | Secern AI |
 
 > **구현 문서 4/5** | 이전: [비용 분석](./cost_analysis_ko.md) | 다음: [API 레퍼런스](./api_reference_ko.md) | [폴더 인덱스](./README.md)
 
@@ -10,13 +17,16 @@
 
 Phase 2(4-6월) 개발 항목에 대한 **기술 스택, 학습 자료, 구현 가이드**를 정리한 문서입니다.
 
-### 현재 기술 스택
-| 구성요소 | 버전/사양 |
-|---------|----------|
-| LLM 추론 | vLLM >= 0.6.0 |
-| 백엔드 | Rust + Loco.rs |
-| 모델 | GPT-OSS 20B (94%), Qwen2.5-32B-AWQ (54%) |
-| GPU | 4x RTX 2080 Ti (44GB 합계) |
+### 현재 기술 스택 (v2.0 업데이트)
+| 구성요소 | 버전/사양 | 변경 사항 (v2.0) |
+|---------|----------|-----------------|
+| LLM 추론 | vLLM >= 0.6.0 | 유지 |
+| 백엔드 | Rust + Loco.rs | 유지 |
+| **MCP 서버** | rmcp v0.8.0 (Rust) | ✅ **Phase 1에서 구현 완료** |
+| 모델 | GPT-OSS 20B (94%), Qwen2.5-32B-AWQ (54%) | GPT-OSS 20B 확정 |
+| GPU | 4x RTX 2080 Ti (44GB 합계) | 유지 |
+| **프론트엔드** | Coco Studio (웹 UI) | ✅ **Phase 1에서 구현 완료** |
+| **프리뷰** | xFrame5, Vue3 런타임 | ✅ **Phase 1에서 구현 완료** |
 
 ---
 
@@ -179,7 +189,9 @@ scrape_configs:
 
 ### C. 백엔드/API 영역
 
-#### C1. 프레임워크 분리 (MCP 기반) `P0`
+#### C1. 프레임워크 분리 (MCP 기반) — ✅ **Phase 1에서 완료**
+
+> **상태 변경 (v2.0)**: Phase 2 P0 항목이었으나, 대보DX(문기봉 상무)가 Phase 1에서 2026년 1월 27일에 구현 완료.
 
 | 항목 | 권장 스택 | 비고 |
 |------|----------|------|
@@ -188,39 +200,35 @@ scrape_configs:
 | **프리미티브** | tools, resources, prompts | 3대 빌딩 블록 |
 | **구현** | `#[tool]` 매크로 | Rust 절차적 매크로 |
 
-**학습 자료**:
+**현재 운영 중인 MCP 서버** (v2.0):
+| MCP 서버 | 역할 | 구현일 |
+|----------|------|--------|
+| `xframe5-compiler` | xFrame5 XML + JS 코드 생성 | 2026-01-27 |
+| `xframe5-validator` | xFrame5 API 허용목록 검증 | 2026-01-27 |
+| `vue-compiler` | Vue3 SFC (.vue) 코드 생성 | 2026-01-27 |
+
+**학습 자료** (추가 MCP 서버 개발 시 참조):
 - [MCP 공식 스펙](https://modelcontextprotocol.io/specification/2025-11-25) - 프로토콜 명세
 - [Anthropic MCP 소개](https://www.anthropic.com/news/model-context-protocol) - 개념 이해
 - [Rust MCP Server 튜토리얼 (OneUptime)](https://oneuptime.com/blog/post/2026-01-07-rust-mcp-server/view) - 실전 가이드
 - [rmcp 실습 가이드 (HackMD)](https://hackmd.io/@Hamze/SytKkZP01l) - 핸즈온
 
-**MCP 서버 구조 (xFrame5)**:
-```rust
-use rmcp::{tool, ServerBuilder};
-
-#[tool(description = "xFrame5 XML 화면 생성")]
-async fn generate_xml(prompt: String, template: String) -> String {
-    // xFrame5 특화 XML 생성 로직
-}
-
-#[tool(description = "API 허용목록 검증")]
-async fn validate_api(code: String, allowlist: Vec<String>) -> ValidationResult {
-    // xFrame5 API 검증 로직
-}
+**현재 아키텍처** (운영 중):
 ```
-
-**아키텍처** (from `architecture_mcp.md`):
-```
-Coco Core (Orchestration)
+Coco Engine (Orchestration)
   ├─ Output parsing
   ├─ Symbol linking
   └─ Graph validation
         ↓
 MCP Servers (Framework-Specific)
-  ├─ xFrame5 Server (Phase 2)
-  ├─ Spring Server (Phase 3)
-  └─ Vue/React Server (Phase 3)
+  ├─ xframe5-compiler  ✅ 운영 중
+  ├─ xframe5-validator ✅ 운영 중
+  ├─ vue-compiler      ✅ 운영 중
+  ├─ Spring Server     📋 Phase 2
+  └─ React Server      📋 Phase 3
 ```
+
+**Phase 2 할 일**: 기존 MCP 서버 패턴을 참고하여 **Spring MCP 서버** 추가 구현
 
 ---
 
@@ -309,14 +317,16 @@ class XFrame5QualityMetric(BaseMetric):
 
 ## 3. 월별 스터디 및 개발 일정
 
-### 4월: 아키텍처 & 인프라
+### 4월: ~~아키텍처~~ Spring 확장 & 인프라 (v2.0 조정)
+
+> **변경**: xFrame5/Vue MCP 서버는 Phase 1에서 완료 → 4월은 Spring MCP 서버 구현으로 변경
 
 | 주차 | Backend | ML | MLOps | QA |
 |-----|---------|-----|-------|-----|
-| W1 | rmcp SDK 학습 | LLaMA-Factory 환경 구성 | Prometheus 설정 | DeepEval 학습 |
-| W2 | FrameworkAdapter 설계 | 학습 데이터 준비 | Grafana 대시보드 | 벤치마크 자동화 설계 |
-| W3 | xFrame5 MCP 서버 시작 | Qwen32B 파인튜닝 시작 | vLLM 메트릭 통합 | 부하 테스트 설계 |
-| W4 | MCP 서버 계속 | 모델 평가 | 알림 설정 | Locust 셋업 |
+| W1 | ~~rmcp 학습~~ → Spring MCP 설계 | LLaMA-Factory 환경 구성 | Prometheus 설정 | DeepEval 학습 |
+| W2 | Spring 코드생성 로직 설계 | 학습 데이터 준비 | Grafana 대시보드 | 벤치마크 자동화 설계 |
+| W3 | Spring MCP 서버 구현 시작 | Qwen32B 파인튜닝 시작 | vLLM 메트릭 통합 | 부하 테스트 설계 |
+| W4 | Spring MCP 서버 계속 | 모델 평가 | 알림 설정 | Locust 셋업 |
 
 ### 5월: 모델 & 테스트
 
@@ -340,17 +350,18 @@ class XFrame5QualityMetric(BaseMetric):
 
 ## 4. 우선순위 매트릭스
 
-| 항목 | 우선순위 | 복잡도 | 의존성 | 담당 |
-|-----|---------|--------|--------|-----|
-| C1. 프레임워크 분리 (MCP) | **P0** | 높음 | 없음 | Backend |
-| A1. 모델 품질 개선 | **P0** | 높음 | 학습 데이터 | ML |
-| D1. 벤치마크 자동화 | **P0** | 중간 | A1 완료 | QA |
-| B1. 동시 사용자 최적화 | P1 | 높음 | B2 측정 | MLOps |
-| B2. 모니터링 시스템 | P1 | 중간 | 없음 | MLOps |
-| A2. 경량 모델 QA | P1 | 중간 | KB | ML |
-| A3. 멀티 모델 라우팅 | P1 | 중간 | C1 진행 | Backend+ML |
-| D2. 부하 테스트 자동화 | P1 | 중간 | B2 완료 | QA |
-| D3. E2E 테스트 | P1 | 중-높 | C1, C2 | QA |
+| 항목 | 우선순위 | 복잡도 | 의존성 | 담당 | v2.0 현황 |
+|-----|---------|--------|--------|-----|----------|
+| ~~C1. 프레임워크 분리 (MCP)~~ | ~~P0~~ | - | - | - | ✅ **Phase 1 완료** |
+| A1. 모델 품질 개선 | **P0** | 높음 | 학습 데이터 | ML | 유지 |
+| D1. 벤치마크 자동화 | **P0** | 중간 | A1 완료 | QA | 유지 |
+| **C3-1. Spring MCP 서버** | **P0** (신규) | 높음 | C1 완료 ✅ | Backend | C1 대체 |
+| B1. 동시 사용자 최적화 | P1 | 높음 | B2 측정 | MLOps | 유지 |
+| B2. 모니터링 시스템 | P1 | 중간 | 없음 | MLOps | 유지 |
+| A2. 경량 모델 QA | P1 | 중간 | KB | ML | 유지 |
+| A3. 멀티 모델 라우팅 | P1 | 중간 | ~~C1 진행~~ ✅ | Backend+ML | 유지 |
+| D2. 부하 테스트 자동화 | P1 | 중간 | B2 완료 | QA | 유지 |
+| D3. E2E 테스트 | P1 | 중-높 | ~~C1~~, C2 | QA | 유지 |
 
 ---
 
@@ -358,7 +369,7 @@ class XFrame5QualityMetric(BaseMetric):
 
 | 파일 | 용도 |
 |-----|------|
-| `03_development/2026-01-24_progress/architecture_mcp.md` | MCP 아키텍처 설계 (C1) |
+| `03_development/2026-01-24_progress/architecture_mcp.md` | MCP 아키텍처 설계 (C1 ✅ 완료) |
 | `03_development/2026-01-15_project_intro/model_benchmark.md` | 품질 기준선 (A1, D1) |
 | `03_development/2026-01-15_project_intro/load_test_qwen32b.md` | 성능 기준선 (B1, D2) |
 | `03_development/2026-01-24_progress/vram_sizing.md` | VRAM 계획 (B1) |
@@ -396,9 +407,17 @@ pytest tests/e2e/ -v --tb=short
 | 리스크 | 확률 | 대응 |
 |--------|------|------|
 | Qwen32B 80% 미달 | 30% | GPT-OSS 20B 폴백 유지 |
-| MCP 통합 복잡도 | 25% | 최소 기능 MCP 서버로 시작 |
+| ~~MCP 통합 복잡도~~ | - | ✅ Phase 1에서 해소 — MCP 패턴 검증 완료 |
+| Spring MCP 복잡도 | 25% | 기존 xFrame5 MCP 패턴 재활용 |
 | KV 캐시 35% 미만 개선 | 20% | 점진적 개선 수용, HA로 보완 |
 
 ---
 
-**작성**: Claude Code 분석 | **검토 필요**: 시선AI R&D팀
+---
+
+## 변경이력
+
+| 버전 | 일자 | 변경 내용 | 작성자 |
+|------|------|----------|--------|
+| 1.0 | 2026-01-28 | 초안 작성 | 분석팀 |
+| 2.0 | 2026-02-12 | C1(MCP 분리) Phase 1 완료 반영, 기술 스택 현황 업데이트, 4월 일정 Spring MCP로 조정, 우선순위 매트릭스 업데이트, 리스크 재평가 | 분석팀 |

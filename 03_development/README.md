@@ -25,16 +25,20 @@
 │       ├── README.md                 # CLI 소개
 │       └── cli_test_report.md        # CLI 테스트 상세 보고서
 │
-└── 2026-02-07_progress/              # 2월 1주차 진행 현황
-    ├── README.md                     # 1/26~2/7 진행 종합 요약
-    ├── uasl_spec/                    # UASL/SUIS 스펙 문서
-    │   ├── README.md                 # UASL 개요 및 변경 이력
-    │   ├── suis_spec_kr.md           # SUIS UI 스펙 (한글)
-    │   ├── suis_spec_en.md           # SUIS UI 스펙 (영문)
-    │   └── suis_prompts.yaml         # 프롬프트 템플릿
-    └── reports/                      # 보고서 (PDF→MD 변환)
-        ├── cgf_comparison_20260128.md    # CGF 전략 비교 벤치마크
-        └── qa_improvement_20260128.md    # QA 기능 개선 보고서
+├── 2026-02-07_progress/              # 2월 1주차 진행 현황
+│   ├── README.md                     # 1/26~2/7 진행 종합 요약
+│   ├── uasl_spec/                    # UASL/SUIS 스펙 문서
+│   │   ├── README.md                 # UASL 개요 및 변경 이력
+│   │   ├── suis_spec_kr.md           # SUIS UI 스펙 (한글)
+│   │   ├── suis_spec_en.md           # SUIS UI 스펙 (영문)
+│   │   └── suis_prompts.yaml         # 프롬프트 템플릿
+│   └── reports/                      # 보고서 (PDF→MD 변환)
+│       ├── cgf_comparison_20260128.md    # CGF 전략 비교 벤치마크
+│       └── qa_improvement_20260128.md    # QA 기능 개선 보고서
+│
+└── 2026-02-12_progress/              # 2월 2주차 진행 현황
+    ├── README.md                     # Coco Studio 기능 테스트 요약
+    └── coco_studio_test_report.md    # Studio 기능 테스트 보고서 (TC1~TC7)
 ```
 
 ---
@@ -80,6 +84,19 @@
 - UASL/SUIS v1.1 스펙 확정
 - 제품명 Coder → Coco (Coordinated Coding) 변경
 - QA 환각 문제 해결 및 답변 검증 강화
+
+### 2026-02-12: Coco Studio 기능 테스트
+
+| 문서 | 설명 |
+|------|------|
+| `README.md` | Coco Studio 기능 테스트 요약 |
+| `coco_studio_test_report.md` | Studio 기능 테스트 보고서 (TC1~TC7) |
+
+**주요 결과:**
+- 7개 테스트 케이스 실행, 통과율 71.4% (5/7)
+- CGF-B 파이프라인 코드 생성 정상 동작 확인
+- Review 모드 모델 태스크 설정 누락 발견
+- 코드 프리뷰, RAG Q&A, Import, 다크모드 등 정상 확인
 
 ---
 

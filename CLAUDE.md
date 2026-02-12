@@ -13,7 +13,8 @@ CodingLLM_PM_Documents/
 ├── 01_strategy/           # 전략 문서
 │   ├── executive_summary_ko.md
 │   ├── competitive_strategy_ko.md
-│   └── regulatory_environment_ko.md
+│   ├── regulatory_environment_ko.md
+│   └── product_overview_ko.md
 │
 ├── 02_implementation/     # 구현 문서
 │   ├── roadmap_ko.md
@@ -62,6 +63,7 @@ CodingLLM_PM_Documents/
 | `01_strategy/executive_summary_ko.md` | 경영진 요약 - 프로젝트 개요 및 핵심 가치 |
 | `01_strategy/competitive_strategy_ko.md` | 경쟁 전략 - 상세 경쟁사 분석 |
 | `01_strategy/regulatory_environment_ko.md` | 규제 환경 - AI 규제 및 컴플라이언스 |
+| `01_strategy/product_overview_ko.md` | 제품 기능 소개 - Coco 구성 및 핵심 기능 |
 | `02_implementation/roadmap_ko.md` | 구현 로드맵 - Phase 1/2 기능 명세 |
 | `02_implementation/resource_plan_ko.md` | 투입 인력 및 로드맵 - Phase별 인력/일정 계획 |
 | `02_implementation/phase2_tech_stack_ko.md` | Phase 2 기술 스택 - 학습 자료/구현 가이드 |
@@ -88,11 +90,71 @@ CodingLLM_PM_Documents/
 - 각 진행 폴더 README에 `이전 진행`/`다음 진행` 링크 체인 유지
 - 새 진행 폴더 추가 시 직전 폴더 README에 다음 링크 추가
 
+### 문서 메타데이터 표준
+
+모든 정식 문서(README 제외)는 아래 테이블 형식의 메타데이터 헤더를 사용한다.
+
+**문서번호 체계**: `SAI-{카테고리}-{년도}-{순번}`
+
+| 카테고리 | 대상 | 보안등급 |
+|----------|------|----------|
+| `STR` | 01_strategy/ 전략 문서 | 대외비 |
+| `IMPL` | 02_implementation/ 구현 문서 | 대외비 |
+| `TEST` | 03_development/ 테스트·벤치마크 보고서 | 일반 |
+| `MTG` | 04_meetings/ 회의록 | 일반 |
+
+**보고서 헤더** (01_strategy, 02_implementation, 03_development):
+
+```markdown
+# [문서 제목]
+
+| 항목 | 내용 |
+|------|------|
+| **문서번호** | SAI-STR-2026-001 |
+| **작성일** | 2026년 1월 21일 |
+| **개정일** | 2026년 2월 12일 |
+| **버전** | v3.0 |
+| **보안등급** | 대외비 |
+| **작성** | Secern AI |
+```
+
+**회의록 헤더** (04_meetings):
+
+```markdown
+# [회의 제목]
+
+| 항목 | 내용 |
+|------|------|
+| **문서번호** | SAI-MTG-2026-001 |
+| **일시** | 2026년 2월 11일 오전 9시~10시 |
+| **장소/형태** | 대면 + Teams 화상 |
+| **보안등급** | 일반 |
+| **작성** | Secern AI |
+
+### 참석자
+
+| 소속 | 참석자 |
+|------|--------|
+| **외부** | 홍길동 대표 |
+| **Secern AI** | 주용수 매니저 |
+```
+
+**공통 하단**: 모든 정식 문서 끝에 변경이력 테이블 포함
+
+```markdown
+---
+## 변경이력
+
+| 버전 | 일자 | 변경 내용 | 작성자 |
+|------|------|----------|--------|
+| 1.0 | 2026-01-21 | 초안 작성 | 분석팀 |
+```
+
 ## Coco 핵심 개념
 
 - **제품 정체성**: AI 코드 생성이 아닌 **AI 코드 거버넌스** 플랫폼
 - **대상 환경**: 폐쇄망, 온프레미스 LLM, 규제 산업 기업
-- **5대 USP**: 결정론적 출력, 표준 강제, 완전한 온프레미스, 감사 추적, LLM 추상화
+- **6대 USP**: 결정론적 출력, 표준 강제, 완전한 온프레미스, Spec-Driven 코드 생성, 감사 추적, LLM 추상화
 - **제품 구성**: Coco Engine, Coco Studio, Coco CLI, Coco Admin, MCP Servers, Eclipse Plugin
 
 ## API 엔드포인트 요약

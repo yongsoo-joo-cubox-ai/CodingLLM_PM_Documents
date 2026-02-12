@@ -1,7 +1,13 @@
 # API 레퍼런스
 
-**Date:** 2026-01-08 | **Updated:** 2026-01-21
-**Status:** Established
+| 항목 | 내용 |
+|------|------|
+| **문서번호** | SAI-IMPL-2026-005 |
+| **작성일** | 2026년 1월 8일 |
+| **개정일** | 2026년 2월 12일 |
+| **버전** | v2.0 |
+| **보안등급** | 대외비 |
+| **작성** | Secern AI |
 
 > **구현 문서 5/5** | 이전: [기술 스택](./phase2_tech_stack_ko.md) | [폴더 인덱스](./README.md)
 
@@ -123,6 +129,17 @@ curl http://localhost:3000/agent/models
 | `/agent/agentic/session/{session_id}` | GET | Get session status | ✅ Active |
 | `/agent/agentic/session/{session_id}` | DELETE | Cancel/delete session | ✅ Active |
 
+### MCP Server Endpoints (v2.0 신규)
+
+> MCP 서버는 Coco Engine이 내부적으로 호출합니다. 직접 사용자가 호출하지 않으며, `product` 파라미터에 따라 자동 라우팅됩니다.
+
+| MCP Server | 역할 | 프로토콜 | Status |
+|------------|------|----------|--------|
+| `xframe5-compiler` | xFrame5 XML + JS 코드 생성 | stdio | ✅ Active |
+| `xframe5-validator` | xFrame5 API 허용목록 검증 | stdio | ✅ Active |
+| `vue-compiler` | Vue3 SFC (.vue) 코드 생성 | stdio | ✅ Active |
+| `spring-compiler` | Spring 코드 생성 | stdio | 📋 Phase 2 |
+
 ### Internal/Experimental Endpoints
 
 | Endpoint | Method | Description | Status |
@@ -163,7 +180,7 @@ POST /agent/agentic/v2/stream
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `product` | string | ✅ | Product identifier (e.g., `xframe5-ui`) |
+| `product` | string | ✅ | Product identifier: `xframe5-ui`, `vue3`, `spring` (Phase 2) |
 | `prompt` | string | ✅ | Natural language request |
 | `project_structure.name` | string | | Project name |
 | `project_structure.views_path` | string | | Path for view files |
@@ -666,6 +683,30 @@ All endpoints return errors in this format:
 
 ---
 
+## Code Generation Strategies (v2.0)
+
+Coco Engine은 두 가지 코드 생성 전략을 지원합니다:
+
+| 전략 | 설명 | 파이프라인 | 권장 |
+|------|------|-----------|------|
+| **CGF-A** (Direct) | LLM이 직접 코드 생성 | 의도 파악 → LLM 코드 생성 → Post-processing | 단순 작업 |
+| **CGF-B** (Spec-first) | LLM은 스펙만 생성, MCP 서버가 코드 생성 | 의도 파악 → LLM 스펙 생성 → MCP 코드 생성 → 검증 | ✅ **권장** |
+
+> **CGF-B 성능**: CGF-A 대비 65% 속도 개선, 4개 테스트 중 3:1 품질 우위 (CGF 비교 보고서 참조)
+
+### Coco Studio (Web UI)
+
+Coco Studio는 `https://coco.secernai.net`에서 제공되는 웹 기반 UI로, 위 API를 시각적으로 사용할 수 있습니다.
+
+| 기능 | 설명 | 사용 API |
+|------|------|----------|
+| **코드 생성** | 자연어 프롬프트로 코드 생성 | `/agent/agentic/v2/stream` |
+| **코드 리뷰** | 코드 품질 분석 | `/agent/review` |
+| **Q&A** | 프레임워크 지식 질의응답 | `/agent/qa` |
+| **코드 프리뷰** | 생성된 코드 실행 미리보기 | 내부 프리뷰 서버 |
+
+---
+
 ## Embedding Algorithm
 
 The system uses **all-MiniLM-L6-v2** for semantic search (RAG):
@@ -687,4 +728,12 @@ The system uses **all-MiniLM-L6-v2** for semantic search (RAG):
 
 ---
 
-**Last Updated:** 2026-01-21
+---
+
+## 변경이력
+
+| 버전 | 일자 | 변경 내용 | 작성자 |
+|------|------|----------|--------|
+| 1.0 | 2026-01-08 | 초안 작성 | 분석팀 |
+| 1.1 | 2026-01-21 | 엔드포인트 정리, 세션 관리 추가 | 분석팀 |
+| 2.0 | 2026-02-12 | MCP 서버 엔드포인트 추가, CGF-A/CGF-B 전략 문서화, Coco Studio 설명 추가, product 필드 멀티 프레임워크 반영 | 분석팀 |

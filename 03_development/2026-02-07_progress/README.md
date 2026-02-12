@@ -3,6 +3,7 @@
 이 문서는 2026년 1월 26일 ~ 2월 7일 기간 동안의 개발 진행 사항을 종합 정리합니다.
 
 > **이전 진행**: [2026-01-24 1월 4주차 진행](../2026-01-24_progress/) - MCP 아키텍처 변경([architecture_mcp.md](../2026-01-24_progress/architecture_mcp.md)), QA 업데이트([qa_update/](../2026-01-24_progress/qa_update/))
+> **다음 진행**: [2026-02-12 Coco Studio 기능 테스트](../2026-02-12_progress/) - Studio 웹 UI 전체 기능 검증 (7 TC, 통과율 71.4%)
 
 ---
 
