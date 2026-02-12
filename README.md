@@ -1,15 +1,26 @@
-# Coder 프로젝트 문서
+# Coco 프로젝트 문서
 
 국내 SI 사업을 위한 범용 AI 코딩 어시스턴스 프로젝트 문서 저장소
+
+> 기존 Coder에서 **Coco**로 제품명 변경 (2026-02)
 
 ---
 
 ## 개요
 
-**Coder**는 AI 코드 생성이 아닌 **AI 코드 거버넌스** 플랫폼입니다.
+**Coco** (Coordinated Coding)는 AI 코드 생성이 아닌 **AI 코드 거버넌스** 플랫폼입니다.
 
 - **대상 환경**: 폐쇄망, 온프레미스 LLM, 규제 산업 기업
 - **핵심 USP**: 결정론적 출력, 표준 강제, 완전한 온프레미스, 감사 추적, LLM 추상화
+
+### 제품 구성
+
+- **Coco Engine** (Rust 백엔드)
+- **Coco Studio** (웹 기반 IDE)
+- **Coco CLI** (명령줄 도구)
+- **Coco Admin** (관리 콘솔)
+- **MCP Servers** (프레임워크별 컴파일러/검증기)
+- **Eclipse Plugin**
 
 ---
 
@@ -22,6 +33,7 @@ CodingLLM_PM_Documents/
 ├── 03_development/        # 개발 진행 자료
 ├── 04_meetings/           # 회의록
 ├── 05_knowledge_base/     # 기술 참고자료
+├── _00_work/              # 작업 자료 스테이징
 └── .obsidian/             # Obsidian 설정
 ```
 
@@ -38,6 +50,8 @@ CodingLLM_PM_Documents/
 | 문서 | 설명 |
 |------|------|
 | [[02_implementation/roadmap_ko\|roadmap]] | 구현 로드맵 - Phase 1/2 기능 명세 |
+| [[02_implementation/resource_plan_ko\|resource_plan]] | 투입 인력 및 로드맵 |
+| [[02_implementation/phase2_tech_stack_ko\|phase2_tech_stack]] | Phase 2 기술 스택 및 스터디 가이드 |
 | [[02_implementation/cost_analysis_ko\|cost_analysis]] | 비용 분석 - TCO 및 ROI 계산 |
 | [[02_implementation/api_reference_ko\|api_reference]] | API 레퍼런스 - 엔드포인트 명세 |
 
@@ -47,6 +61,7 @@ CodingLLM_PM_Documents/
 |------|------|
 | `2026-01-15_project_intro/` | 프로젝트 소개 및 초기 벤치마크 |
 | `2026-01-24_progress/` | 1월 4주차 진행 현황 (QA, CLI 테스트) |
+| `2026-02-07_progress/` | 2월 1주차 진행 (코드생성, UASL, QA 개선) |
 
 상세: [[03_development/README\|개발 자료 인덱스]]
 
@@ -55,6 +70,7 @@ CodingLLM_PM_Documents/
 | 문서 | 설명 |
 |------|------|
 | [[04_meetings/2025-12-26_softbase_xframe_ko\|2025-12-26_softbase_xframe]] | SOFTBase xFrame AI 기능 도입 논의 |
+| [[04_meetings/2026-02-11_ShinsegaeInC\|2026-02-11_ShinsegaeInC]] | 신세계 I&C 솔루션 데모 |
 
 ### 05_knowledge_base/ - 기술 참고자료
 
@@ -107,4 +123,4 @@ GET  /_health                  # 헬스 체크
 
 ---
 
-*마지막 업데이트: 2026-01-26*
+*마지막 업데이트: 2026-02-11*

@@ -1,0 +1,174 @@
+# SUIS Prompts Configuration
+# ═══════════════════════════════════════════════════════════════════════════════
+# This file contains system-level prompts for UASL/SUIS specification generation.
+# These prompts define the CONTRACT between LLM output and MCP compilers.
+#
+# DO NOT store these in the database - they are system code, not user data.
+# To upgrade SUIS version: update this file and restart the server.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Current SUIS version
+suis_version: "1.1"
+
+# Spec generation prompt - produces SUIS JSON from user request
+spec_generation:
+  system_prompt: |
+    You are a SUIS (Semantic UI Specification) generator. Convert user requests into semantic UI specifications.
+
+    SUIS is FRAMEWORK-AGNOSTIC and LAYOUT-AGNOSTIC. It describes WHAT the user wants, not HOW it looks.
+
+    ## OUTPUT RULES
+    1. Output ONLY valid JSON - no markdown, no explanation
+    2. Use SEMANTIC concepts only (no pixel positions, no framework widgets)
+    3. Use SEMANTIC TRIGGERS (not DOM events)
+    4. Every operation must have an intent
+    5. delete intent MUST have confirmation
+
+    ## SUIS v1.1 Schema
+
+    {
+      "ui": {
+        "suis_version": "1.1",
+        "screens": {
+          "<screen_id>": {
+            "subject": {
+              "domain": "string (entity name: task, member, order)",
+              "purpose": "browse | edit | create | view | dashboard",
+              "title": "string (human-readable title)",
+              "description": "string (optional)"
+            },
+            "display": {
+              "primary": {
+                "type": "collection | form | detail | chart",
+                "fields": [
+                  {
+                    "name": "string (entity field name)",
+                    "label": "string (optional, display label)",
+                    "format": "text | integer | decimal | date | datetime | boolean | enum | currency",
+                    "sortable": boolean,
+                    "visible": boolean,
+                    "width_hint": "xs | sm | md | lg | xl",
+                    "align_hint": "left | center | right",
+                    "editable": boolean,
+                    "required": boolean
+                  }
+                ]
+              },
+              "secondary": [{"type": "...", "fields": [...]}],
+              "filters": [
+                {
+                  "field": "string",
+                  "operator": "eq | ne | gt | lt | gte | lte | range | contains | in",
+                  "input": "text | number | date | date_range | select | multi_select"
+                }
+              ]
+            },
+            "operations": [
+              {
+                "intent": "search | create | edit | delete | view | submit | approve | reject | export | import",
+                "trigger": "automatic | select_item | activate_item | bulk_selection | confirm_action | value_change",
+                "opens": "string (target screen_id, optional)",
+                "confirmation": "string (required for delete)",
+                "success_feedback": "string (optional)",
+                "post_action": "refresh | close | navigate (optional)"
+              }
+            ],
+            "navigation": {
+              "<nav_id>": {
+                "target": "string (screen_id)",
+                "mode": "modal | full"
+              }
+            },
+            "permissions": {
+              "roles": ["string"]
+            }
+          }
+        }
+      }
+    }
+
+    ## PURPOSE TYPES
+    - browse: List/grid view with search, selection, bulk actions
+    - edit: Form for modifying existing record
+    - create: Form for new record
+    - view: Read-only detail view
+    - dashboard: Aggregated metrics/charts
+
+    ## DISPLAY TYPES
+    - collection: Table/grid of records (for browse)
+    - form: Input fields for editing (for edit/create)
+    - detail: Read-only fields (for view)
+    - chart: Visualization (for dashboard)
+
+    ## SEMANTIC TRIGGERS (NOT DOM events)
+    - automatic: On screen load (for search)
+    - select_item: Single row/item selection
+    - activate_item: Double-click/enter on item (opens edit)
+    - bulk_selection: Multiple items selected
+    - confirm_action: User confirms button click
+    - value_change: Field value changed
+
+    ## INTENTS
+    - search: Load/filter data (trigger: automatic)
+    - create: Open new record form (trigger: confirm_action)
+    - edit: Open edit form (trigger: activate_item)
+    - delete: Remove record (MUST have confirmation)
+    - view: Open read-only detail
+    - submit: Save form data
+    - approve/reject: Workflow actions
+    - export/import: Data transfer
+
+    ## FIELD FORMATS
+    - text: String display
+    - integer: Whole numbers
+    - decimal: Numbers with decimals
+    - date: Date only (YYYY-MM-DD)
+    - datetime: Date and time
+    - boolean: Yes/No, checkbox
+    - enum: Fixed set of values
+    - currency: Money amount
+
+    ## WIDTH HINTS (semantic, not pixels)
+    - xs: Very narrow (ID, checkbox)
+    - sm: Small (status, short text)
+    - md: Medium (name, title)
+    - lg: Large (description)
+    - xl: Extra large (notes, comments)
+
+    ## SCREEN NAMING
+    - {entity}_list: Browse screen
+    - {entity}_editor: Edit/create screen
+    - {entity}_detail: View screen
+    - {entity}_dashboard: Dashboard
+
+  user_prompt_template: |
+    ## Request
+    {input_description}
+
+    ## Entity: {entity_name}
+    ## Purpose: {screen_type}
+
+    Generate SUIS v1.1 JSON. Output ONLY the JSON, no explanation.
+
+# Intent analysis prompt - classifies user intent
+intent_analysis:
+  system_prompt: |
+    You are an intent classifier for UI generation requests.
+
+    Analyze the user's request and extract:
+    1. Entity name (the data object: task, member, order, product, etc.)
+    2. Screen type (browse, edit, create, view, dashboard)
+    3. Key operations needed
+
+    Output as JSON:
+    {
+      "entity": "string",
+      "screen_type": "browse | edit | create | view | dashboard",
+      "operations": ["search", "create", "edit", "delete", ...]
+    }
+
+  user_prompt_template: |
+    Analyze this request:
+    {input_description}
+
+    Output ONLY JSON, no explanation.

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Purpose
 
-이 저장소는 **Coder 프로젝트의 문서 저장소**입니다. AI 코드 거버넌스 플랫폼인 Coder의 전략 분석, 로드맵, API 레퍼런스 문서를 관리합니다.
+이 저장소는 **Coco 프로젝트의 문서 저장소**입니다. AI 코드 거버넌스 플랫폼인 Coco(구 Coder)의 전략 분석, 로드맵, API 레퍼런스 문서를 관리합니다.
 
 ## Document Structure
 
@@ -28,21 +28,29 @@ CodingLLM_PM_Documents/
 │   │   ├── project_introduction.md
 │   │   ├── load_test_qwen32b.md
 │   │   └── model_benchmark.md
-│   └── 2026-01-24_progress/
-│       ├── vram_sizing.md
-│       ├── architecture_mcp.md
-│       ├── lightweight_model_qa.md
-│       ├── qa_test_report/
-│       ├── qa_examples/
-│       ├── qa_update/
-│       └── cli_test/
+│   ├── 2026-01-24_progress/
+│   │   ├── vram_sizing.md
+│   │   ├── architecture_mcp.md
+│   │   ├── lightweight_model_qa.md
+│   │   ├── qa_test_report/
+│   │   ├── qa_examples/
+│   │   ├── qa_update/
+│   │   └── cli_test/
+│   └── 2026-02-07_progress/
+│       ├── README.md              # 1/26~2/7 진행 종합 요약
+│       ├── uasl_spec/             # UASL/SUIS 스펙 문서
+│       └── reports/               # CGF 비교, QA 개선 보고서
 │
 ├── 04_meetings/           # 회의록
-│   └── 2025-12-26_softbase_xframe_ko.md
+│   ├── 2025-12-26_softbase_xframe_ko.md
+│   └── 2026-02-11_ShinsegaeInC.md
 │
 ├── 05_knowledge_base/     # 기술 참고자료
 │   ├── README.md          # xFrame5 아카이브 내용 기록
 │   └── xframe5_knowledge_base.zip  # 대용량 (Git 제외)
+│
+├── _00_work/              # 작업 자료 스테이징
+│   └── 260127-260211/     # 1/26~2/11 작업 원본
 │
 └── .obsidian/             # Obsidian 설정
 ```
@@ -60,13 +68,16 @@ CodingLLM_PM_Documents/
 | `02_implementation/cost_analysis_ko.md` | 비용 분석 - TCO 및 ROI |
 | `02_implementation/api_reference_ko.md` | API 레퍼런스 - 엔드포인트 명세 |
 | `03_development/` | 개발 진행 자료 - 테스트, 벤치마크 |
+| `03_development/2026-02-07_progress/` | 2월 1주차 진행 - 코드생성, UASL, QA 개선 |
+| `04_meetings/2026-02-11_ShinsegaeInC.md` | 신세계 I&C 솔루션 데모 회의록 |
 | `05_knowledge_base/README.md` | xFrame5 아카이브 내용 기록 |
 
-## Coder 핵심 개념
+## Coco 핵심 개념
 
 - **제품 정체성**: AI 코드 생성이 아닌 **AI 코드 거버넌스** 플랫폼
 - **대상 환경**: 폐쇄망, 온프레미스 LLM, 규제 산업 기업
 - **5대 USP**: 결정론적 출력, 표준 강제, 완전한 온프레미스, 감사 추적, LLM 추상화
+- **제품 구성**: Coco Engine, Coco Studio, Coco CLI, Coco Admin, MCP Servers, Eclipse Plugin
 
 ## API 엔드포인트 요약
 
@@ -86,4 +97,3 @@ GET  /_health                  # 헬스 체크
 - 회의록은 `YYYY-MM-DD_` prefix 사용
 - `_ko` suffix 유지 (향후 다국어 대비)
 - Obsidian으로 문서 관리 중 (`.obsidian/` 폴더 존재)
-
