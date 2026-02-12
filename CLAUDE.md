@@ -47,7 +47,7 @@ CodingLLM_PM_Documents/
 │
 ├── 05_knowledge_base/     # 기술 참고자료
 │   ├── README.md          # xFrame5 아카이브 내용 기록
-│   └── xframe5_knowledge_base.zip  # 대용량 (Git 제외)
+│   └── xframe5_knowledge_base.zip  # 대용량 (Git LFS)
 │
 ├── _00_work/              # 작업 자료 스테이징
 │   └── 260127-260211/     # 1/26~2/11 작업 원본
@@ -96,4 +96,37 @@ GET  /_health                  # 헬스 체크
 - 파일명은 **영문 소문자 + 언더스코어** 사용
 - 회의록은 `YYYY-MM-DD_` prefix 사용
 - `_ko` suffix 유지 (향후 다국어 대비)
-- Obsidian으로 문서 관리 중 (`.obsidian/` 폴더 존재)
+- Obsidian으로 문서 관리 중 (`.obsidian/`은 gitignore)
+
+## Git LFS 관리
+
+대용량 바이너리 파일은 Git LFS로 관리합니다.
+
+### GitHub LFS 무료 할당량
+
+| 항목 | 한도 |
+|------|------|
+| 저장소 용량 | 1 GB |
+| 월간 대역폭 | 1 GB |
+
+### 현재 LFS 사용량 (2026-02-12 기준)
+
+| 분류 | 파일 수 | 크기 | 비고 |
+|------|--------|------|------|
+| mov (데모 영상) | 8개 | ~54 MB | `_00_work/260127-260211/` |
+| zip (KB/스펙) | 5개 | ~80 MB | xframe5 KB 74MB + UASL/dist 소형 4개 |
+| **합계** | **13개** | **~134 MB** | 무료 한도의 ~13% |
+
+### 추적 대상 (`.gitattributes`)
+
+```
+*.mov filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
+```
+
+### 관리 규칙
+
+- 대용량 바이너리(영상, 압축파일, 이미지 등) 추가 시 반드시 LFS 추적 확인
+- `git lfs ls-files --size`로 현재 사용량 확인 후 추가
+- 무료 한도(1GB) 초과 전 정리 또는 유료 전환 검토
+- 새로운 확장자 추가 시 `.gitattributes`에 `git lfs track` 반영
