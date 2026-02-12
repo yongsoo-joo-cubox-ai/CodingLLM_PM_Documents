@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UASL/SUIS Flow Diagram</title>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    font-family: 'Pretendard', system-ui, -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+  }
+
+  /* ── Side Labels ── */
+  .side-label {
+    position: absolute;
+    left: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #888;
+    letter-spacing: 0.04em;
+  }
+
+  .side-label .label-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: 14px;
+    color: #aaa;
+    letter-spacing: 0.08em;
+  }
+
+  .side-label-what {
+    top: 100px;
+  }
+
+  .side-label-how {
+    bottom: 100px;
+  }
+
+  .side-label .label-tag {
+    background: #f0f0f0;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #666;
+    letter-spacing: 0.06em;
+  }
+
+  .side-label .label-tag.what-tag {
+    background: #fff5f0;
+    color: #ff4800;
+    border: 1.5px solid #ffe0d0;
+  }
+
+  .side-label .label-tag.how-tag {
+    background: #f0f7ff;
+    color: #2a7de1;
+    border: 1.5px solid #d0e4ff;
+  }
+
+  .side-bracket {
+    position: absolute;
+    left: 158px;
+    width: 28px;
+    border-left: 2.5px solid;
+    border-top: 2.5px solid;
+    border-bottom: 2.5px solid;
+    border-right: none;
+    border-radius: 6px 0 0 6px;
+  }
+
+  .bracket-what {
+    top: 145px;
+    height: 300px;
+    border-color: #ffd0b8;
+  }
+
+  .bracket-how {
+    top: 690px;
+    height: 260px;
+    border-color: #b8d4ff;
+  }
+
+  /* ── Main Container ── */
+  .flow-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 60px;
+    gap: 0;
+    position: relative;
+  }
+
+  /* ── Flow Nodes ── */
+  .flow-node {
+    width: 340px;
+    padding: 22px 28px;
+    background: #ffffff;
+    border: 2px solid #e8e8e8;
+    border-radius: 16px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+  }
+
+  .flow-node .node-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+    display: block;
+    line-height: 1.2;
+  }
+
+  .flow-node .node-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #333333;
+    margin-bottom: 4px;
+  }
+
+  .flow-node .node-subtitle {
+    font-size: 13px;
+    font-weight: 500;
+    color: #999;
+  }
+
+  /* ── Emphasized SUIS Node ── */
+  .flow-node.emphasized {
+    width: 400px;
+    padding: 28px 34px;
+    border: 2.5px solid #ff4800;
+    background: linear-gradient(135deg, #ffffff 0%, #fff8f5 100%);
+    box-shadow:
+      0 0 0 4px rgba(255, 72, 0, 0.08),
+      0 4px 24px rgba(255, 72, 0, 0.12),
+      0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .flow-node.emphasized .node-title {
+    font-size: 24px;
+    color: #ff4800;
+  }
+
+  .flow-node.emphasized .node-subtitle {
+    font-size: 14px;
+    color: #b73d0c;
+    font-weight: 600;
+  }
+
+  /* ── Arrow Down ── */
+  .arrow-down {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 0;
+  }
+
+  .arrow-down .arrow-line {
+    width: 2.5px;
+    height: 36px;
+    background: linear-gradient(to bottom, #ddd, #bbb);
+    border-radius: 2px;
+  }
+
+  .arrow-down .arrow-head {
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 10px solid #bbb;
+  }
+
+  /* ── Branch Section ── */
+  .branch-section {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0;
+  }
+
+  .branch-lines {
+    position: relative;
+    width: 700px;
+    height: 70px;
+  }
+
+  /* Central vertical line from top center */
+  .branch-lines::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2.5px;
+    height: 20px;
+    background: #bbb;
+  }
+
+  /* Horizontal line across */
+  .branch-lines::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 50px;
+    right: 50px;
+    height: 2.5px;
+    background: #bbb;
+  }
+
+  /* Vertical drops to each branch */
+  .branch-drop {
+    position: absolute;
+    top: 22px;
+    width: 2.5px;
+    height: 30px;
+    background: #bbb;
+  }
+
+  .branch-drop::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 9px solid #bbb;
+  }
+
+  .branch-drop-left {
+    left: 50px;
+  }
+
+  .branch-drop-center {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .branch-drop-right {
+    right: 50px;
+  }
+
+  /* ── Branch Cards ── */
+  .branch-cards {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-top: 8px;
+  }
+
+  .branch-card {
+    width: 200px;
+    padding: 20px 16px;
+    background: #ffffff;
+    border: 2px solid #e8e8e8;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  }
+
+  .branch-card .card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .badge-done {
+    background: #e8f8ef;
+    color: #1a9d56;
+    border: 1.5px solid #b8e8cc;
+  }
+
+  .badge-progress {
+    background: #fff8e8;
+    color: #c78a00;
+    border: 1.5px solid #ffe4a0;
+  }
+
+  /* ── Title Area ── */
+  .diagram-title {
+    position: absolute;
+    top: 30px;
+    right: 80px;
+    text-align: right;
+  }
+
+  .diagram-title h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1a1a2e;
+    letter-spacing: -0.01em;
+  }
+
+  .diagram-title h1 span {
+    color: #ff4800;
+  }
+
+  .diagram-title p {
+    font-size: 14px;
+    color: #999;
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  /* ── Decorative ── */
+  .spec-detail {
+    position: absolute;
+    right: -220px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 190px;
+    background: #fafafa;
+    border: 1.5px solid #eee;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 12px;
+    color: #888;
+    line-height: 1.7;
+  }
+
+  .spec-detail .detail-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #ff4800;
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+  }
+
+  .spec-detail::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 2px;
+    background: #ddd;
+  }
+
+  .spec-detail ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .spec-detail li {
+    padding: 2px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .spec-detail li::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #ff4800;
+    flex-shrink: 0;
+  }
+
+  /* ── Connector label ── */
+  .connector-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #bbb;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0 8px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Title -->
+  <div class="diagram-title">
+    <h1>Spec-Driven <span>Code Generation</span></h1>
+    <p>UASL/SUIS 기반 코드 생성 흐름</p>
+  </div>
+
+  <!-- Side Labels -->
+  <div class="side-label side-label-what">
+    <div class="label-tag what-tag">WHAT</div>
+    <div class="label-text">의도 전달</div>
+  </div>
+  <div class="bracket-what side-bracket"></div>
+
+  <div class="side-label side-label-how">
+    <div class="label-tag how-tag">HOW</div>
+    <div class="label-text">구현 생성</div>
+  </div>
+  <div class="bracket-how side-bracket"></div>
+
+  <!-- Main Flow -->
+  <div class="flow-container">
+
+    <!-- Node 1: Natural Language -->
+    <div class="flow-node">
+      <span class="node-icon">&#x1F4AC;</span>
+      <div class="node-title">자연어 요청</div>
+      <div class="node-subtitle">Natural Language Request</div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="arrow-down">
+      <div class="arrow-line"></div>
+      <div class="arrow-head"></div>
+    </div>
+
+    <!-- Node 2: LLM Analysis -->
+    <div class="flow-node">
+      <span class="node-icon">&#x1F9E0;</span>
+      <div class="node-title">LLM 분석</div>
+      <div class="node-subtitle">LLM Analysis &amp; Intent Extraction</div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="arrow-down">
+      <div class="arrow-line"></div>
+      <div class="arrow-head"></div>
+    </div>
+
+    <!-- Node 3: SUIS Spec (Emphasized) -->
+    <div class="flow-node emphasized" style="position: relative;">
+      <span class="node-icon">&#x1F4CB;</span>
+      <div class="node-title">SUIS Spec</div>
+      <div class="node-subtitle">Structured UI Specification</div>
+
+      <!-- Detail callout -->
+      <div class="spec-detail">
+        <div class="detail-title">SPEC 구성요소</div>
+        <ul>
+          <li>컴포넌트 구조</li>
+          <li>데이터 바인딩</li>
+          <li>이벤트 핸들링</li>
+          <li>레이아웃 정의</li>
+          <li>유효성 검증 규칙</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="arrow-down">
+      <div class="arrow-line"></div>
+      <div class="arrow-head"></div>
+    </div>
+
+    <!-- Node 4: MCP Server -->
+    <div class="flow-node">
+      <span class="node-icon">&#x2699;&#xFE0F;</span>
+      <div class="node-title">MCP 서버</div>
+      <div class="node-subtitle">Model Context Protocol Server</div>
+    </div>
+
+    <!-- Branch Lines -->
+    <div class="branch-section">
+      <div class="branch-lines">
+        <div class="branch-drop branch-drop-left"></div>
+        <div class="branch-drop branch-drop-center"></div>
+        <div class="branch-drop branch-drop-right"></div>
+      </div>
+
+      <!-- Branch Cards -->
+      <div class="branch-cards">
+        <!-- xFrame5 -->
+        <div class="branch-card">
+          <div class="card-title">xFrame5</div>
+          <span class="badge badge-done">&#x2705; 완료</span>
+        </div>
+
+        <!-- Vue3 -->
+        <div class="branch-card">
+          <div class="card-title">Vue 3</div>
+          <span class="badge badge-done">&#x2705; 완료</span>
+        </div>
+
+        <!-- Spring Boot -->
+        <div class="branch-card">
+          <div class="card-title">Spring Boot</div>
+          <span class="badge badge-progress">&#x1F504; 진행 중</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

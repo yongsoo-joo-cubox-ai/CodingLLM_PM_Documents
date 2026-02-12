@@ -6,5 +6,5 @@
 # Obsidian
 .obsidian/
 
-# Claude Code
-.claude/
+# Playwright MCP
+.playwright-mcp/

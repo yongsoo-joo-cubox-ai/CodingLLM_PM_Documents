@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coco Platform - Product Architecture</title>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    background: #ffffff;
+    font-family: 'Pretendard', system-ui, -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+    color: #333333;
+    position: relative;
+  }
+
+  /* ── Canvas ── */
+  .canvas {
+    width: 1920px;
+    height: 1080px;
+    padding: 60px 80px 50px 80px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* ── Title ── */
+  .title-area {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .title-area h1 {
+    font-size: 38px;
+    font-weight: 800;
+    color: #1a1a2e;
+    letter-spacing: -0.5px;
+  }
+
+  .title-area h1 span {
+    color: #ff4800;
+  }
+
+  .title-area p {
+    font-size: 17px;
+    color: #777;
+    margin-top: 6px;
+    font-weight: 400;
+  }
+
+  /* ── Main grid with layer labels ── */
+  .architecture {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+  }
+
+  /* ── Layer labels column ── */
+  .layer-labels {
+    width: 130px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-right: 20px;
+  }
+
+  .layer-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    writing-mode: horizontal-tb;
+    text-align: center;
+  }
+
+  .layer-label-inner {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 14px 10px;
+    width: 110px;
+    text-align: center;
+  }
+
+  .layer-label-inner .label-icon {
+    font-size: 22px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .layer-label-inner .label-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a2e;
+    line-height: 1.3;
+  }
+
+  .layer-label-inner .label-sub {
+    font-size: 11px;
+    font-weight: 400;
+    color: #999;
+    margin-top: 2px;
+  }
+
+  .label-top { flex: 0 0 auto; margin-top: 10px; }
+  .label-mid { flex: 0 0 auto; }
+  .label-bottom { flex: 0 0 auto; margin-bottom: 10px; }
+
+  /* ── Tiers column ── */
+  .tiers {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  /* ── Tier rows ── */
+  .tier {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 36px;
+    position: relative;
+  }
+
+  .tier-top {
+    flex: 0 0 220px;
+    padding-bottom: 10px;
+  }
+
+  .tier-mid {
+    flex: 0 0 280px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .tier-bottom {
+    flex: 0 0 220px;
+    padding-top: 10px;
+  }
+
+  /* ── Arrow zones between tiers ── */
+  .arrow-zone {
+    flex: 0 0 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 100px;
+  }
+
+  .arrow-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .arrow-shaft {
+    width: 3px;
+    height: 22px;
+    background: linear-gradient(180deg, #ff4800 0%, #b73d0c 100%);
+    border-radius: 2px;
+  }
+
+  .arrow-head-down {
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 10px solid #b73d0c;
+  }
+
+  .arrow-head-up {
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 10px solid #ff4800;
+  }
+
+  .arrow-label {
+    font-size: 11px;
+    color: #999;
+    font-weight: 500;
+    margin-top: 2px;
+    white-space: nowrap;
+  }
+
+  /* ── Component blocks ── */
+  .block {
+    background: #ffffff;
+    border: 1.5px solid #e8e8e8;
+    border-top: 4px solid #ff4800;
+    border-radius: 12px;
+    padding: 24px 28px 20px 28px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+    position: relative;
+    transition: box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .block:hover {
+    box-shadow: 0 4px 20px rgba(255, 72, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Small blocks (top / bottom rows) */
+  .block-sm {
+    width: 480px;
+    min-height: 160px;
+  }
+
+  /* Large block (middle row) */
+  .block-lg {
+    width: 100%;
+    max-width: 1520px;
+    min-height: 200px;
+  }
+
+  /* ── Block header ── */
+  .block-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .block-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .icon-studio   { background: #fff0e6; color: #ff4800; }
+  .icon-cli      { background: #e8f4f8; color: #0c7bb7; }
+  .icon-eclipse  { background: #f0e8f8; color: #7b0cb7; }
+  .icon-engine   { background: linear-gradient(135deg, #fff0e6, #ffe0cc); color: #b73d0c; }
+  .icon-mcp      { background: #e6f8ed; color: #0cb74e; }
+  .icon-admin    { background: #f8f0e6; color: #b7850c; }
+
+  .block-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1a1a2e;
+    letter-spacing: -0.3px;
+  }
+
+  .block-title .product-prefix {
+    color: #ff4800;
+  }
+
+  /* ── Status badge ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #e6ffed;
+    color: #1a8a3f;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-left: auto;
+    flex-shrink: 0;
+    border: 1px solid #b8e6c8;
+  }
+
+  /* ── Block description ── */
+  .block-desc {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+    margin-top: 2px;
+  }
+
+  /* ── Tags ── */
+  .block-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .tag {
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: #f8f9fa;
+    color: #555;
+    border: 1px solid #eee;
+  }
+
+  .tag-orange { background: #fff5f0; color: #b73d0c; border-color: #ffe0cc; }
+  .tag-blue   { background: #eef6ff; color: #0c5fb7; border-color: #cce0f5; }
+  .tag-green  { background: #eefff3; color: #0c8a3d; border-color: #c0e8d0; }
+  .tag-purple { background: #f5eeff; color: #6b0cb7; border-color: #dcc8f0; }
+
+  /* ── Engine-specific: pipeline steps ── */
+  .pipeline {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-top: 8px;
+    flex-wrap: nowrap;
+  }
+
+  .pipe-step {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .pipe-box {
+    background: linear-gradient(135deg, #fff5f0, #ffffff);
+    border: 1.5px solid #ffd6c2;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #b73d0c;
+    white-space: nowrap;
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .pipe-box .step-num {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    color: #ff4800;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+  }
+
+  .pipe-arrow {
+    color: #ffb899;
+    font-size: 18px;
+    margin: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* ── Bottom watermark ── */
+  .watermark {
+    position: absolute;
+    bottom: 20px;
+    right: 40px;
+    font-size: 12px;
+    color: #ccc;
+    font-weight: 400;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <!-- Title -->
+  <div class="title-area">
+    <h1><span>Coco</span> Platform Architecture</h1>
+    <p>3-Tier Product Architecture -- UI Layer / Core Engine / Infrastructure</p>
+  </div>
+
+  <!-- Architecture Layout -->
+  <div class="architecture">
+
+    <!-- Layer Labels -->
+    <div class="layer-labels">
+      <div class="layer-label label-top">
+        <div class="layer-label-inner">
+          <span class="label-icon">&#x1F5A5;</span>
+          <span class="label-text">UI Layer</span>
+          <span class="label-sub">Client Interface</span>
+        </div>
+      </div>
+      <div class="layer-label label-mid">
+        <div class="layer-label-inner">
+          <span class="label-icon">&#x2699;</span>
+          <span class="label-text">Core</span>
+          <span class="label-sub">Processing Engine</span>
+        </div>
+      </div>
+      <div class="layer-label label-bottom">
+        <div class="layer-label-inner">
+          <span class="label-icon">&#x1F5C4;</span>
+          <span class="label-text">Infrastructure</span>
+          <span class="label-sub">Services &amp; Admin</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tiers -->
+    <div class="tiers">
+
+      <!-- ===== TOP ROW: UI Layer ===== -->
+      <div class="tier tier-top">
+
+        <!-- Coco Studio -->
+        <div class="block block-sm">
+          <div class="block-header">
+            <div class="block-icon icon-studio">&#x1F3A8;</div>
+            <span class="block-title"><span class="product-prefix">Coco</span> Studio</span>
+            <span class="badge">&#x2705; Active</span>
+          </div>
+          <div class="block-desc">
+            웹 기반 통합 개발 환경 UI<br>
+            코드 생성 요청, 리뷰 결과 확인, 프로젝트 관리
+          </div>
+          <div class="block-tags">
+            <span class="tag tag-orange">Web UI</span>
+            <span class="tag tag-blue">React</span>
+            <span class="tag tag-blue">TypeScript</span>
+          </div>
+        </div>
+
+        <!-- Coco CLI -->
+        <div class="block block-sm">
+          <div class="block-header">
+            <div class="block-icon icon-cli">&#x1F4BB;</div>
+            <span class="block-title"><span class="product-prefix">Coco</span> CLI</span>
+            <span class="badge">&#x2705; Active</span>
+          </div>
+          <div class="block-desc">
+            터미널 기반 인터페이스<br>
+            CI/CD 파이프라인 연동, 배치 코드 생성 및 리뷰
+          </div>
+          <div class="block-tags">
+            <span class="tag tag-orange">Terminal</span>
+            <span class="tag tag-purple">CLI Tool</span>
+            <span class="tag tag-green">CI/CD</span>
+          </div>
+        </div>
+
+        <!-- Eclipse Plugin -->
+        <div class="block block-sm">
+          <div class="block-header">
+            <div class="block-icon icon-eclipse">&#x1F50C;</div>
+            <span class="block-title">Eclipse Plugin</span>
+            <span class="badge">&#x2705; Active</span>
+          </div>
+          <div class="block-desc">
+            Eclipse IDE 통합 플러그인<br>
+            에디터 내 실시간 코드 생성 및 거버넌스 검증
+          </div>
+          <div class="block-tags">
+            <span class="tag tag-purple">IDE Plugin</span>
+            <span class="tag tag-blue">Java/Eclipse</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===== ARROW ZONE: Top -> Mid ===== -->
+      <div class="arrow-zone">
+        <div class="arrow-group">
+          <div class="arrow-head-up"></div>
+          <div class="arrow-shaft"></div>
+          <div class="arrow-head-down"></div>
+          <span class="arrow-label">REST API</span>
+        </div>
+        <div class="arrow-group">
+          <div class="arrow-head-up"></div>
+          <div class="arrow-shaft"></div>
+          <div class="arrow-head-down"></div>
+          <span class="arrow-label">Streaming</span>
+        </div>
+        <div class="arrow-group">
+          <div class="arrow-head-up"></div>
+          <div class="arrow-shaft"></div>
+          <div class="arrow-head-down"></div>
+          <span class="arrow-label">SSE / HTTP</span>
+        </div>
+      </div>
+
+      <!-- ===== MIDDLE ROW: Core ===== -->
+      <div class="tier tier-mid">
+
+        <!-- Coco Engine -->
+        <div class="block block-lg">
+          <div class="block-header">
+            <div class="block-icon icon-engine" style="width:50px;height:50px;font-size:26px;">&#x1F680;</div>
+            <span class="block-title" style="font-size:24px;"><span class="product-prefix">Coco</span> Engine</span>
+            <div class="block-tags" style="margin-top:0; margin-left:12px;">
+              <span class="tag tag-orange">Rust</span>
+              <span class="tag tag-orange">Loco.rs</span>
+            </div>
+            <span class="badge" style="font-size:13px; padding:4px 14px;">&#x2705; Active</span>
+          </div>
+          <div class="block-desc">
+            핵심 코드 생성 및 거버넌스 엔진 -- 6단계 결정론적 파이프라인을 통해 Spec-Driven 코드를 생성하고 표준 준수를 강제합니다.
+          </div>
+          <!-- 6-Stage Pipeline -->
+          <div class="pipeline">
+            <div class="pipe-step">
+              <div class="pipe-box"><span class="step-num">Step 1</span>Spec 파싱</div>
+            </div>
+            <span class="pipe-arrow">&#x25B6;</span>
+            <div class="pipe-step">
+              <div class="pipe-box"><span class="step-num">Step 2</span>표준 검증</div>
+            </div>
+            <span class="pipe-arrow">&#x25B6;</span>
+            <div class="pipe-step">
+              <div class="pipe-box"><span class="step-num">Step 3</span>프롬프트 생성</div>
+            </div>
+            <span class="pipe-arrow">&#x25B6;</span>
+            <div class="pipe-step">
+              <div class="pipe-box"><span class="step-num">Step 4</span>LLM 호출</div>
+            </div>
+            <span class="pipe-arrow">&#x25B6;</span>
+            <div class="pipe-step">
+              <div class="pipe-box"><span class="step-num">Step 5</span>후처리 검증</div>
+            </div>
+            <span class="pipe-arrow">&#x25B6;</span>
+            <div class="pipe-step">
+              <div class="pipe-box"><span class="step-num">Step 6</span>감사 로깅</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===== ARROW ZONE: Mid -> Bottom ===== -->
+      <div class="arrow-zone">
+        <div class="arrow-group">
+          <div class="arrow-head-up"></div>
+          <div class="arrow-shaft"></div>
+          <div class="arrow-head-down"></div>
+          <span class="arrow-label">MCP Protocol</span>
+        </div>
+        <div class="arrow-group">
+          <div class="arrow-head-up"></div>
+          <div class="arrow-shaft"></div>
+          <div class="arrow-head-down"></div>
+          <span class="arrow-label">Admin API</span>
+        </div>
+      </div>
+
+      <!-- ===== BOTTOM ROW: Infrastructure ===== -->
+      <div class="tier tier-bottom">
+
+        <!-- MCP Servers -->
+        <div class="block block-sm" style="width: 740px;">
+          <div class="block-header">
+            <div class="block-icon icon-mcp">&#x1F310;</div>
+            <span class="block-title">MCP Servers</span>
+            <span class="badge">&#x2705; Active</span>
+          </div>
+          <div class="block-desc">
+            Model Context Protocol 기반 외부 컴파일러 서버<br>
+            프레임워크 전용 코드 컴파일 및 검증 수행
+          </div>
+          <div class="block-tags">
+            <span class="tag tag-green">xframe5-compiler</span>
+            <span class="tag tag-green">vue-compiler</span>
+            <span class="tag tag-blue">MCP Protocol</span>
+          </div>
+        </div>
+
+        <!-- Coco Admin -->
+        <div class="block block-sm" style="width: 740px;">
+          <div class="block-header">
+            <div class="block-icon icon-admin">&#x1F6E0;</div>
+            <span class="block-title"><span class="product-prefix">Coco</span> Admin</span>
+            <span class="badge">&#x2705; Active</span>
+          </div>
+          <div class="block-desc">
+            관리자 대시보드 및 설정 UI<br>
+            모델 관리, 사용자 권한, 감사 로그 조회, 시스템 모니터링
+          </div>
+          <div class="block-tags">
+            <span class="tag tag-orange">Admin UI</span>
+            <span class="tag tag-blue">Dashboard</span>
+            <span class="tag tag-purple">Monitoring</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Watermark -->
+  <div class="watermark">Secern AI &middot; Coco Platform Architecture &middot; 2026</div>
+
+</div>
+</body>
+</html>

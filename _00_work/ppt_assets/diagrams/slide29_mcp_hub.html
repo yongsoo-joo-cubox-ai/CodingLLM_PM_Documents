@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Server Hub-Spoke Architecture</title>
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    font-family: 'Pretendard', system-ui, -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+    background: #ffffff;
+    color: #333333;
+  }
+
+  .slide {
+    width: 1920px;
+    height: 1080px;
+    position: relative;
+  }
+
+  /* Header */
+  .slide-header {
+    text-align: center;
+    padding-top: 48px;
+    position: relative;
+    z-index: 10;
+  }
+
+  .slide-header h1 {
+    font-size: 42px;
+    font-weight: 700;
+    color: #1a1a2e;
+    letter-spacing: -0.5px;
+  }
+
+  .slide-header h1 span {
+    color: #ff4800;
+  }
+
+  .slide-header p {
+    font-size: 20px;
+    color: #888888;
+    margin-top: 10px;
+    font-weight: 400;
+  }
+
+  /* SVG connectors layer */
+  .connectors {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .connector-line {
+    stroke: #ddd;
+    stroke-width: 2.5;
+    stroke-dasharray: 8 4;
+    fill: none;
+  }
+
+  .connector-line.active {
+    stroke: #ff4800;
+    stroke-width: 3;
+    stroke-dasharray: none;
+  }
+
+  .connector-line.in-progress {
+    stroke: #ff6b2b;
+    stroke-width: 2.5;
+    stroke-dasharray: 8 4;
+  }
+
+  .connector-line.planned {
+    stroke: #cccccc;
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+  }
+
+  /* Connector dot at hub end */
+  .connector-dot {
+    fill: #ff4800;
+  }
+
+  .connector-dot.planned {
+    fill: #cccccc;
+  }
+
+  .connector-dot.in-progress {
+    fill: #ff6b2b;
+  }
+
+  /* Hub center */
+  .hub-container {
+    position: absolute;
+    z-index: 5;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-top: 24px;
+  }
+
+  .hub {
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff4800 0%, #b73d0c 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow:
+      0 8px 32px rgba(255, 72, 0, 0.3),
+      0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 40px;
+  }
+
+  .hub-icon {
+    font-size: 44px;
+    margin-bottom: 8px;
+  }
+
+  .hub-title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+
+  .hub-subtitle {
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.85;
+    margin-bottom: 16px;
+  }
+
+  .hub-flow {
+    font-size: 13px;
+    font-weight: 400;
+    opacity: 0.9;
+    line-height: 1.7;
+    letter-spacing: 0.2px;
+  }
+
+  .hub-flow .arrow {
+    opacity: 0.7;
+    margin: 0 2px;
+  }
+
+  /* Spoke cards */
+  .spoke {
+    position: absolute;
+    z-index: 5;
+    width: 260px;
+  }
+
+  .spoke-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 24px 22px;
+    box-shadow:
+      0 2px 12px rgba(0, 0, 0, 0.07),
+      0 1px 4px rgba(0, 0, 0, 0.04);
+    border: 1.5px solid #eee;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .spoke-card.completed {
+    border-color: #d4edda;
+  }
+
+  .spoke-card.in-progress {
+    border-color: #ffe0cc;
+  }
+
+  .spoke-card.planned {
+    border-color: #e9ecef;
+  }
+
+  .spoke-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+
+  .spoke-icon.completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  .spoke-icon.in-progress {
+    background: #fff3e0;
+    color: #e65100;
+  }
+
+  .spoke-icon.planned {
+    background: #f5f5f5;
+    color: #999;
+  }
+
+  .spoke-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #333;
+    letter-spacing: -0.3px;
+  }
+
+  .spoke-desc {
+    font-size: 13px;
+    color: #888;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  /* Status badges */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+  }
+
+  .badge.completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  .badge.in-progress {
+    background: #fff3e0;
+    color: #e65100;
+  }
+
+  .badge.planned {
+    background: #f0f0f0;
+    color: #888;
+  }
+
+  /* Spoke positions — arranged around center hub */
+  /* Center of hub is at (960, 564) — shifted down 24px from true center */
+
+  /* Top-left */
+  .spoke-top-left {
+    top: 146px;
+    left: 218px;
+  }
+
+  /* Top-right */
+  .spoke-top-right {
+    top: 146px;
+    right: 218px;
+  }
+
+  /* Right */
+  .spoke-right {
+    top: 440px;
+    right: 130px;
+  }
+
+  /* Bottom-right */
+  .spoke-bottom-right {
+    bottom: 80px;
+    right: 218px;
+  }
+
+  /* Bottom-left */
+  .spoke-bottom-left {
+    bottom: 80px;
+    left: 218px;
+  }
+
+  /* Left */
+  .spoke-left {
+    top: 440px;
+    left: 130px;
+  }
+
+  /* Protocol label on connectors */
+  .protocol-label {
+    font-size: 11px;
+    fill: #aaa;
+    font-family: 'Pretendard', system-ui, sans-serif;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <!-- Header -->
+  <div class="slide-header">
+    <h1><span>MCP</span> Server Hub-Spoke Architecture</h1>
+    <p>Coco Engine 중심의 MCP 서버 확장 구조</p>
+  </div>
+
+  <!-- SVG Connectors -->
+  <svg class="connectors" viewBox="0 0 1920 1080">
+    <!-- Hub center: (960, 564) -->
+
+    <!-- Top-left connector: spoke card center ~(348, 260) to hub -->
+    <line class="connector-line active" x1="418" y1="310" x2="845" y2="480" />
+    <circle class="connector-dot" cx="845" cy="480" r="5" />
+
+    <!-- Top-right connector: spoke card center ~(1572, 260) to hub -->
+    <line class="connector-line active" x1="1502" y1="310" x2="1075" y2="480" />
+    <circle class="connector-dot" cx="1075" cy="480" r="5" />
+
+    <!-- Right connector: spoke card center ~(1660, 530) to hub -->
+    <line class="connector-line active" x1="1530" y1="530" x2="1120" y2="560" />
+    <circle class="connector-dot" cx="1120" cy="560" r="5" />
+
+    <!-- Bottom-right connector: spoke card center ~(1572, 890) to hub -->
+    <line class="connector-line in-progress" x1="1502" y1="830" x2="1075" y2="650" />
+    <circle class="connector-dot in-progress" cx="1075" cy="650" r="5" />
+
+    <!-- Bottom-left connector: spoke card center ~(348, 890) to hub -->
+    <line class="connector-line planned" x1="418" y1="830" x2="845" y2="650" />
+    <circle class="connector-dot planned" cx="845" cy="650" r="5" />
+
+    <!-- Left connector: spoke card center ~(260, 530) to hub -->
+    <line class="connector-line planned" x1="390" y1="530" x2="800" y2="560" />
+    <circle class="connector-dot planned" cx="800" cy="560" r="5" />
+
+    <!-- MCP protocol labels on lines -->
+    <text class="protocol-label" x="600" y="382" transform="rotate(-14, 600, 382)">MCP</text>
+    <text class="protocol-label" x="1270" y="382" transform="rotate(14, 1270, 382)">MCP</text>
+    <text class="protocol-label" x="1330" y="536">MCP</text>
+    <text class="protocol-label" x="1270" y="750" transform="rotate(-14, 1270, 750)">MCP</text>
+    <text class="protocol-label" x="600" y="750" transform="rotate(14, 600, 750)">MCP</text>
+    <text class="protocol-label" x="560" y="536">MCP</text>
+  </svg>
+
+  <!-- Center Hub -->
+  <div class="hub-container">
+    <div class="hub">
+      <div class="hub-icon">&#x2699;&#xFE0F;</div>
+      <div class="hub-title">Coco Engine</div>
+      <div class="hub-subtitle">Orchestration Layer</div>
+      <div class="hub-flow">
+        의도 분석 <span class="arrow">&rarr;</span> UASL/SUIS<br>
+        <span class="arrow">&rarr;</span> MCP 호출
+      </div>
+    </div>
+  </div>
+
+  <!-- Spoke: Top-Left — xframe5-compiler -->
+  <div class="spoke spoke-top-left">
+    <div class="spoke-card completed">
+      <div class="spoke-icon completed">&#x1F3D7;</div>
+      <div class="spoke-name">xframe5-compiler</div>
+      <div class="spoke-desc">xFrame5 UI 컴포넌트<br>코드 생성 서버</div>
+      <div class="badge completed">&#x2705; 완료</div>
+    </div>
+  </div>
+
+  <!-- Spoke: Top-Right — xframe5-validator -->
+  <div class="spoke spoke-top-right">
+    <div class="spoke-card completed">
+      <div class="spoke-icon completed">&#x1F50D;</div>
+      <div class="spoke-name">xframe5-validator</div>
+      <div class="spoke-desc">xFrame5 코드 검증<br>및 표준 준수 검사</div>
+      <div class="badge completed">&#x2705; 완료</div>
+    </div>
+  </div>
+
+  <!-- Spoke: Right — vue-compiler -->
+  <div class="spoke spoke-right">
+    <div class="spoke-card completed">
+      <div class="spoke-icon completed">&#x1F4E6;</div>
+      <div class="spoke-name">vue-compiler</div>
+      <div class="spoke-desc">Vue.js 컴포넌트<br>코드 생성 서버</div>
+      <div class="badge completed">&#x2705; 완료</div>
+    </div>
+  </div>
+
+  <!-- Spoke: Bottom-Right — spring-compiler -->
+  <div class="spoke spoke-bottom-right">
+    <div class="spoke-card in-progress">
+      <div class="spoke-icon in-progress">&#x1F527;</div>
+      <div class="spoke-name">spring-compiler</div>
+      <div class="spoke-desc">Spring Boot 백엔드<br>코드 생성 서버</div>
+      <div class="badge in-progress">&#x1F504; 개발중</div>
+    </div>
+  </div>
+
+  <!-- Spoke: Bottom-Left — react-compiler -->
+  <div class="spoke spoke-bottom-left">
+    <div class="spoke-card planned">
+      <div class="spoke-icon planned">&#x1F4CB;</div>
+      <div class="spoke-name">react-compiler</div>
+      <div class="spoke-desc">React 컴포넌트<br>코드 생성 서버</div>
+      <div class="badge planned">&#x1F4CB; 예정</div>
+    </div>
+  </div>
+
+  <!-- Spoke: Left — custom-adapter -->
+  <div class="spoke spoke-left">
+    <div class="spoke-card planned">
+      <div class="spoke-icon planned">&#x1F9E9;</div>
+      <div class="spoke-name">custom-adapter</div>
+      <div class="spoke-desc">커스텀 프레임워크<br>어댑터 확장 인터페이스</div>
+      <div class="badge planned">&#x1F4CB; 예정</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

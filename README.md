@@ -117,6 +117,23 @@ GET  /_health                  # 헬스 체크
 
 ---
 
+## Google Drive 동기화
+
+이 저장소의 문서를 Google Drive 공유 드라이브(`CodingLLM_Project/01_Documents/`)로 단방향 미러링합니다. MD 파일은 DOCX로 변환되며, 원본 MD는 Git에만 보관합니다.
+
+```bash
+# 미리보기
+bash ~/.claude/scripts/sync-to-gdrive.sh --dry-run
+
+# 실제 동기화
+bash ~/.claude/scripts/sync-to-gdrive.sh
+```
+
+- **사전 요구사항**: `brew install pandoc`, Google Drive 데스크톱 앱 마운트
+- **Claude Code 사용 시**: `/sync-gdrive` 또는 `/sync-gdrive --dry-run`
+
+---
+
 ## 문서 명명 규칙
 
 | 규칙 | 설명 | 예시 |

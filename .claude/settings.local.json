@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__serena__activate_project",
+      "Bash(wc:*)"
+    ],
+    "additionalDirectories": [
+      "/Users/ysjoo/Library/CloudStorage/GoogleDrive-yongsoo.joo@cubox.ai/공유 드라이브/CodingLLM_Project"
+    ]
+  }
+}
