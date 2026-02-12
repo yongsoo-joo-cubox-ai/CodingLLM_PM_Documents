@@ -211,7 +211,7 @@ async fn validate_api(code: String, allowlist: Vec<String>) -> ValidationResult 
 
 **아키텍처** (from `architecture_mcp.md`):
 ```
-Coder Core (Orchestration)
+Coco Core (Orchestration)
   ├─ Output parsing
   ├─ Symbol linking
   └─ Graph validation

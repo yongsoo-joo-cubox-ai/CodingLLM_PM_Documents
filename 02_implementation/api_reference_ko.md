@@ -1,4 +1,4 @@
-# API Reference
+# API 레퍼런스
 
 **Date:** 2026-01-08 | **Updated:** 2026-01-21
 **Status:** Established

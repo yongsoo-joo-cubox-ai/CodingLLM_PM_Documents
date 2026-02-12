@@ -67,6 +67,9 @@ Qwen2.5-32B-AWQ 모델, 4x RTX 2080 Ti (44GB) 환경 기준:
 ### CLI 테스트
 
 Eclipse 플러그인, curl 외에 CLI 실행 방식 추가:
+
+> **참고**: 아래 CLI 명령어는 당시 제품명 "Coder" 기준입니다. 이후 제품명이 Coco로 변경되었습니다.
+
 - `coder generate` - 코드 생성
 - `coder qa` - 프레임워크 Q&A
 - `coder review` - 코드 리뷰
