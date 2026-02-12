@@ -1,6 +1,6 @@
 # 05_knowledge_base - 기술 참고자료
 
-이 폴더는 Coder 프로젝트에서 사용하는 프레임워크별 Knowledge Base를 관리합니다.
+이 폴더는 Coco 프로젝트에서 사용하는 프레임워크별 Knowledge Base를 관리합니다.
 
 ---
 
@@ -98,4 +98,4 @@ unzip xframe5_knowledge_base.zip
 ## 관련 링크
 
 - [개발 자료](../03_development/) - 테스트 결과, 벤치마크
-- [API 레퍼런스](../02_implementation/api_reference_ko.md) - Coder API 명세
+- [API 레퍼런스](../02_implementation/api_reference_ko.md) - Coco API 명세

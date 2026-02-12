@@ -90,5 +90,5 @@
 
 ## 관련 문서
 
-- [[strategy/executive_summary_ko|경영진 요약]]: 프로젝트 개요
-- [[implementation/roadmap_ko|로드맵]]: 구현 계획
+- [[01_strategy/executive_summary_ko|경영진 요약]]: 프로젝트 개요
+- [[02_implementation/roadmap_ko|로드맵]]: 구현 계획

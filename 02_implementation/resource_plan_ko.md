@@ -336,11 +336,11 @@
 
 ## 8. 참고 문서
 
-- [[implementation/roadmap_ko|기존 로드맵]] - 기능 중심 로드맵
-- [[development/2026-01-15_project_intro/model_benchmark|모델 벤치마크]] - GPT-OSS 94%, Qwen32B 54%
-- [[development/2026-01-15_project_intro/load_test_qwen32b|부하 테스트]] - 25-65초
-- [[development/2026-01-24_progress/architecture_mcp|MCP 아키텍처]] - 프레임워크 분리 설계
-- [[implementation/cost_analysis_ko|비용 분석]] - 인프라 비용 상세
+- [[02_implementation/roadmap_ko|기존 로드맵]] - 기능 중심 로드맵
+- [[03_development/2026-01-15_project_intro/model_benchmark|모델 벤치마크]] - GPT-OSS 94%, Qwen32B 54%
+- [[03_development/2026-01-15_project_intro/load_test_qwen32b|부하 테스트]] - 25-65초
+- [[03_development/2026-01-24_progress/architecture_mcp|MCP 아키텍처]] - 프레임워크 분리 설계
+- [[02_implementation/cost_analysis_ko|비용 분석]] - 인프라 비용 상세
 
 ---
 
