@@ -84,12 +84,16 @@ CodingLLM_PM_Documents/
 
 ## 읽기 순서
 
-프로젝트를 처음 접하는 경우 아래 순서로 읽기를 권장합니다:
+프로젝트를 처음 접하는 경우 대상에 맞는 경로로 읽기를 권장합니다.
 
-1. **[[01_strategy/executive_summary_ko\|경영진 요약]]** - 프로젝트 개요 파악
-2. **[[01_strategy/competitive_strategy_ko\|경쟁 전략]]** - 시장 분석 및 차별화 포인트
-3. **[[02_implementation/roadmap_ko\|구현 로드맵]]** - 구현 계획 및 마일스톤
-4. **[[02_implementation/cost_analysis_ko\|비용 분석]]** - 투자 대비 효과
+### 전체 파악 (경영진/관리자)
+1. [경영진 요약](01_strategy/executive_summary_ko.md) → 2. [경쟁 전략](01_strategy/competitive_strategy_ko.md) → 3. [로드맵](02_implementation/roadmap_ko.md) → 4. [비용 분석](02_implementation/cost_analysis_ko.md)
+
+### 구현 상세 (개발자/PM)
+1. [로드맵](02_implementation/roadmap_ko.md) → 2. [투입 인력](02_implementation/resource_plan_ko.md) → 3. [기술 스택](02_implementation/phase2_tech_stack_ko.md) → 4. [API 레퍼런스](02_implementation/api_reference_ko.md)
+
+### 개발 진행 현황
+[2026-01-15](03_development/2026-01-15_project_intro/) → [2026-01-24](03_development/2026-01-24_progress/) → [2026-02-07](03_development/2026-02-07_progress/) (시간순)
 
 ---
 

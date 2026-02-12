@@ -3,6 +3,8 @@
 **Date:** 2026-01-08 | **Updated:** 2026-01-21
 **Status:** Established
 
+> **구현 문서 5/5** | 이전: [기술 스택](./phase2_tech_stack_ko.md) | [폴더 인덱스](./README.md)
+
 ---
 
 ## API Stability Levels

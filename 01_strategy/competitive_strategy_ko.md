@@ -2,6 +2,8 @@
 
 **2026년 1월 21일 | Cline Enterprise 대응 전략**
 
+> **전략 문서 2/3** | 이전: [경영진 요약](./executive_summary_ko.md) | 다음: [규제 환경](./regulatory_environment_ko.md) | [폴더 인덱스](./README.md)
+
 ---
 
 ## 개요
