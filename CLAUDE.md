@@ -175,7 +175,7 @@ Git 저장소를 Google Drive 공유 드라이브로 단방향 미러링하는 �
 - **소스**: 이 저장소 (Git이 원본)
 - **타겟**: `CodingLLM_Project/01_Documents/` (Google Drive 공유 드라이브)
 - **MD 처리**: DOCX로 변환하여 타겟에 저장, 원본 MD는 Git에만 보관
-- **스크립트**: `~/.claude/scripts/sync-to-gdrive.sh`
+- **스크립트**: `.claude/scripts/sync-to-gdrive.sh`
 
 ### 슬래시 커맨드
 
@@ -188,8 +188,8 @@ Git 저장소를 Google Drive 공유 드라이브로 단방향 미러링하는 �
 ### 터미널에서 직접 실행
 
 ```bash
-bash ~/.claude/scripts/sync-to-gdrive.sh            # 실제 동기화
-bash ~/.claude/scripts/sync-to-gdrive.sh --dry-run   # 미리보기
+bash .claude/scripts/sync-to-gdrive.sh            # 실제 동기화
+bash .claude/scripts/sync-to-gdrive.sh --dry-run   # 미리보기
 ```
 
 ### 동작 요약

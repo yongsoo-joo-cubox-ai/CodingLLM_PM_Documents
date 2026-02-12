@@ -7,7 +7,7 @@ CodingLLM_PM_Documents를 Google Drive 공유 드라이브로 동기화하는 �
 
 ## 실행할 작업
 
-1. `~/.claude/scripts/sync-to-gdrive.sh`를 $ARGUMENTS 인자와 함께 실행
+1. `.claude/scripts/sync-to-gdrive.sh`를 $ARGUMENTS 인자와 함께 실행
 2. 스크립트 출력을 사용자에게 보여줌
 3. 결과를 간결하게 요약
 
@@ -26,7 +26,7 @@ CodingLLM_PM_Documents를 Google Drive 공유 드라이브로 동기화하는 �
 ## 실행
 
 ```bash
-bash ~/.claude/scripts/sync-to-gdrive.sh $ARGUMENTS
+bash .claude/scripts/sync-to-gdrive.sh $ARGUMENTS
 ```
 
 실행 후 결과를 한글로 요약해서 보고하세요. 실패 항목이 있으면 원인을 분석하세요.

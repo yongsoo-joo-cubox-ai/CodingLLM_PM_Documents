@@ -17,7 +17,7 @@ CodingLLM_PM_Documents(Git)와 Google Drive 공유 드라이브 간 동기화 �
 ### 분석 스크립트
 
 ```bash
-bash ~/.claude/scripts/sync-analyze.sh
+bash .claude/scripts/sync-analyze.sh
 ```
 
 ## 출력 형식

@@ -123,10 +123,10 @@ GET  /_health                  # 헬스 체크
 
 ```bash
 # 미리보기
-bash ~/.claude/scripts/sync-to-gdrive.sh --dry-run
+bash .claude/scripts/sync-to-gdrive.sh --dry-run
 
 # 실제 동기화
-bash ~/.claude/scripts/sync-to-gdrive.sh
+bash .claude/scripts/sync-to-gdrive.sh
 ```
 
 - **사전 요구사항**: `brew install pandoc`, Google Drive 데스크톱 앱 마운트
