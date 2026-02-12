@@ -5,3 +5,6 @@
 
 # Obsidian
 .obsidian/
+
+# Claude Code
+.claude/
