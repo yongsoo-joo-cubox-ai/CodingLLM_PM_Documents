@@ -6,5 +6,4 @@
 05_knowledge_base/*.zip
 
 # Obsidian
-.obsidian/workspace.json
-.obsidian/workspace-mobile.json
+.obsidian/
