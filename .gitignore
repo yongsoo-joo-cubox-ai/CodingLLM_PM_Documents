@@ -8,3 +8,4 @@
 
 # Playwright MCP
 .playwright-mcp/
+.omc/
