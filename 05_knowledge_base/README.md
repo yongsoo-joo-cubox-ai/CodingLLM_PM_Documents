@@ -87,6 +87,18 @@ unzip xframe5_knowledge_base.zip
 
 ---
 
+## 프로젝트 용어집
+
+| 항목 | 내용 |
+|------|------|
+| **파일** | [glossary_ko.md](./glossary_ko.md) |
+| **대상** | 경영진, 초보자, 신규 투입 인력 |
+| **용어 수** | ~70개 (UASL 내부 용어 제외) |
+
+프로젝트에서 사용하는 기술/전략 용어를 경영진용(비유적)과 개발자용(기술적) 설명으로 분리 정리한 문서입니다. 프로젝트를 처음 접하는 분은 이 용어집을 먼저 읽는 것을 권장합니다.
+
+---
+
 ## 향후 추가 예정
 
 - `spring/` - Spring Framework Knowledge Base
@@ -98,4 +110,4 @@ unzip xframe5_knowledge_base.zip
 ## 관련 링크
 
 - [개발 자료](../03_development/) - 테스트 결과, 벤치마크
-- [API 레퍼런스](../02_implementation/api_reference_ko.md) - Coco API 명세
+- [API 레퍼런스](../02_implementation/05_api_reference_ko.md) - Coco API 명세

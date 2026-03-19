@@ -5,13 +5,21 @@
 | **문서번호** | SAI-IMPL-2026-001 |
 | **작성일** | 2026년 1월 21일 |
 | **개정일** | 2026년 3월 19일 |
-| **버전** | v5.0 |
+| **버전** | v5.2 |
 | **보안등급** | 대외비 |
 | **작성** | Secern AI |
 
-> **구현 문서 1/5** | 다음: [투입 인력](./resource_plan_ko.md) | [폴더 인덱스](./README.md)
+> **구현 문서 1/5** | 다음: [투입 인력](./02_resource_plan_ko.md) | [폴더 인덱스](./README.md)
 
 ---
+
+> **TL;DR**
+> - **Phase 1 완료** (1~3월): MCP 서버 6종, Coco Studio, UASL v3, 부산은행 PoC 준비
+> - **Phase 2 진행 예정** (4~6월): Spring MCP, 멀티 모델, HA, 세션 관리 등
+> - **트랙 2** (4월 착수): OpenCode 기반 자율형 코딩 에이전트, 시선AI 주도
+> - 전체 목표: 3개 프레임워크 지원, GPT-OSS 90%+ 정확도, 부산은행 PoC 통과
+>
+> **대상**: PM-개발자 | **소요**: ~15분 | **용어**: [용어집](../05_knowledge_base/glossary_ko.md)
 
 ## 개요
 
@@ -112,7 +120,7 @@
 
 > **권장**: 초기 PoC는 클라우드로 시작, 상용화 시 온프레미스 전환 고려
 
-> 상세 비용 분석: `cost_analysis_ko.md` 참조
+> 상세 비용 분석: `03_cost_analysis_ko.md` 참조
 
 ---
 
@@ -140,7 +148,7 @@
 ### 트랙 2: 코딩 에이전트 로드맵 (2026 Q2 착수)
 
 > **시선AI 주도, 2026년 4월 착수.** 트랙 1(부산은행 PoC)과 병행 추진. OpenCode(anomalyco/opencode) 포크 기반.
-> 상세: [오픈코드 기반 코딩 툴 개발 계획](../01_strategy/오픈코드%20기반%20코딩%20툴%20개발%20계획_260319.md)
+> 상세: [트랙 2 기술 전략 리서치](../01_strategy/05_track2_tech_strategy_ko.md)
 
 | 단계 | 내용 | 핵심 기술 | 예상 기간 |
 |------|------|----------|----------|
@@ -150,6 +158,8 @@
 | **4단계** | UX + IDE 통합 | 데스크톱 앱, 사내 대시보드, VS Code/IntelliJ 플러그인 | 7~8개월 |
 
 **트랙 간 기술 공유**: 온프레미스 sLLM 인프라(vLLM, 모델 웨이트), UASL 스펙, RBAC/감사 추적 개념은 두 트랙이 공유
+
+> vLLM 인프라 고도화 상세는 [vLLM R&D 계획](./06_vllm_rd_plan_ko.md) 참조
 
 > **참고**: 트랙 1의 "MCP 서버"(코드 생성 엔진, 예: xframe5-compiler)와 트랙 2의 "MCP"(Model Context Protocol, 에이전트 도구 접근 프로토콜)는 **목적과 구조가 다른 별개의 기술**임
 
@@ -344,12 +354,12 @@ $ coco models health
 
 ## 관련 문서
 
-- [[implementation/resource_plan_ko|투입 인력 및 로드맵]]: Phase별 인력 투입 및 상세 일정
-- [[strategy/executive_summary_ko|경영진 요약]]: 전략 분석 보고서
-- [[strategy/regulatory_environment_ko|규제 환경]]: 국내 규제 환경
-- [[implementation/cost_analysis_ko|비용 분석]]: 인프라 비용 상세 분석
-- [[strategy/competitive_strategy_ko|경쟁 전략]]: Cline Enterprise 대응 전략
-- [[implementation/api_reference_ko|API 레퍼런스]]: API 엔드포인트 명세
+- [[02_implementation/02_resource_plan_ko|투입 인력 및 로드맵]]: Phase별 인력 투입 및 상세 일정
+- [[01_strategy/01_executive_summary_ko|경영진 요약]]: 전략 분석 보고서
+- [[01_strategy/03_regulatory_environment_ko|규제 환경]]: 국내 규제 환경
+- [[02_implementation/03_cost_analysis_ko|비용 분석]]: 인프라 비용 상세 분석
+- [[01_strategy/02_competitive_strategy_ko|경쟁 전략]]: Cline Enterprise 대응 전략
+- [[02_implementation/05_api_reference_ko|API 레퍼런스]]: API 엔드포인트 명세
 
 ---
 
@@ -361,3 +371,5 @@ $ coco models health
 | 3.0 | 2026-02-12 | 2월 진행 현황 반영 (MCP 전환, Coco Studio, Vue3, UASL/SUIS, 신세계 I&C 데모) | 분석팀 |
 | 4.0 | 2026-03-19 | 3월 진행 반영: Phase 1 완료, 프레임워크 5종 확장, 부산은행 PoC, CLI coco 통일, 4B 모델 실험 추가, 목표 지표 업데이트 | 분석팀 |
 | 5.0 | 2026-03-19 | 투트랙 로드맵 재구조화: 트랙 1(IntraGenX)/트랙 2(코딩 에이전트) 분리, Phase 3 에이전트 로드맵 추가, VS Code/터미널을 트랙 2로 이관 | PM (주용수) |
+| 5.1 | 2026-03-19 | vLLM R&D 교차 참조 추가 | PM (주용수) |
+| 5.2 | 2026-03-19 | TL;DR 블록 추가, 파일명 넘버링 적용 | PM (주용수) |

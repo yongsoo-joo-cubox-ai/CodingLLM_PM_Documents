@@ -99,8 +99,8 @@
 
 ## 관련 문서
 
-- [[01_strategy/executive_summary_ko|경영진 요약]]: 프로젝트 개요
-- [[02_implementation/roadmap_ko|로드맵]]: 구현 계획
+- [[01_strategy/01_executive_summary_ko|경영진 요약]]: 프로젝트 개요
+- [[02_implementation/01_roadmap_ko|로드맵]]: 구현 계획
 
 ## 변경이력
 

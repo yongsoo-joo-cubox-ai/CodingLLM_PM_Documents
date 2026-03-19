@@ -5,13 +5,21 @@
 | **문서번호** | SAI-IMPL-2026-005 |
 | **작성일** | 2026년 1월 8일 |
 | **개정일** | 2026년 3월 19일 |
-| **버전** | v3.0 |
+| **버전** | v3.1 |
 | **보안등급** | 대외비 |
 | **작성** | Secern AI |
 
-> **구현 문서 5/5** | 이전: [기술 스택](./phase2_tech_stack_ko.md) | [폴더 인덱스](./README.md)
+> **구현 문서 5/5** | 이전: [기술 스택](./04_phase2_tech_stack_ko.md) | [폴더 인덱스](./README.md)
 
 ---
+
+> **TL;DR**
+> - **5개 핵심 엔드포인트**: 스트리밍 코드 생성, 코드 리뷰, Q&A, 모델 목록, 헬스 체크
+> - API 안정성 3등급: Stable(프로덕션) / Beta(변경 가능) / Internal(연구용)
+> - Demo 서버(3100 포트)와 Dev 서버(3000 포트) 분리 운영
+> - curl 예제, 에러 코드, 세션 관리 포함
+>
+> **대상**: 개발자 | **소요**: ~30분 | **용어**: [용어집](../05_knowledge_base/glossary_ko.md)
 
 ## API Stability Levels
 
@@ -733,9 +741,9 @@ The system uses **all-MiniLM-L6-v2** for semantic search (RAG):
 
 ## 관련 문서
 
-- [[implementation/roadmap_ko|로드맵]]: 구현 로드맵
-- [[strategy/executive_summary_ko|경영진 요약]]: 프로젝트 개요
-- [[implementation/cost_analysis_ko|비용 분석]]: 인프라 비용
+- [[02_implementation/01_roadmap_ko|로드맵]]: 구현 로드맵
+- [[01_strategy/01_executive_summary_ko|경영진 요약]]: 프로젝트 개요
+- [[02_implementation/03_cost_analysis_ko|비용 분석]]: 인프라 비용
 
 ---
 
@@ -749,3 +757,4 @@ The system uses **all-MiniLM-L6-v2** for semantic search (RAG):
 | 1.1 | 2026-01-21 | 엔드포인트 정리, 세션 관리 추가 | 분석팀 |
 | 2.0 | 2026-02-12 | MCP 서버 엔드포인트 추가, CGF-A/CGF-B 전략 문서화, Coco Studio 설명 추가, product 필드 멀티 프레임워크 반영 | 분석팀 |
 | 3.0 | 2026-03-19 | Demo/Dev 서버 분리 반영 | 분석팀 |
+| 3.1 | 2026-03-19 | TL;DR 블록 추가, 파일명 넘버링 적용 | PM (주용수) |

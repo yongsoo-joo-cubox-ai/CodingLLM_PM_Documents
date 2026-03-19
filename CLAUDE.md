@@ -13,17 +13,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 CodingLLM_PM_Documents/
 ├── 01_strategy/           # 전략 문서
-│   ├── executive_summary_ko.md
-│   ├── competitive_strategy_ko.md
-│   ├── regulatory_environment_ko.md
-│   └── product_overview_ko.md
+│   ├── 01_executive_summary_ko.md
+│   ├── 02_competitive_strategy_ko.md
+│   ├── 03_regulatory_environment_ko.md
+│   ├── 04_product_overview_ko.md
+│   └── 05_track2_tech_strategy_ko.md
 │
 ├── 02_implementation/     # 구현 문서
-│   ├── roadmap_ko.md
-│   ├── resource_plan_ko.md
-│   ├── phase2_tech_stack_ko.md
-│   ├── cost_analysis_ko.md
-│   └── api_reference_ko.md
+│   ├── 01_roadmap_ko.md
+│   ├── 02_resource_plan_ko.md
+│   ├── 03_cost_analysis_ko.md
+│   ├── 04_phase2_tech_stack_ko.md
+│   ├── 05_api_reference_ko.md
+│   └── 06_vllm_rd_plan_ko.md
 │
 ├── 03_development/        # 개발 진행 자료
 │   ├── README.md          # 개발 현황 인덱스
@@ -74,22 +76,24 @@ CodingLLM_PM_Documents/
 
 | 경로 | 설명 |
 |------|------|
-| `01_strategy/executive_summary_ko.md` | 경영진 요약 - 프로젝트 개요 및 핵심 가치 |
-| `01_strategy/competitive_strategy_ko.md` | 경쟁 전략 - 상세 경쟁사 분석 |
-| `01_strategy/regulatory_environment_ko.md` | 규제 환경 - AI 규제 및 컴플라이언스 |
-| `01_strategy/product_overview_ko.md` | 제품 기능 소개 - Coco 구성 및 핵심 기능 |
-| `01_strategy/오픈코드 기반 코딩 툴 개발 계획_260319.md` | 트랙 2 기술 전략 리서치 (Gemini Deep Research) |
-| `02_implementation/roadmap_ko.md` | 구현 로드맵 - Phase 1/2 + 트랙 2 코딩 에이전트 로드맵 |
-| `02_implementation/resource_plan_ko.md` | 투입 인력 및 로드맵 - Phase별 인력/일정 계획 |
-| `02_implementation/phase2_tech_stack_ko.md` | Phase 2 기술 스택 - 학습 자료/구현 가이드 |
-| `02_implementation/cost_analysis_ko.md` | 비용 분석 - TCO 및 ROI |
-| `02_implementation/api_reference_ko.md` | API 레퍼런스 - 엔드포인트 명세 |
+| `01_strategy/01_executive_summary_ko.md` | 경영진 요약 - 프로젝트 개요 및 핵심 가치 |
+| `01_strategy/02_competitive_strategy_ko.md` | 경쟁 전략 - 상세 경쟁사 분석 |
+| `01_strategy/03_regulatory_environment_ko.md` | 규제 환경 - AI 규제 및 컴플라이언스 |
+| `01_strategy/04_product_overview_ko.md` | 제품 기능 소개 - Coco 구성 및 핵심 기능 |
+| `01_strategy/05_track2_tech_strategy_ko.md` | 트랙 2 기술 전략 리서치 v2.0 — 경쟁 솔루션 + Cline 비교 병합본 |
+| `02_implementation/01_roadmap_ko.md` | 구현 로드맵 - Phase 1/2 + 트랙 2 코딩 에이전트 로드맵 |
+| `02_implementation/02_resource_plan_ko.md` | 투입 인력 및 로드맵 - Phase별 인력/일정 계획 |
+| `02_implementation/04_phase2_tech_stack_ko.md` | Phase 2 기술 스택 - 학습 자료/구현 가이드 |
+| `02_implementation/03_cost_analysis_ko.md` | 비용 분석 - TCO 및 ROI |
+| `02_implementation/05_api_reference_ko.md` | API 레퍼런스 - 엔드포인트 명세 |
+| `02_implementation/06_vllm_rd_plan_ko.md` | vLLM 인프라 고도화 R&D 계획 (인증/암호화/LiteLLM 멀티 모델) |
 | `03_development/` | 개발 진행 자료 - 테스트, 벤치마크 |
 | `03_development/2026-02-07_progress/` | 2월 1주차 진행 - 코드생성, UASL, QA 개선 |
 | `03_development/2026-02-12_progress/` | Coco Studio 기능 테스트 (7 TC, 71.4%) |
 | `03_development/2026-03-19_progress/` | 3월 진행 - 4B 파인튜닝, UASL v2/v3, 서버 분리, 부산은행 PoC |
 | `04_meetings/2026-02-11_ShinsegaeInC.md` | 신세계 I&C 솔루션 데모 회의록 |
 | `04_meetings/2026-03-17_dev_update.md` | 개발 현황 업데이트 (서버 분리, Playground, 부산은행 PoC) |
+| `05_knowledge_base/glossary_ko.md` | 프로젝트 용어집 - 경영진/개발자용 이중 설명 (~70개 용어) |
 | `05_knowledge_base/README.md` | xFrame5 아카이브 내용 기록 |
 
 ## 문서 관리 규칙
@@ -98,11 +102,30 @@ CodingLLM_PM_Documents/
 - 모든 주요 폴더(01~05)에 README.md가 존재하며 읽기 순서를 안내
 - 새 문서 추가 시 해당 폴더 README.md에 반영
 
+### 파일명 넘버링
+- 01_strategy/, 02_implementation/ 정식 문서는 읽기 순서 번호를 파일명에 prefix로 부여
+- 형식: `{NN}_{파일명}_ko.md` (예: `01_executive_summary_ko.md`)
+- 참고 문서는 정식 문서 뒤 번호 부여 (예: 정식 4건 → 참고 문서는 05번부터)
+- 03_development/, 04_meetings/는 날짜 prefix가 자연 정렬 역할을 하므로 넘버링 미적용
+
 ### 네비게이션 블록
 - `01_strategy/`, `02_implementation/` 문서 상단에 이전/다음 네비게이션 존재
 - 형식: `> **문서 N/M** | 이전: [...] | 다음: [...] | [폴더 인덱스](./README.md)`
 - 위치: 메타데이터(날짜/버전) 아래, `---` 구분선 위
 - 새 문서 추가 시 기존 문서의 네비게이션도 업데이트
+
+### TL;DR 블록
+- 01_strategy/, 02_implementation/ 정식 문서(README, 참고 문서 제외)에 TL;DR 블록 필수
+- 위치: `---` 구분선 직후, 본문 첫 섹션 직전
+- 형식: blockquote(`>`) 안에 3~5개 불릿 + 대상 독자 + 소요 시간
+- 새 문서 추가 시 반드시 TL;DR 포함
+
+### 용어집
+- 위치: 05_knowledge_base/glossary_ko.md
+- 새로운 기술 용어 도입 시 용어집에도 반영
+- 기존 용어의 정의/범위가 변경되면 용어집도 함께 업데이트
+- 용어 설명에 자주 바뀌는 수치(버전, 포트 등)를 직접 기입하지 않고 해당 문서 링크로 위임
+- UASL 내부 용어는 UASL glossary에서 별도 관리
 
 ### 03_development/ 체인
 - 각 진행 폴더 README에 `이전 진행`/`다음 진행` 링크 체인 유지
@@ -120,6 +143,7 @@ CodingLLM_PM_Documents/
 | `IMPL` | 02_implementation/ 구현 문서 | 대외비 |
 | `TEST` | 03_development/ 테스트·벤치마크 보고서 | 일반 |
 | `MTG` | 04_meetings/ 회의록 | 일반 |
+| `KB` | 05_knowledge_base/ 기술 참고자료·용어집 | 일반 |
 
 **보고서 헤더** (01_strategy, 02_implementation, 03_development):
 

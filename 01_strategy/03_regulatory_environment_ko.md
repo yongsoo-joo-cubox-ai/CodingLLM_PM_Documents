@@ -5,13 +5,20 @@
 | **문서번호** | SAI-STR-2026-003 |
 | **작성일** | 2026년 1월 21일 |
 | **개정일** | 2026년 3월 19일 |
-| **버전** | v3.0 |
+| **버전** | v3.1 |
 | **보안등급** | 대외비 |
 | **작성** | Secern AI |
 
-> **전략 문서 3/4** | 이전: [경쟁 전략](./competitive_strategy_ko.md) | 다음: [제품 기능 소개](./product_overview_ko.md) | [폴더 인덱스](./README.md)
+> **전략 문서 3/4** | 이전: [경쟁 전략](./02_competitive_strategy_ko.md) | 다음: [제품 기능 소개](./04_product_overview_ko.md) | [폴더 인덱스](./README.md)
 
 ---
+
+> **TL;DR**
+> - 금융권 망분리 완화 계속 지연 중 — 폐쇄망 기반 Coco에 **유리한 시간** 확보
+> - **인공지능기본법** 2026년 1월 시행 완료 — Coco의 감사 추적 + 결정론적 파이프라인이 컴플라이언스 충족
+> - EU AI Act 2026년 8월 전면 적용 예정, 부산은행 PoC로 금융권 적합성 검증 중
+>
+> **대상**: 경영진-법무 | **소요**: ~10분 | **용어**: [용어집](../05_knowledge_base/glossary_ko.md)
 
 ## 개요
 
@@ -265,9 +272,9 @@
 
 ## 관련 문서
 
-- [[strategy/executive_summary_ko|경영진 요약]]
-- [[implementation/roadmap_ko|로드맵]]
-- [[implementation/cost_analysis_ko|비용 분석]]
+- [[01_strategy/01_executive_summary_ko|경영진 요약]]
+- [[02_implementation/01_roadmap_ko|로드맵]]
+- [[02_implementation/03_cost_analysis_ko|비용 분석]]
 
 ## 변경이력
 
@@ -276,3 +283,4 @@
 | 1.0 | 2026-01-21 | 초안 작성 | 분석팀 |
 | 2.0 | 2026-02-12 | 인공지능기본법 시행 완료 반영, 망분리 지연 현황 업데이트, 신세계 I&C 시장 검증 추가, Spec-Driven 투명성 반영, 전략적 권고 업데이트 | 분석팀 |
 | 3.0 | 2026-03-19 | 3월 업데이트: 부산은행 PoC 반영, 날짜 기준 업데이트 | 분석팀 |
+| 3.1 | 2026-03-19 | TL;DR 블록 추가, 파일명 넘버링 적용 | PM (주용수) |

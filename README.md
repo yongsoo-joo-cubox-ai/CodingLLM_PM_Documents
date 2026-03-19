@@ -43,19 +43,21 @@ CodingLLM_PM_Documents/
 
 | 문서 | 설명 |
 |------|------|
-| [[01_strategy/executive_summary_ko\|executive_summary]] | 경영진 요약 - 프로젝트 개요 및 핵심 가치 |
-| [[01_strategy/competitive_strategy_ko\|competitive_strategy]] | 경쟁 전략 - 상세 경쟁사 분석 및 차별화 전략 |
-| [[01_strategy/regulatory_environment_ko\|regulatory_environment]] | 규제 환경 - 국내 AI 규제 및 컴플라이언스 |
+| [[01_strategy/01_executive_summary_ko\|executive_summary]] | 경영진 요약 - 프로젝트 개요 및 핵심 가치 |
+| [[01_strategy/02_competitive_strategy_ko\|competitive_strategy]] | 경쟁 전략 - 상세 경쟁사 분석 및 차별화 전략 |
+| [[01_strategy/03_regulatory_environment_ko\|regulatory_environment]] | 규제 환경 - 국내 AI 규제 및 컴플라이언스 |
+| [[01_strategy/04_product_overview_ko\|product_overview]] | 제품 기능 소개 - 투트랙 제품군 정의 |
 
 ### 02_implementation/ - 구현 문서
 
 | 문서 | 설명 |
 |------|------|
-| [[02_implementation/roadmap_ko\|roadmap]] | 구현 로드맵 - Phase 1/2 + 트랙 2 에이전트 |
-| [[02_implementation/resource_plan_ko\|resource_plan]] | 투입 인력 및 로드맵 |
-| [[02_implementation/phase2_tech_stack_ko\|phase2_tech_stack]] | Phase 2 기술 스택 및 스터디 가이드 |
-| [[02_implementation/cost_analysis_ko\|cost_analysis]] | 비용 분석 - TCO 및 ROI 계산 |
-| [[02_implementation/api_reference_ko\|api_reference]] | API 레퍼런스 - 엔드포인트 명세 |
+| [[02_implementation/01_roadmap_ko\|roadmap]] | 구현 로드맵 - Phase 1/2 + 트랙 2 에이전트 |
+| [[02_implementation/02_resource_plan_ko\|resource_plan]] | 투입 인력 및 로드맵 |
+| [[02_implementation/04_phase2_tech_stack_ko\|phase2_tech_stack]] | Phase 2 기술 스택 및 스터디 가이드 |
+| [[02_implementation/03_cost_analysis_ko\|cost_analysis]] | 비용 분석 - TCO 및 ROI 계산 |
+| [[02_implementation/05_api_reference_ko\|api_reference]] | API 레퍼런스 - 엔드포인트 명세 |
+| [[02_implementation/06_vllm_rd_plan_ko\|vllm_rd_plan]] | vLLM 인프라 고도화 R&D 계획 (인증/암호화/멀티 모델) |
 
 ### 03_development/ - 개발 진행 자료
 
@@ -89,13 +91,27 @@ CodingLLM_PM_Documents/
 
 ## 읽기 순서
 
-프로젝트를 처음 접하는 경우 대상에 맞는 경로로 읽기를 권장합니다.
+### 빠른 온보딩 (처음 접하는 분) — ~25분
+1. [용어집](05_knowledge_base/glossary_ko.md) (~10분)
+2. [경영진 요약](01_strategy/01_executive_summary_ko.md) (~15분)
 
-### 전체 파악 (경영진/관리자)
-1. [경영진 요약](01_strategy/executive_summary_ko.md) → 2. [경쟁 전략](01_strategy/competitive_strategy_ko.md) → 3. [로드맵](02_implementation/roadmap_ko.md) → 4. [비용 분석](02_implementation/cost_analysis_ko.md)
+### 전체 파악 (경영진/관리자) — 총 ~60분
 
-### 구현 상세 (개발자/PM)
-1. [로드맵 (Phase 1/2 + 트랙 2)](02_implementation/roadmap_ko.md) → 2. [투입 인력](02_implementation/resource_plan_ko.md) → 3. [기술 스택](02_implementation/phase2_tech_stack_ko.md) → 4. [API 레퍼런스](02_implementation/api_reference_ko.md)
+| 순서 | 문서 | 소요 시간 | 난이도 | 선행 지식 |
+|------|------|----------|--------|----------|
+| 1 | [경영진 요약](01_strategy/01_executive_summary_ko.md) | ~15분 | ★☆☆ | 없음 |
+| 2 | [경쟁 전략](01_strategy/02_competitive_strategy_ko.md) | ~20분 | ★★☆ | 경영진 요약 |
+| 3 | [로드맵](02_implementation/01_roadmap_ko.md) | ~15분 | ★★☆ | 경영진 요약 |
+| 4 | [비용 분석](02_implementation/03_cost_analysis_ko.md) | ~10분 | ★☆☆ | 없음 |
+
+### 구현 상세 (개발자/PM) — 총 ~75분
+
+| 순서 | 문서 | 소요 시간 | 난이도 | 선행 지식 |
+|------|------|----------|--------|----------|
+| 1 | [로드맵](02_implementation/01_roadmap_ko.md) | ~15분 | ★★☆ | 경영진 요약 권장 |
+| 2 | [투입 인력](02_implementation/02_resource_plan_ko.md) | ~15분 | ★☆☆ | 로드맵 |
+| 3 | [기술 스택](02_implementation/04_phase2_tech_stack_ko.md) | ~20분 | ★★★ | 로드맵 |
+| 4 | [API 레퍼런스](02_implementation/05_api_reference_ko.md) | ~30분 | ★★★ | 기술 스택 |
 
 ### 개발 진행 현황
 [2026-01-15](03_development/2026-01-15_project_intro/) → [2026-01-24](03_development/2026-01-24_progress/) → [2026-02-07](03_development/2026-02-07_progress/) → [2026-02-12](03_development/2026-02-12_progress/) → [2026-03-19](03_development/2026-03-19_progress/) (시간순)
@@ -114,11 +130,11 @@ GET  /agent/models             # 사용 가능 모델 목록
 GET  /_health                  # 헬스 체크
 ```
 
-상세: [[02_implementation/api_reference_ko\|API 레퍼런스]]
+상세: [[02_implementation/05_api_reference_ko\|API 레퍼런스]]
 
 ### 규제 관련
 
-규제 환경 및 컴플라이언스 요구사항: [[01_strategy/regulatory_environment_ko\|규제 환경]]
+규제 환경 및 컴플라이언스 요구사항: [[01_strategy/03_regulatory_environment_ko\|규제 환경]]
 
 ---
 
