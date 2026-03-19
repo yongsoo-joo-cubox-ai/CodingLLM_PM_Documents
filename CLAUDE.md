@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Purpose
 
-이 저장소는 **Coco 프로젝트의 문서 저장소**입니다. AI 코드 거버넌스 플랫폼인 Coco(구 Coder)의 전략 분석, 로드맵, API 레퍼런스 문서를 관리합니다.
+이 저장소는 **Coco / IntraGenX 프로젝트의 문서 저장소**입니다. AI 코드 거버넌스 플랫폼인 Coco(구 Coder)의 전략 분석, 로드맵, API 레퍼런스 문서를 관리합니다.
+
+> **대외 브랜딩**: IntraGenX (2026-03~) — 시선AI(The Brain, LLM 개발) + 대보DX(The Body, 애플리케이션 & 어플라이언스) 합작
 
 ## Document Structure
 
@@ -37,21 +39,33 @@ CodingLLM_PM_Documents/
 │   │   ├── qa_examples/
 │   │   ├── qa_update/
 │   │   └── cli_test/
-│   └── 2026-02-07_progress/
-│       ├── README.md              # 1/26~2/7 진행 종합 요약
-│       ├── uasl_spec/             # UASL/SUIS 스펙 문서
-│       └── reports/               # CGF 비교, QA 개선 보고서
+│   ├── 2026-02-07_progress/
+│   │   ├── README.md              # 1/26~2/7 진행 종합 요약
+│   │   ├── uasl_spec/             # UASL/SUIS 스펙 문서
+│   │   └── reports/               # CGF 비교, QA 개선 보고서
+│   ├── 2026-02-12_progress/
+│   │   └── coco_studio_test_report.md  # Studio 기능 테스트 (TC1~TC7)
+│   └── 2026-03-19_progress/
+│       ├── README.md              # 2/12~3/19 진행 종합 요약
+│       ├── model_finetuning_4b.md # 4B 모델 LoRA 파인튜닝 실험
+│       └── uasl_spec/             # UASL v2/v3 업데이트 이력
 │
 ├── 04_meetings/           # 회의록
-│   ├── 2025-12-26_softbase_xframe_ko.md
-│   └── 2026-02-11_ShinsegaeInC.md
+│   ├── 2025-12-26_softbase_xframe.md
+│   ├── 2026-02-11_ShinsegaeInC.md
+│   └── 2026-03-17_dev_update.md
 │
 ├── 05_knowledge_base/     # 기술 참고자료
 │   ├── README.md          # xFrame5 아카이브 내용 기록
 │   └── xframe5_knowledge_base.zip  # 대용량 (Git LFS)
 │
+├── 06_infra/              # 인프라/배포 관련 자료
+│   └── 코딩에이전트_외부업체데모_환경구성_방안.docx
+│
 ├── _00_work/              # 작업 자료 스테이징
-│   └── 260127-260211/     # 1/26~2/11 작업 원본
+│   ├── 260127-260211/     # 1/26~2/11 작업 원본
+│   ├── 260212-260319/     # 2/12~3/19 작업 원본
+│   └── ppt_assets/        # PPT 빌드 스크립트, 템플릿, 다이어그램
 │
 └── .obsidian/             # Obsidian 설정
 ```
@@ -64,14 +78,18 @@ CodingLLM_PM_Documents/
 | `01_strategy/competitive_strategy_ko.md` | 경쟁 전략 - 상세 경쟁사 분석 |
 | `01_strategy/regulatory_environment_ko.md` | 규제 환경 - AI 규제 및 컴플라이언스 |
 | `01_strategy/product_overview_ko.md` | 제품 기능 소개 - Coco 구성 및 핵심 기능 |
-| `02_implementation/roadmap_ko.md` | 구현 로드맵 - Phase 1/2 기능 명세 |
+| `01_strategy/오픈코드 기반 코딩 툴 개발 계획_260319.md` | 트랙 2 기술 전략 리서치 (Gemini Deep Research) |
+| `02_implementation/roadmap_ko.md` | 구현 로드맵 - Phase 1/2 + 트랙 2 코딩 에이전트 로드맵 |
 | `02_implementation/resource_plan_ko.md` | 투입 인력 및 로드맵 - Phase별 인력/일정 계획 |
 | `02_implementation/phase2_tech_stack_ko.md` | Phase 2 기술 스택 - 학습 자료/구현 가이드 |
 | `02_implementation/cost_analysis_ko.md` | 비용 분석 - TCO 및 ROI |
 | `02_implementation/api_reference_ko.md` | API 레퍼런스 - 엔드포인트 명세 |
 | `03_development/` | 개발 진행 자료 - 테스트, 벤치마크 |
 | `03_development/2026-02-07_progress/` | 2월 1주차 진행 - 코드생성, UASL, QA 개선 |
+| `03_development/2026-02-12_progress/` | Coco Studio 기능 테스트 (7 TC, 71.4%) |
+| `03_development/2026-03-19_progress/` | 3월 진행 - 4B 파인튜닝, UASL v2/v3, 서버 분리, 부산은행 PoC |
 | `04_meetings/2026-02-11_ShinsegaeInC.md` | 신세계 I&C 솔루션 데모 회의록 |
+| `04_meetings/2026-03-17_dev_update.md` | 개발 현황 업데이트 (서버 분리, Playground, 부산은행 PoC) |
 | `05_knowledge_base/README.md` | xFrame5 아카이브 내용 기록 |
 
 ## 문서 관리 규칙
@@ -150,12 +168,28 @@ CodingLLM_PM_Documents/
 | 1.0 | 2026-01-21 | 초안 작성 | 분석팀 |
 ```
 
-## Coco 핵심 개념
+## Coco / IntraGenX 핵심 개념
 
 - **제품 정체성**: AI 코드 생성이 아닌 **AI 코드 거버넌스** 플랫폼
-- **대상 환경**: 폐쇄망, 온프레미스 LLM, 규제 산업 기업
-- **6대 USP**: 결정론적 출력, 표준 강제, 완전한 온프레미스, Spec-Driven 코드 생성, 감사 추적, LLM 추상화
+- **대외 브랜드**: IntraGenX — "AI 기반 차세대 시스템 개발 플랫폼" (시선AI + 대보DX 합작)
+- **투트랙 전략**:
+  - **트랙 1 (IntraGenX)**: Spec-Driven 일괄 코드 생성 — SI 프로젝트, Top-Down
+  - **트랙 2 (코딩 에이전트)**: OpenCode 기반 자율형 CLI 에이전트 — 개발자, Bottom-Up (2026년 4월 착수, 시선AI 주도)
+- **MCP 용어 구분**: 트랙 1의 MCP 서버(코드 생성 엔진) ≠ 트랙 2의 MCP(Model Context Protocol, 도구 접근 프로토콜)
+- **대상 환경**: 폐쇄망, 온프레미스 LLM, 규제 산업 기업 (금융권 PoC 진행 중)
+- **6대 USP**: ①결정론적 출력, ②표준 강제, ③완전한 온프레미스, ④Spec-Driven 코드 생성, ⑤감사 추적, ⑥LLM 추상화
 - **제품 구성**: Coco Engine, Coco Studio, Coco CLI, Coco Admin, MCP Servers, Eclipse Plugin
+- **지원 프레임워크**: xFrame5, WebSquare, Vue 3, React 19, Spring Boot
+
+## 서버 환경
+
+| 환경 | Studio 포트 | Engine 포트 | 비고 |
+|------|-----------|-----------|------|
+| **Demo** | 5174 | 3100 | 고객 데모용 (http://172.16.100.116:5174/landing) |
+| **Dev** | 5173 | 3000 | 개발용 (기존) |
+| **Playground** | 4000 + 프로젝트 ID | 동적 | Docker 기반 전체 앱 배포, FE-BE 연동 |
+
+- Demo 도메인: https://coco.secernai.net
 
 ## API 엔드포인트 요약
 
@@ -209,7 +243,7 @@ bash .claude/scripts/sync-to-gdrive.sh --dry-run   # 미리보기
 - 모든 문서는 **한글**로 작성
 - 파일명은 **영문 소문자 + 언더스코어** 사용
 - 회의록은 `YYYY-MM-DD_` prefix 사용
-- `_ko` suffix 유지 (향후 다국어 대비)
+- `_ko` suffix: `01_strategy/`, `02_implementation/` 문서에만 사용 (향후 다국어 대비). 회의록(`04_meetings/`)과 개발 진행(`03_development/`)에는 사용하지 않음
 - Obsidian으로 문서 관리 중 (`.obsidian/`은 gitignore)
 
 ## Git LFS 관리

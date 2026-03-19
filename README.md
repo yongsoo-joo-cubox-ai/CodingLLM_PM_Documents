@@ -3,6 +3,7 @@
 국내 SI 사업을 위한 범용 AI 코딩 어시스턴스 프로젝트 문서 저장소
 
 > 기존 Coder에서 **Coco**로 제품명 변경 (2026-02)
+> 대외 브랜딩 **IntraGenX** 확정 — 시선AI(The Brain) + 대보DX(The Body) 합작 (2026-03)
 
 ---
 
@@ -11,7 +12,8 @@
 **Coco** (Coordinated Coding)는 AI 코드 생성이 아닌 **AI 코드 거버넌스** 플랫폼입니다.
 
 - **대상 환경**: 폐쇄망, 온프레미스 LLM, 규제 산업 기업
-- **핵심 USP**: 결정론적 출력, 표준 강제, 완전한 온프레미스, 감사 추적, LLM 추상화
+- **6대 USP**: 결정론적 출력, 표준 강제, 완전한 온프레미스, Spec-Driven 코드 생성, 감사 추적, LLM 추상화
+- **투트랙 전략**: 트랙 1(IntraGenX, SI 일괄 생성) → 트랙 2(코딩 에이전트, 개발자 자율형)
 
 ### 제품 구성
 
@@ -49,7 +51,7 @@ CodingLLM_PM_Documents/
 
 | 문서 | 설명 |
 |------|------|
-| [[02_implementation/roadmap_ko\|roadmap]] | 구현 로드맵 - Phase 1/2 기능 명세 |
+| [[02_implementation/roadmap_ko\|roadmap]] | 구현 로드맵 - Phase 1/2 + 트랙 2 에이전트 |
 | [[02_implementation/resource_plan_ko\|resource_plan]] | 투입 인력 및 로드맵 |
 | [[02_implementation/phase2_tech_stack_ko\|phase2_tech_stack]] | Phase 2 기술 스택 및 스터디 가이드 |
 | [[02_implementation/cost_analysis_ko\|cost_analysis]] | 비용 분석 - TCO 및 ROI 계산 |
@@ -62,6 +64,8 @@ CodingLLM_PM_Documents/
 | `2026-01-15_project_intro/` | 프로젝트 소개 및 초기 벤치마크 |
 | `2026-01-24_progress/` | 1월 4주차 진행 현황 (QA, CLI 테스트) |
 | `2026-02-07_progress/` | 2월 1주차 진행 (코드생성, UASL, QA 개선) |
+| `2026-02-12_progress/` | Coco Studio 기능 테스트 (7 TC, 71.4%) |
+| `2026-03-19_progress/` | 3월 진행 (4B 파인튜닝, UASL v2/v3, 서버 분리, 부산은행 PoC) |
 
 상세: [[03_development/README\|개발 자료 인덱스]]
 
@@ -69,8 +73,9 @@ CodingLLM_PM_Documents/
 
 | 문서 | 설명 |
 |------|------|
-| [[04_meetings/2025-12-26_softbase_xframe_ko\|2025-12-26_softbase_xframe]] | SOFTBase xFrame AI 기능 도입 논의 |
+| [[04_meetings/2025-12-26_softbase_xframe\|2025-12-26_softbase_xframe]] | SOFTBase xFrame AI 기능 도입 논의 |
 | [[04_meetings/2026-02-11_ShinsegaeInC\|2026-02-11_ShinsegaeInC]] | 신세계 I&C 솔루션 데모 |
+| [[04_meetings/2026-03-17_dev_update\|2026-03-17_dev_update]] | 개발 현황 업데이트 (서버 분리, Playground, 부산은행 PoC) |
 
 ### 05_knowledge_base/ - 기술 참고자료
 
@@ -90,10 +95,10 @@ CodingLLM_PM_Documents/
 1. [경영진 요약](01_strategy/executive_summary_ko.md) → 2. [경쟁 전략](01_strategy/competitive_strategy_ko.md) → 3. [로드맵](02_implementation/roadmap_ko.md) → 4. [비용 분석](02_implementation/cost_analysis_ko.md)
 
 ### 구현 상세 (개발자/PM)
-1. [로드맵](02_implementation/roadmap_ko.md) → 2. [투입 인력](02_implementation/resource_plan_ko.md) → 3. [기술 스택](02_implementation/phase2_tech_stack_ko.md) → 4. [API 레퍼런스](02_implementation/api_reference_ko.md)
+1. [로드맵 (Phase 1/2 + 트랙 2)](02_implementation/roadmap_ko.md) → 2. [투입 인력](02_implementation/resource_plan_ko.md) → 3. [기술 스택](02_implementation/phase2_tech_stack_ko.md) → 4. [API 레퍼런스](02_implementation/api_reference_ko.md)
 
 ### 개발 진행 현황
-[2026-01-15](03_development/2026-01-15_project_intro/) → [2026-01-24](03_development/2026-01-24_progress/) → [2026-02-07](03_development/2026-02-07_progress/) (시간순)
+[2026-01-15](03_development/2026-01-15_project_intro/) → [2026-01-24](03_development/2026-01-24_progress/) → [2026-02-07](03_development/2026-02-07_progress/) → [2026-02-12](03_development/2026-02-12_progress/) → [2026-03-19](03_development/2026-03-19_progress/) (시간순)
 
 ---
 
@@ -140,8 +145,8 @@ bash .claude/scripts/sync-to-gdrive.sh
 |------|------|------|
 | 언어 | 영문 소문자 + 언더스코어 | `executive_summary.md` |
 | 날짜 | `YYYY-MM-DD_` prefix (회의록) | `2025-12-26_softbase.md` |
-| suffix | `_ko` (향후 다국어 대비) | `roadmap_ko.md` |
+| suffix | `_ko` (전략/구현 문서만, 향후 다국어 대비) | `roadmap_ko.md` |
 
 ---
 
-*마지막 업데이트: 2026-02-11*
+*마지막 업데이트: 2026-03-19*

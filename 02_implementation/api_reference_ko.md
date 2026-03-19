@@ -4,8 +4,8 @@
 |------|------|
 | **문서번호** | SAI-IMPL-2026-005 |
 | **작성일** | 2026년 1월 8일 |
-| **개정일** | 2026년 2월 12일 |
-| **버전** | v2.0 |
+| **개정일** | 2026년 3월 19일 |
+| **버전** | v3.0 |
 | **보안등급** | 대외비 |
 | **작성** | Secern AI |
 
@@ -106,6 +106,15 @@ curl http://localhost:3000/agent/models
 
 ---
 
+## Server URLs (v3.0)
+
+| 환경 | URL | 용도 |
+|------|-----|------|
+| **Demo** | http://172.16.100.116:3100 | 데모 및 테스트 |
+| **Dev** | http://172.16.100.116:3000 | 개발 및 기존 환경 |
+
+---
+
 ## Endpoints Overview
 
 ### Core Endpoints
@@ -138,7 +147,9 @@ curl http://localhost:3000/agent/models
 | `xframe5-compiler` | xFrame5 XML + JS 코드 생성 | stdio | ✅ Active |
 | `xframe5-validator` | xFrame5 API 허용목록 검증 | stdio | ✅ Active |
 | `vue-compiler` | Vue3 SFC (.vue) 코드 생성 | stdio | ✅ Active |
-| `spring-compiler` | Spring 코드 생성 | stdio | 📋 Phase 2 |
+| `spring-compiler` | Spring 코드 생성 | stdio | ✅ Active |
+| `react-compiler` | React 코드 생성 | stdio | ✅ Active |
+| `websquare-compiler` | WebSquare 코드 생성 | stdio | ✅ Active |
 
 ### Internal/Experimental Endpoints
 
@@ -737,3 +748,4 @@ The system uses **all-MiniLM-L6-v2** for semantic search (RAG):
 | 1.0 | 2026-01-08 | 초안 작성 | 분석팀 |
 | 1.1 | 2026-01-21 | 엔드포인트 정리, 세션 관리 추가 | 분석팀 |
 | 2.0 | 2026-02-12 | MCP 서버 엔드포인트 추가, CGF-A/CGF-B 전략 문서화, Coco Studio 설명 추가, product 필드 멀티 프레임워크 반영 | 분석팀 |
+| 3.0 | 2026-03-19 | Demo/Dev 서버 분리 반영 | 분석팀 |

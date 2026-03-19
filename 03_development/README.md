@@ -36,9 +36,15 @@
 │       ├── cgf_comparison_20260128.md    # CGF 전략 비교 벤치마크
 │       └── qa_improvement_20260128.md    # QA 기능 개선 보고서
 │
-└── 2026-02-12_progress/              # 2월 2주차 진행 현황
-    ├── README.md                     # Coco Studio 기능 테스트 요약
-    └── coco_studio_test_report.md    # Studio 기능 테스트 보고서 (TC1~TC7)
+├── 2026-02-12_progress/              # 2월 2주차 진행 현황
+│   ├── README.md                     # Coco Studio 기능 테스트 요약
+│   └── coco_studio_test_report.md    # Studio 기능 테스트 보고서 (TC1~TC7)
+│
+└── 2026-03-19_progress/              # 3월 진행 현황 (02/12~03/19)
+    ├── README.md                     # 진행 종합 요약
+    ├── model_finetuning_4b.md        # 4B 모델 LoRA 파인튜닝 실험 결과
+    └── uasl_spec/                    # UASL 스펙 v2/v3 업데이트 이력
+        └── README.md                 # 변경 이력 및 dist 패키지 참조
 ```
 
 ---
@@ -97,6 +103,21 @@
 - CGF-B 파이프라인 코드 생성 정상 동작 확인
 - Review 모드 모델 태스크 설정 누락 발견
 - 코드 프리뷰, RAG Q&A, Import, 다크모드 등 정상 확인
+
+### 2026-03-19: 3월 진행 (02/12 ~ 03/19)
+
+| 문서/폴더 | 설명 |
+|----------|------|
+| `README.md` | 2/12~3/19 진행 종합 요약 |
+| `model_finetuning_4b.md` | 4B 모델 LoRA 파인튜닝 실험 결과 |
+| `uasl_spec/` | UASL 스펙 v2/v3 업데이트 변경 이력 |
+
+**주요 성과:**
+- 4B 모델(Qwen3-4B-Instruct) LoRA 파인튜닝 — UASL 지식 주입 확인 (L1/L2 목표 달성, L3 교차참조 미달)
+- UASL 스펙 2차례 업데이트 (복합 화면 지원, 용어 정규화)
+- 서버 인프라 개선: Demo/Dev 분리, Docker 기반 Playground 서버
+- 부산은행 PoC 긍정 검토
+- 제품 대외 명칭 IntraGenX 확정 (시선AI + 대보DX 합작)
 
 ---
 

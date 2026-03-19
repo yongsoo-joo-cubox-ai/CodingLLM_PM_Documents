@@ -4,10 +4,12 @@
 
 | 일자 | 문서 | 참석 (외부) | 참석 (내부) | 주요 내용 |
 |------|------|------------|------------|----------|
-| 2025-12-26 | [softbase_xframe_ko.md](./2025-12-26_softbase_xframe_ko.md) | SOFTBase (곽성태 대표, 홍명준 상무), 대보 (문기봉) | 시선AI (남운성 대표, 주용수) | xFrame 기반 AI 기능 도입 논의 |
+| 2025-12-26 | [softbase_xframe.md](./2025-12-26_softbase_xframe.md) | SOFTBase (곽성태 대표, 홍명준 상무), 대보 (문기봉) | 시선AI (남운성 대표, 주용수) | xFrame 기반 AI 기능 도입 논의 |
 | 2026-02-11 | [ShinsegaeInC.md](./2026-02-11_ShinsegaeInC.md) | 신세계 I&C (개발/기획 그룹) | 시선AI, SOFTBase (문기봉 상무) | Coco 솔루션 데모 및 폐쇄망 적용 논의 |
+| 2026-03-17 | [dev_update.md](./2026-03-17_dev_update.md) | — | 개발팀 (메신저) | 서버 분리, Playground 구축, 부산은행 PoC 긍정 검토 |
 
 ## 참고
 
 - 파일명 규칙: `YYYY-MM-DD_대상.md`
 - 새 회의록 추가 시 이 README에도 반영
+- SAI-MTG-2026-002: 해당 번호는 미사용 (번호 할당 오류로 인한 공번). 2026-03-17 회의록이 SAI-MTG-2026-003으로 발번됨
