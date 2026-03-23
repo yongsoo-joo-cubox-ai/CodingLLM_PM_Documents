@@ -64,6 +64,12 @@ CodingLLM_PM_Documents/
 ├── 06_infra/              # 인프라/배포 관련 자료
 │   └── 코딩에이전트_외부업체데모_환경구성_방안.docx
 │
+├── 07_oss_analysis/       # 오픈소스 프로젝트 심층 분석
+│   ├── README.md          # 분석 인덱스 + 비교 요약
+│   ├── 01_vllm_analysis.md
+│   ├── 02_litellm_analysis.md
+│   └── 03_opencode_analysis.md
+│
 ├── _00_work/              # 작업 자료 스테이징
 │   ├── 260127-260211/     # 1/26~2/11 작업 원본
 │   ├── 260212-260319/     # 2/12~3/19 작업 원본
@@ -98,11 +104,14 @@ CodingLLM_PM_Documents/
 | `04_meetings/2026-03-17_dev_update.md` | 개발 현황 업데이트 (서버 분리, Playground, 부산은행 PoC) |
 | `05_knowledge_base/glossary_ko.md` | 프로젝트 용어집 - 경영진/개발자용 이중 설명 (~70개 용어) |
 | `06_infra/` | 인프라/배포 관련 자료 |
+| `07_oss_analysis/01_vllm_analysis.md` | vLLM 심층 분석 — LLM 추론 엔진 |
+| `07_oss_analysis/02_litellm_analysis.md` | LiteLLM 심층 분석 — LLM 프록시/라우터 |
+| `07_oss_analysis/03_opencode_analysis.md` | OpenCode 심층 분석 — AI 코딩 에이전트 |
 
 ## 문서 관리 규칙
 
 ### 폴더 README
-- 모든 주요 폴더(01~06)에 README.md가 존재하며 읽기 순서를 안내
+- 모든 주요 폴더(01~07)에 README.md가 존재하며 읽기 순서를 안내
 - 새 문서 추가 시 해당 폴더 README.md에 반영
 
 ### 파일명 넘버링
@@ -146,7 +155,7 @@ CodingLLM_PM_Documents/
 | `IMPL` | 02_implementation/ 구현 문서 | 대외비 |
 | `TEST` | 03_development/ 테스트·벤치마크 보고서 | 일반 |
 | `MTG` | 04_meetings/ 회의록 | 일반 |
-| `KB` | 05_knowledge_base/ 기술 참고자료·용어집 | 일반 |
+| `KB` | 05_knowledge_base/, 07_oss_analysis/ 기술 참고자료·용어집·OSS 분석 | 일반 |
 
 **보고서 헤더** (01_strategy, 02_implementation, 03_development):
 
