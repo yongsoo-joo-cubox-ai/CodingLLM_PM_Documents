@@ -161,7 +161,7 @@
 
 > vLLM 인프라 고도화 상세는 [vLLM R&D 계획](./06_vllm_rd_plan_ko.md) 참조
 
-> **참고**: 트랙 1의 "MCP 서버"(코드 생성 엔진, 예: xframe5-compiler)와 트랙 2의 "MCP"(Model Context Protocol, 에이전트 도구 접근 프로토콜)는 **목적과 구조가 다른 별개의 기술**임
+> **참고**: 트랙 1과 트랙 2 모두 **MCP(Model Context Protocol) 동일 프로토콜**을 사용하되, 용도가 다름 — 트랙 1: 코드 생성 엔진 MCP 서버(xframe5-compiler 등), 트랙 2: 개발 도구 접근 MCP 서버(Jira, Confluence 등)
 
 ---
 
