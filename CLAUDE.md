@@ -88,18 +88,21 @@ CodingLLM_PM_Documents/
 | `02_implementation/05_api_reference_ko.md` | API 레퍼런스 - 엔드포인트 명세 |
 | `02_implementation/06_vllm_rd_plan_ko.md` | vLLM 인프라 고도화 R&D 계획 (인증/암호화/LiteLLM 멀티 모델) |
 | `03_development/` | 개발 진행 자료 - 테스트, 벤치마크 |
+| `03_development/2026-01-15_project_intro/` | 프로젝트 소개 — 부하 테스트, 모델 벤치마크 |
+| `03_development/2026-01-24_progress/` | 1월 진행 — VRAM 산정, MCP 아키텍처, 경량 모델 QA |
 | `03_development/2026-02-07_progress/` | 2월 1주차 진행 - 코드생성, UASL, QA 개선 |
 | `03_development/2026-02-12_progress/` | Coco Studio 기능 테스트 (7 TC, 71.4%) |
 | `03_development/2026-03-19_progress/` | 3월 진행 - 4B 파인튜닝, UASL v2/v3, 서버 분리, 부산은행 PoC |
+| `04_meetings/2025-12-26_softbase_xframe.md` | 소프트베이스 xFrame5 기술 미팅 |
 | `04_meetings/2026-02-11_ShinsegaeInC.md` | 신세계 I&C 솔루션 데모 회의록 |
 | `04_meetings/2026-03-17_dev_update.md` | 개발 현황 업데이트 (서버 분리, Playground, 부산은행 PoC) |
 | `05_knowledge_base/glossary_ko.md` | 프로젝트 용어집 - 경영진/개발자용 이중 설명 (~70개 용어) |
-| `05_knowledge_base/README.md` | xFrame5 아카이브 내용 기록 |
+| `06_infra/` | 인프라/배포 관련 자료 |
 
 ## 문서 관리 규칙
 
 ### 폴더 README
-- 모든 주요 폴더(01~05)에 README.md가 존재하며 읽기 순서를 안내
+- 모든 주요 폴더(01~06)에 README.md가 존재하며 읽기 순서를 안내
 - 새 문서 추가 시 해당 폴더 README.md에 반영
 
 ### 파일명 넘버링
