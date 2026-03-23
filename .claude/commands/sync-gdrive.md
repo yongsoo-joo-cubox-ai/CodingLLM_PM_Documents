@@ -1,6 +1,6 @@
 ---
 allowed-tools: Bash(bash:*), Bash(sh:*)
-description: Sync CodingLLM project documents to Google Drive (one-way mirror with MD→DOCX conversion)
+description: CodingLLM 문서를 Google Drive로 동기화 (단방향 미러링, MD→DOCX 변환)
 ---
 
 CodingLLM_PM_Documents를 Google Drive 공유 드라이브로 동기화하는 스크립트를 실행합니다.

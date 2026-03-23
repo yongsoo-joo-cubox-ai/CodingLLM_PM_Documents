@@ -4,10 +4,10 @@
 set -uo pipefail
 
 ###############################################################################
-# 경로 설정
+# 공통 설정 로드
 ###############################################################################
-SOURCE="/Users/ysjoo/Documents/GitHub/CodingLLM_PM_Documents"
-TARGET="/Users/ysjoo/Library/CloudStorage/GoogleDrive-yongsoo.joo@cubox.ai/공유 드라이브/CodingLLM_Project/01_Documents"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/sync-config.sh"
 
 DRY_RUN=false
 [[ "${1:-}" == "--dry-run" ]] && DRY_RUN=true
@@ -55,18 +55,11 @@ echo "--------------------------------------------"
 echo ""
 echo "[Step 1/4] rsync: 비-MD 파일 동기화..."
 
+RSYNC_EXCLUDES=($(build_rsync_excludes))
 RSYNC_OPTS=(
   -rltv
   --no-perms --no-owner --no-group
-  --exclude='.git/'
-  --exclude='.gitignore'
-  --exclude='.gitattributes'
-  --exclude='.obsidian/'
-  --exclude='.claude/'
-  --exclude='.DS_Store'
-  --exclude='.playwright-mcp/'
-  --exclude='CLAUDE.md'
-  --exclude='*.md'
+  "${RSYNC_EXCLUDES[@]}"
 )
 
 if $DRY_RUN; then
@@ -74,6 +67,10 @@ if $DRY_RUN; then
 fi
 
 rsync_output=$(rsync "${RSYNC_OPTS[@]}" "$SOURCE/" "$TARGET/" 2>&1)
+rsync_exit=$?
+if [ $rsync_exit -ne 0 ] && [ $rsync_exit -ne 23 ]; then
+  echo "  WARNING: rsync가 오류 코드 $rsync_exit 로 종료됨"
+fi
 # rsync 출력에서 실제 파일 전송 건수 세기 (디렉토리 제외)
 while IFS= read -r line; do
   # rsync 출력에서 파일 행만 카운트 (끝이 /가 아닌 것)
@@ -121,24 +118,20 @@ while IFS= read -r md_file; do
   # 타겟 디렉토리 생성
   mkdir -p "$(dirname "$docx_path")"
 
-  # MD 내 .md 링크를 .docx로 치환 후 pandoc 변환
-  if sed 's/\.md)/\.docx)/g' "$md_file" | \
+  # MD 내 마크다운 링크의 .md를 .docx로 치환 후 pandoc 변환
+  # perl 사용: macOS BSD sed의 선택적 캡처 그룹 비호환 문제 회피
+  pandoc_err=$(perl -pe 's/\]\(([^)]*?)\.md(#[^)"]*)?\)/"](" . $1 . ".docx" . ($2 \/\/ "") . ")"/ge' "$md_file" | \
     pandoc -o "$docx_path" --from markdown --to docx \
-      --resource-path="$(dirname "$md_file")" 2>/dev/null; then
+      --resource-path="$(dirname "$md_file")" 2>&1)
+  if [ $? -eq 0 ]; then
     echo "  [OK]      ${rel_path%.md}.docx"
     ((converted++))
   else
-    echo "  [FAIL]    ${rel_path}"
-    failed_files+=("$rel_path")
+    echo "  [FAIL]    ${rel_path} — ${pandoc_err}"
+    failed_files+=("$rel_path: $pandoc_err")
     ((failed++))
   fi
-done < <(find "$SOURCE" -name '*.md' \
-  -not -path '*/.git/*' \
-  -not -path '*/.obsidian/*' \
-  -not -path '*/.claude/*' \
-  -not -path '*/.playwright-mcp/*' \
-  -not -name 'CLAUDE.md' \
-  | sort)
+done < <(eval "find \"$SOURCE\" -name '*.md' $(build_find_excludes)" | sort)
 
 echo "  → 변환: ${converted}건, 스킵(최신): ${skipped}건, 실패: ${failed}건"
 

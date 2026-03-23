@@ -5,7 +5,10 @@
       "Bash(wc:*)"
     ],
     "additionalDirectories": [
-      "/Users/ysjoo/Library/CloudStorage/GoogleDrive-yongsoo.joo@cubox.ai/공유 드라이브/CodingLLM_Project"
+      "/Users/ysjoo/Library/CloudStorage/GoogleDrive-yongsoo.joo@cubox.ai/공유 드라이브/CodingLLM_Project",
+      "/Users/ysjoo/Documents/GitHub/_coding_llm/_public/vllm",
+      "/Users/ysjoo/Documents/GitHub/_coding_llm/_public/litellm",
+      "/Users/ysjoo/Documents/GitHub/_coding_llm/_public/opencode"
     ]
   }
 }

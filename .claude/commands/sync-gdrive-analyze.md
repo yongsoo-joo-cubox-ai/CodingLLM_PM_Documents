@@ -1,13 +1,13 @@
 ---
 allowed-tools: Bash(bash:*), Bash(sh:*)
-description: Analyze sync state between Git repo and Google Drive before syncing
+description: Git 저장소와 Google Drive 간 동기화 상태 분석
 ---
 
 CodingLLM_PM_Documents(Git)와 Google Drive 공유 드라이브 간 동기화 상태를 분석합니다.
 
 ## 경로
 
-- **소스**: `/Users/ysjoo/Documents/GitHub/CodingLLM_PM_Documents`
+- **소스**: 스크립트 위치 기반 자동 탐지 (저장소 루트)
 - **타겟**: `~/Library/CloudStorage/GoogleDrive-yongsoo.joo@cubox.ai/공유 드라이브/CodingLLM_Project/01_Documents`
 
 ## 분석할 항목

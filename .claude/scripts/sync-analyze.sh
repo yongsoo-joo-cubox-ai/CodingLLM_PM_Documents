@@ -2,10 +2,11 @@
 # sync-analyze.sh — 소스/타겟 동기화 상태 분석 (크기·시간 비교 포함)
 set -uo pipefail
 
-SOURCE="/Users/ysjoo/Documents/GitHub/CodingLLM_PM_Documents"
-TARGET="/Users/ysjoo/Library/CloudStorage/GoogleDrive-yongsoo.joo@cubox.ai/공유 드라이브/CodingLLM_Project/01_Documents"
-
-EXCLUDE_PATTERN='\.git/|\.obsidian/|\.claude/|\.playwright-mcp/|\.DS_Store|\.gitignore|\.gitattributes|CLAUDE\.md'
+###############################################################################
+# 공통 설정 로드
+###############################################################################
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/sync-config.sh"
 
 ###############################################################################
 # 사전 검증
@@ -20,10 +21,7 @@ fi
 ###############################################################################
 # 파일 목록 수집
 ###############################################################################
-src_all=$(find "$SOURCE" -type f \
-  -not -path '*/.git/*' -not -path '*/.obsidian/*' -not -path '*/.claude/*' \
-  -not -path '*/.playwright-mcp/*' -not -name '.DS_Store' \
-  -not -name '.gitignore' -not -name '.gitattributes' -not -name 'CLAUDE.md')
+src_all=$(eval "find \"$SOURCE\" -type f $(build_find_excludes)")
 
 src_md=$(echo "$src_all" | grep '\.md$' || true)
 src_nonmd=$(echo "$src_all" | grep -v '\.md$' || true)
@@ -75,7 +73,7 @@ while IFS= read -r md_file; do
   src_size=$(stat -f%z "$md_file" 2>/dev/null || echo 0)
   src_mtime=$(stat -f%m "$md_file" 2>/dev/null || echo 0)
   src_date=$(date -r "$src_mtime" '+%Y-%m-%d %H:%M' 2>/dev/null || echo "?")
-  src_size_h=$(numfmt --to=iec "$src_size" 2>/dev/null || echo "${src_size}B")
+  src_size_h=$(human_size "$src_size")
 
   if [ ! -f "$docx_path" ]; then
     printf "%-8s  %-60s  %10s  %10s  %-16s  %s\n" "[신규]" "$display_rel" "$src_size_h" "-" "$src_date" "타겟 없음"
@@ -84,7 +82,7 @@ while IFS= read -r md_file; do
   else
     tgt_size=$(stat -f%z "$docx_path" 2>/dev/null || echo 0)
     tgt_mtime=$(stat -f%m "$docx_path" 2>/dev/null || echo 0)
-    tgt_size_h=$(numfmt --to=iec "$tgt_size" 2>/dev/null || echo "${tgt_size}B")
+    tgt_size_h=$(human_size "$tgt_size")
 
     if [ "$md_file" -nt "$docx_path" ]; then
       printf "%-8s  %-60s  %10s  %10s  %-16s  %s\n" "[변경]" "$display_rel" "$src_size_h" "$tgt_size_h" "$src_date" "소스가 더 최신"
@@ -105,7 +103,7 @@ while IFS= read -r src_file; do
   src_size=$(stat -f%z "$src_file" 2>/dev/null || echo 0)
   src_mtime=$(stat -f%m "$src_file" 2>/dev/null || echo 0)
   src_date=$(date -r "$src_mtime" '+%Y-%m-%d %H:%M' 2>/dev/null || echo "?")
-  src_size_h=$(numfmt --to=iec "$src_size" 2>/dev/null || echo "${src_size}B")
+  src_size_h=$(human_size "$src_size")
 
   if [ ! -f "$tgt_file" ]; then
     printf "%-8s  %-60s  %10s  %10s  %-16s  %s\n" "[신규]" "$rel" "$src_size_h" "-" "$src_date" "타겟 없음"
@@ -113,7 +111,7 @@ while IFS= read -r src_file; do
     ((sync_needed++))
   else
     tgt_size=$(stat -f%z "$tgt_file" 2>/dev/null || echo 0)
-    tgt_size_h=$(numfmt --to=iec "$tgt_size" 2>/dev/null || echo "${tgt_size}B")
+    tgt_size_h=$(human_size "$tgt_size")
 
     if [ "$src_size" -ne "$tgt_size" ] || [ "$src_file" -nt "$tgt_file" ]; then
       reason=""
@@ -145,7 +143,7 @@ while IFS= read -r tgt_file; do
 
   if $should_flag; then
     tgt_size=$(stat -f%z "$tgt_file" 2>/dev/null || echo 0)
-    tgt_size_h=$(numfmt --to=iec "$tgt_size" 2>/dev/null || echo "${tgt_size}B")
+    tgt_size_h=$(human_size "$tgt_size")
     printf "%-8s  %-60s  %10s  %10s  %-16s  %s\n" "[삭제]" "$rel" "-" "$tgt_size_h" "-" "소스 없음"
     ((delete_files++))
     ((sync_needed++))
