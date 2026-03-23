@@ -775,9 +775,10 @@ outputs = llm.chat(messages, sampling_params)
 
 `vllm/entrypoints/mcp/` 디렉토리에서 Model Context Protocol 서버를 구현한다.
 
-- `tool_server.py`: `ToolServer` 추상 클래스. MCP 도구를 vLLM 서버에 연결
+- `tool_server.py`: `ToolServer` 추상 클래스 + `MCPToolServer(ToolServer)` 구체 구현 + `DemoToolServer(ToolServer)` 데모용
 - `tool.py`: `HarmonyBrowserTool`, `HarmonyPythonTool` 등 내장 도구 정의
 - `openai_harmony` 패키지 기반으로 OpenAI의 도구 호출 포맷과 호환
+- Coco에서 커스텀 MCP 도구를 추가하려면 `MCPToolServer`를 상속하여 구현
 
 ### 6.5 미들웨어 체인
 
@@ -794,48 +795,136 @@ API 서버에는 다음 미들웨어가 적용된다:
 
 ### 7.1 IntraGenX 아키텍처에서의 역할
 
-vLLM은 IntraGenX 아키텍처에서 **추론 엔진 백엔드**로 사용된다. Coco Engine이 vLLM의 OpenAI 호환 API를 통해 코드 생성, 리뷰, QA 요청을 처리한다.
+vLLM은 IntraGenX 아키텍처에서 **추론 엔진 백엔드**로 사용된다. 트랙 1(Spec-Driven 코드 생성)과 트랙 2(코딩 에이전트) 모두 vLLM을 통해 LLM 추론을 수행한다.
 
 ```
-┌──────────────────────┐     ┌──────────────────────┐
-│    Coco Engine        │────▶│      vLLM 서버         │
-│  (코드 생성/리뷰/QA)   │ API │  (LLM 추론 엔진)       │
-│                      │◀────│  - /v1/chat/completions │
-└──────────────────────┘     └──────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                    IntraGenX 배포 토폴로지                        │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌────────────────┐   ┌────────────────┐   ┌────────────────┐  │
+│  │  Coco Studio    │   │  Coco CLI      │   │  OpenCode      │  │
+│  │  (웹 UI)        │   │  (터미널)       │   │  (트랙 2)       │  │
+│  └───────┬────────┘   └───────┬────────┘   └───────┬────────┘  │
+│          │                     │                     │           │
+│          └─────────┬───────────┘                     │           │
+│                    ▼                                 │           │
+│          ┌─────────────────┐                         │           │
+│          │  Coco Engine     │                         │           │
+│          │  (코드 생성/리뷰) │                         │           │
+│          └────────┬────────┘                         │           │
+│                   │                                  │           │
+│                   ▼                                  ▼           │
+│          ┌─────────────────────────────────────────────┐        │
+│          │          LiteLLM Proxy (AI Gateway)          │        │
+│          │  - 라우팅/로드밸런싱                            │        │
+│          │  - API 키 인증                                │        │
+│          │  - 비용 추적                                   │        │
+│          └───────┬────────────────┬────────────────────┘        │
+│                  │                │                              │
+│          ┌───────▼──────┐ ┌──────▼───────┐                     │
+│          │  vLLM #1      │ │  vLLM #2      │                     │
+│          │  (Qwen 32B)   │ │  (4B LoRA)    │                     │
+│          │  GPU 0-1      │ │  GPU 2        │                     │
+│          └──────────────┘ └──────────────┘                     │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ### 7.2 통합 포인트
 
-1. **OpenAI 호환 API**: Coco Engine은 `POST /v1/chat/completions` 엔드포인트로 vLLM과 통신. 별도 SDK 없이 `openai` Python 클라이언트 사용 가능.
+| 통합 영역 | 상세 | vLLM 관련 코드/설정 |
+|----------|------|-------------------|
+| **OpenAI 호환 API** | Coco Engine이 `POST /v1/chat/completions`로 통신. `openai` Python 클라이언트 사용 | `vllm/entrypoints/openai/api_server.py` |
+| **토큰 스트리밍** | SSE 기반 `stream=True`. Coco Engine의 `/agent/agentic/v2/stream`이 vLLM 스트리밍 중계 | `RequestOutputKind.DELTA` 모드 |
+| **모델 로딩** | HuggingFace 또는 로컬 경로. 4B 파인튜닝 모델(LoRA) 서빙 가능 | `--model`, `--enable-lora` |
+| **다중 모델** | LiteLLM Proxy 경유로 여러 vLLM 인스턴스 라우팅 | `06_vllm_rd_plan_ko.md` 참조 |
+| **구조화된 출력** | JSON Schema로 코드 생성 출력 형식 강제 (CGF 파이프라인 후처리 감소) | `structured_outputs` 파라미터 |
+| **감사 추적** | OpenTelemetry 트레이싱으로 요청별 추적. Coco Admin 대시보드 연동 가능 | `vllm/tracing/`, `--otlp-traces-endpoint` |
 
-2. **모델 로딩**: HuggingFace 모델 또는 로컬 경로에서 모델 로딩. 4B 파인튜닝 모델(LoRA 포함)도 vLLM으로 서빙 가능.
+**실제 Coco Engine → vLLM 호출 패턴**:
 
-3. **토큰 스트리밍**: SSE 기반 `stream=True` 옵션으로 실시간 코드 생성 스트리밍. Coco Engine의 `/agent/agentic/v2/stream` 엔드포인트가 vLLM의 스트리밍을 중계.
+```python
+# Coco Engine 내부 — vLLM 호출 예시 (openai 클라이언트 사용)
+from openai import OpenAI
 
-4. **다중 모델 서빙**: LiteLLM 프록시를 통해 여러 vLLM 인스턴스를 라우팅하는 구조가 `02_implementation/06_vllm_rd_plan_ko.md`에 계획되어 있다.
+client = OpenAI(
+    base_url="http://localhost:3000/v1",  # LiteLLM Proxy 경유
+    api_key="sk-coco-internal"             # LiteLLM API 키
+)
+
+response = client.chat.completions.create(
+    model="qwen-32b",                      # LiteLLM이 vLLM으로 라우팅
+    messages=[
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": uasl_spec}
+    ],
+    stream=True,
+    temperature=0.1,                       # 코드 생성은 낮은 temperature
+    extra_body={
+        "structured_outputs": {            # JSON Schema 강제
+            "type": "json_schema",
+            "json_schema": code_output_schema
+        }
+    }
+)
+```
 
 ### 7.3 커스터마이징 영역
 
-| 영역 | 구현 방안 | 관련 vLLM 코드 |
-|------|----------|---------------|
-| **인증 미들웨어** | FastAPI 미들웨어로 API 키/JWT 인증 추가 | `vllm/entrypoints/openai/api_server.py` — lifespan 함수에서 미들웨어 등록 |
-| **모델 암호화** | 커스텀 ModelLoader 구현 — 암호화된 가중치 파일을 메모리에서 복호화 후 로딩 | `vllm/model_executor/model_loader/base_loader.py` 상속 |
-| **모니터링** | Prometheus 메트릭 + OpenTelemetry 트레이싱 | `vllm/v1/metrics/`, `vllm/tracing/` |
-| **LoRA 어댑터** | 런타임에 LoRA 어댑터 교체 — 프로젝트/프레임워크별 코드 스타일 적용 | `vllm/lora/` |
-| **구조화된 출력** | JSON Schema 기반 코드 생성 출력 강제 | `vllm/v1/structured_output/`, xgrammar/outlines 백엔드 |
+| 영역 | 구현 방안 | 관련 vLLM 코드 | 난이도 |
+|------|----------|---------------|--------|
+| **인증 미들웨어** | FastAPI 미들웨어로 API 키/JWT 인증 추가 | `api_server.py` lifespan 함수 | 낮음 |
+| **모델 암호화** | 커스텀 ModelLoader — 암호화된 가중치를 메모리에서 복호화 후 로딩 | `model_loader/base_loader.py` 상속 | 높음 |
+| **모니터링** | Prometheus 메트릭 + OpenTelemetry 트레이싱 | `vllm/v1/metrics/`, `vllm/tracing/` | 낮음 |
+| **LoRA 어댑터** | 런타임에 LoRA 교체 — 프로젝트/프레임워크별 코드 스타일 | `vllm/lora/` | 중간 |
+| **구조화된 출력** | JSON Schema 기반 코드 생성 출력 강제 | `vllm/v1/structured_output/` | 낮음 |
+| **커스텀 MCP 도구** | MCPToolServer 상속으로 Coco 전용 도구 추가 | `vllm/entrypoints/mcp/tool_server.py` | 중간 |
 
 ### 7.4 온프레미스/폐쇄망 배포 고려사항
 
-1. **오프라인 모델 로딩**: `--model /local/path/to/model` 옵션으로 로컬 모델 직접 로딩. HuggingFace Hub 접근 불필요.
-2. **Docker 배포**: `docker/Dockerfile`로 자체 이미지 빌드. 네트워크 격리 환경에서 pip 패키지를 사전 포함시킨 이미지 준비 필요.
-3. **GPU 메모리 관리**: `gpu_memory_utilization` 파라미터로 GPU 메모리 사용량 제어. 동일 GPU에서 여러 인스턴스 실행 시 조정 필요.
-4. **TLS/SSL**: `vllm/entrypoints/ssl.py`에서 HTTPS 지원. `--ssl-keyfile`, `--ssl-certfile` 옵션.
-5. **인증**: vLLM 자체 인증 기능은 제한적 → 리버스 프록시(Nginx/Envoy) 또는 커스텀 미들웨어로 보완 필요.
+| 항목 | 설정 | 비고 |
+|------|------|------|
+| **오프라인 모델** | `--model /local/path/to/model` | HuggingFace Hub 접근 불필요 |
+| **Docker 배포** | `docker/Dockerfile` 기반 이미지 빌드 | pip 패키지 사전 포함 필요 |
+| **GPU 메모리** | `--gpu-memory-utilization 0.9` | 동일 GPU 다중 인스턴스 시 조정 |
+| **TLS/SSL** | `--ssl-keyfile`, `--ssl-certfile` | `vllm/entrypoints/ssl.py` |
+| **인증** | 리버스 프록시(Nginx) 또는 커스텀 미들웨어 | vLLM 자체 인증은 제한적 |
+| **로그 격리** | `--disable-log-requests` + 내부 로깅 | 민감 정보 유출 방지 |
+| **방화벽** | vLLM 포트(8000)를 LiteLLM만 접근 허용 | Coco Engine → LiteLLM → vLLM 체인 |
 
-### 7.5 교차 참조
+**권장 배포 명령어** (온프레미스):
+
+```bash
+# vLLM 서버 시작 (GPU 2장, TP=2, 4B 파인튜닝 모델)
+vllm serve /models/coco-qwen-4b-lora \
+  --tensor-parallel-size 2 \
+  --gpu-memory-utilization 0.9 \
+  --enable-lora \
+  --lora-modules coco-xframe5=/lora/xframe5 coco-vue3=/lora/vue3 \
+  --max-model-len 32768 \
+  --ssl-keyfile /certs/server.key \
+  --ssl-certfile /certs/server.crt \
+  --host 0.0.0.0 --port 8000
+```
+
+### 7.5 기존 분석과의 차별점
+
+이 문서와 `06_vllm_rd_plan_ko.md`의 역할 분담:
+
+| 항목 | 이 문서 (01_vllm_analysis) | 06_vllm_rd_plan_ko |
+|------|--------------------------|-------------------|
+| **목적** | vLLM 코드베이스 자체의 이해 | Coco와의 통합 R&D 계획 |
+| **관점** | 오픈소스 분석 (내부 구조) | 프로젝트 실행 계획 (일정/인력) |
+| **깊이** | 코드 레벨 메커니즘 | 아키텍처 설계 + 구현 로드맵 |
+| **갱신 주기** | vLLM 버전 업데이트 시 | 프로젝트 마일스톤별 |
+
+### 7.6 교차 참조
 
 - vLLM 인프라 고도화 R&D 계획: [`02_implementation/06_vllm_rd_plan_ko.md`](../../02_implementation/06_vllm_rd_plan_ko.md)
   - 모델 암호화, LiteLLM 연동, 인증/인가 미들웨어, 모니터링 고도화 등 구체적 계획 포함
+- LiteLLM 심층 분석: [`02_litellm_analysis.md`](./02_litellm_analysis.md) — vLLM 프록시 계층 이해에 필수
+- 프로젝트 용어집: [`05_knowledge_base/glossary_ko.md`](../../05_knowledge_base/glossary_ko.md) — vLLM, PagedAttention, KV Cache 등 용어 정의
 
 ---
 
