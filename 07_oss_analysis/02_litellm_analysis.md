@@ -1156,15 +1156,40 @@ litellm_settings:
 IntraGenX 아키텍처에서 LiteLLM은 **멀티 모델 라우팅 Gateway** 역할을 담당한다. `02_implementation/06_vllm_rd_plan_ko.md`에서 정의된 "LiteLLM 멀티 모델 라우팅" 구성과 직접 연결된다:
 
 ```
-클라이언트 (Coco Studio / Coco CLI)
-    ↓
-Coco Engine (코드 생성 엔진)
-    ↓
-LiteLLM Proxy (AI Gateway)
-    ├─ vLLM 인스턴스 1 (Qwen2.5-32B)
-    ├─ vLLM 인스턴스 2 (CodeQwen2.5-7B)
-    ├─ vLLM 인스턴스 3 (파인튜닝 4B 모델)
-    └─ 외부 API (필요 시 — OpenAI, Anthropic)
+┌─────────────────────────────────────────────────────────────────┐
+│                    IntraGenX 배포 토폴로지                        │
+│                    (LiteLLM 중심 관점)                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐    │
+│  │  Coco Studio    │  │  Coco CLI      │  │  OpenCode      │    │
+│  │  (웹 UI)        │  │  (터미널)       │  │  (트랙 2)       │    │
+│  └───────┬────────┘  └───────┬────────┘  └───────┬────────┘    │
+│          └────────┬──────────┘                    │             │
+│                   ▼                               │             │
+│          ┌─────────────────┐                      │             │
+│          │  Coco Engine     │                      │             │
+│          └────────┬────────┘                      │             │
+│                   │ POST /v1/chat/completions     │             │
+│                   └───────────┬───────────────────┘             │
+│                               ▼                                 │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │              LiteLLM Proxy (AI Gateway)                  │   │
+│  │  ┌───────────┐  ┌───────────┐  ┌────────────────────┐  │   │
+│  │  │ 인증/키관리 │  │ 라우팅/LB  │  │ 비용 추적/감사 로그 │  │   │
+│  │  └───────────┘  └───────────┘  └────────────────────┘  │   │
+│  │  ┌───────────┐  ┌───────────┐  ┌────────────────────┐  │   │
+│  │  │ Rate Limit │  │ Fallback  │  │ 캐싱 (Redis)       │  │   │
+│  │  └───────────┘  └───────────┘  └────────────────────┘  │   │
+│  └──────┬──────────────┬──────────────┬────────────────────┘   │
+│         │              │              │                         │
+│  ┌──────▼──────┐ ┌─────▼──────┐ ┌────▼──────┐                 │
+│  │ vLLM #1     │ │ vLLM #2    │ │ vLLM #3   │                 │
+│  │ Qwen 32B    │ │ CodeQwen 7B│ │ 4B LoRA   │                 │
+│  │ GPU 0-1     │ │ GPU 2      │ │ GPU 3     │                 │
+│  └─────────────┘ └────────────┘ └───────────┘                 │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 LiteLLM은 여기서:
@@ -1172,6 +1197,33 @@ LiteLLM은 여기서:
 - 모델별 Fallback 체인 구성 (32B 실패 → 7B → 4B)
 - 토큰 사용량 및 비용 추적
 - API 키 기반 접근 제어
+
+**실제 Coco Engine → LiteLLM Proxy 호출 패턴**:
+
+```python
+# Coco Engine 내부 — LiteLLM Proxy 경유 LLM 호출 예시
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="http://litellm-proxy:3000/v1",  # LiteLLM Proxy
+    api_key="sk-coco-team-dev"                  # LiteLLM이 발급한 팀별 API 키
+)
+
+# LiteLLM이 모델명 기준으로 적절한 vLLM 인스턴스로 라우팅
+response = client.chat.completions.create(
+    model="code-gen-32b",              # LiteLLM config의 model_name
+    messages=[
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": uasl_spec}
+    ],
+    stream=True,
+    temperature=0.1,
+    metadata={                          # LiteLLM 전용: 비용 추적용 메타데이터
+        "project": "banking-poc",
+        "team": "frontend"
+    }
+)
+```
 
 ### 7.2 통합 포인트
 
@@ -1254,11 +1306,25 @@ LiteLLM을 폐쇄망에서 운영할 때의 고려사항:
 | **라이선스** | Enterprise 라이선스 검증 | 오프라인 라이선스 키 지원 확인 필요 |
 | **Admin UI** | 번들 포함 | Docker 이미지에 사전 빌드 포함 |
 
-### 7.5 교차 참조
+### 7.5 기존 분석과의 차별점
 
-- `../../02_implementation/06_vllm_rd_plan_ko.md` — vLLM 인프라 고도화 R&D 계획, LiteLLM 멀티 모델 라우팅 섹션
-- `../../01_strategy/04_product_overview_ko.md` — Coco 제품 구성 (Engine, Studio, CLI)
-- `../../02_implementation/01_roadmap_ko.md` — Phase 2 구현 로드맵
+이 문서와 `06_vllm_rd_plan_ko.md`의 역할 분담:
+
+| 항목 | 이 문서 (02_litellm_analysis) | 06_vllm_rd_plan_ko |
+|------|------------------------------|-------------------|
+| **목적** | LiteLLM 코드베이스 자체의 이해 | vLLM + LiteLLM 통합 R&D 계획 |
+| **관점** | 오픈소스 분석 (내부 구조, 모듈) | 프로젝트 실행 계획 (일정/인력) |
+| **깊이** | Provider 추상화, 라우팅 알고리즘 코드 레벨 | 통합 아키텍처 설계 + 로드맵 |
+| **갱신 주기** | LiteLLM 버전 업데이트 시 | 프로젝트 마일스톤별 |
+
+### 7.6 교차 참조
+
+- vLLM 인프라 고도화 R&D 계획: [`02_implementation/06_vllm_rd_plan_ko.md`](../../02_implementation/06_vllm_rd_plan_ko.md) — LiteLLM 멀티 모델 라우팅 섹션
+- 제품 기능 소개: [`01_strategy/04_product_overview_ko.md`](../../01_strategy/04_product_overview_ko.md) — Coco 제품 구성 (Engine, Studio, CLI)
+- 구현 로드맵: [`02_implementation/01_roadmap_ko.md`](../../02_implementation/01_roadmap_ko.md) — Phase 2 구현 로드맵
+- vLLM 심층 분석: [`01_vllm_analysis.md`](./01_vllm_analysis.md) — LiteLLM이 라우팅하는 추론 엔진 백엔드
+- OpenCode 심층 분석: [`03_opencode_analysis.md`](./03_opencode_analysis.md) — LiteLLM을 경유하여 LLM을 호출하는 에이전트
+- 프로젝트 용어집: [`05_knowledge_base/glossary_ko.md`](../../05_knowledge_base/glossary_ko.md) — LiteLLM, AI Gateway, 프록시 등 용어 정의
 
 ---
 

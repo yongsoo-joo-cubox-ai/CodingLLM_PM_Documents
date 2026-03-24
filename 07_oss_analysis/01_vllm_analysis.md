@@ -924,6 +924,7 @@ vllm serve /models/coco-qwen-4b-lora \
 - vLLM 인프라 고도화 R&D 계획: [`02_implementation/06_vllm_rd_plan_ko.md`](../../02_implementation/06_vllm_rd_plan_ko.md)
   - 모델 암호화, LiteLLM 연동, 인증/인가 미들웨어, 모니터링 고도화 등 구체적 계획 포함
 - LiteLLM 심층 분석: [`02_litellm_analysis.md`](./02_litellm_analysis.md) — vLLM 프록시 계층 이해에 필수
+- OpenCode 심층 분석: [`03_opencode_analysis.md`](./03_opencode_analysis.md) — vLLM을 최종 추론 엔진으로 사용하는 트랙 2 에이전트
 - 프로젝트 용어집: [`05_knowledge_base/glossary_ko.md`](../../05_knowledge_base/glossary_ko.md) — vLLM, PagedAttention, KV Cache 등 용어 정의
 
 ---

@@ -246,3 +246,5 @@ OpenCode나 Claude Code와 같이 종속성이 강한 상용 에이전트 도구
 | 버전 | 일자 | 변경 내용 | 작성자 |
 |------|------|----------|--------|
 | 1.0 | 2026-03-19 | Gemini Deep Research 기반 초안 작성 (인증/암호화/LiteLLM 멀티 모델 셀렉션) | 시선AI |
+
+> **관련 심층 분석 문서**: vLLM 코드베이스 심층 분석은 [`07_oss_analysis/01_vllm_analysis.md`](../07_oss_analysis/01_vllm_analysis.md), LiteLLM 분석은 [`07_oss_analysis/02_litellm_analysis.md`](../07_oss_analysis/02_litellm_analysis.md) 참조.
