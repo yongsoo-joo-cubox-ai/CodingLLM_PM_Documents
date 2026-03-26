@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IntraGenX 투트랙 개발 로드맵 — 시선AI 내부 논의</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #242836;
+    --border: #2e3345;
+    --text: #e8eaed;
+    --text-dim: #9aa0b0;
+    --accent: #4f8ff7;
+    --accent2: #38bdf8;
+    --green: #34d399;
+    --orange: #fb923c;
+    --red: #f87171;
+    --purple: #a78bfa;
+    --yellow: #fbbf24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* Layout */
+  .app { display: flex; height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 280px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow-y: auto;
+    transition: width 0.3s;
+  }
+  .sidebar.collapsed { width: 48px; }
+  .sidebar.collapsed .sidebar-content { display: none; }
+  .sidebar.collapsed .toggle-btn span { transform: rotate(180deg); }
+
+  .sidebar-header {
+    padding: 20px 16px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .sidebar-header h2 { font-size: 13px; font-weight: 600; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; }
+  .toggle-btn { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 18px; }
+  .toggle-btn span { display: inline-block; transition: transform 0.3s; }
+
+  .sidebar-content { padding: 8px 0; }
+
+  .nav-section { padding: 12px 16px 4px; font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 1.5px; text-transform: uppercase; }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 16px; cursor: pointer;
+    font-size: 13px; color: var(--text-dim);
+    transition: all 0.15s; border-left: 3px solid transparent;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(79,143,247,0.08); color: var(--accent); border-left-color: var(--accent); font-weight: 500; }
+  .nav-item .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); min-width: 20px; }
+  .nav-item.active .num { color: var(--accent); }
+
+  /* Main content */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  .topbar {
+    height: 48px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .slide-counter { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-dim); }
+  .topbar-controls { display: flex; gap: 8px; }
+  .topbar-controls button {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif; transition: all 0.15s;
+  }
+  .topbar-controls button:hover { background: var(--accent); border-color: var(--accent); }
+
+  .slide-area {
+    flex: 1; overflow-y: auto; padding: 40px 56px;
+    scroll-behavior: smooth;
+  }
+
+  /* Progress bar */
+  .progress-bar { height: 3px; background: var(--surface2); flex-shrink: 0; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.3s; }
+
+  /* Slide styles */
+  .slide { display: none; animation: fadeIn 0.3s ease; }
+  .slide.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .slide h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+  .slide h2 { font-size: 22px; font-weight: 600; margin: 28px 0 14px; color: var(--text); }
+  .slide h3 { font-size: 16px; font-weight: 600; margin: 20px 0 10px; color: var(--accent2); }
+  .slide p { font-size: 15px; line-height: 1.7; color: var(--text-dim); margin-bottom: 12px; }
+  .slide .subtitle { font-size: 16px; color: var(--text-dim); font-weight: 400; margin-bottom: 32px; }
+
+  /* Title slide */
+  .title-slide { display: flex; flex-direction: column; justify-content: center; min-height: 70vh; }
+  .title-slide h1 { font-size: 40px; font-weight: 900; line-height: 1.25; margin-bottom: 16px; }
+  .title-slide .accent { color: var(--accent); }
+  .title-slide .meta { display: flex; gap: 24px; margin-top: 32px; font-size: 14px; color: var(--text-dim); }
+  .title-slide .meta-item { display: flex; align-items: center; gap: 6px; }
+
+  /* Cards */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 16px 0; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .card-body { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+
+  /* Tables */
+  .tbl { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+  .tbl th { background: var(--surface2); padding: 10px 14px; text-align: left; font-weight: 600; font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+  .tbl td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text-dim); line-height: 1.5; }
+  .tbl tr:hover td { background: rgba(79,143,247,0.03); }
+
+  /* Tags */
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .tag-done { background: rgba(52,211,153,0.15); color: var(--green); }
+  .tag-plan { background: rgba(79,143,247,0.15); color: var(--accent); }
+  .tag-risk { background: rgba(248,113,113,0.15); color: var(--red); }
+  .tag-warn { background: rgba(251,191,36,0.15); color: var(--yellow); }
+  .tag-purple { background: rgba(167,139,250,0.15); color: var(--purple); }
+
+  /* KPI cards */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 16px 0; }
+  .kpi {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .kpi-label { font-size: 12px; color: var(--text-dim); font-weight: 500; }
+  .kpi-value { font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .kpi-sub { font-size: 12px; color: var(--text-dim); }
+  .kpi-bar { height: 4px; background: var(--surface2); border-radius: 2px; margin-top: 4px; }
+  .kpi-bar-fill { height: 100%; border-radius: 2px; }
+
+  /* Timeline */
+  .timeline { position: relative; margin: 24px 0; padding-left: 24px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .tl-item { position: relative; margin-bottom: 24px; }
+  .tl-item::before { content: ''; position: absolute; left: -20px; top: 6px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent); background: var(--bg); }
+  .tl-item.done::before { background: var(--green); border-color: var(--green); }
+  .tl-item.current::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px rgba(79,143,247,0.2); }
+  .tl-period { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); margin-bottom: 4px; }
+  .tl-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .tl-desc { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+
+  /* Comparison table */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .compare-col { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+  .compare-col.winner { border-color: var(--green); }
+  .compare-col h3 { margin-top: 0; }
+
+  /* Architecture diagram */
+  .arch-box {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 20px; margin: 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    line-height: 1.6; white-space: pre; overflow-x: auto; color: var(--text-dim);
+  }
+
+  /* Gantt-like chart */
+  .gantt { margin: 20px 0; }
+  .gantt-row { display: flex; align-items: center; margin-bottom: 6px; }
+  .gantt-label { width: 160px; font-size: 13px; font-weight: 500; flex-shrink: 0; }
+  .gantt-track { flex: 1; height: 28px; background: var(--surface); border-radius: 6px; position: relative; display: flex; align-items: center; }
+  .gantt-bar { position: absolute; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; }
+  .gantt-months { display: flex; margin-bottom: 8px; padding-left: 160px; }
+  .gantt-months span { flex: 1; text-align: center; font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+
+  /* Highlight box */
+  .highlight {
+    background: rgba(79,143,247,0.06); border-left: 3px solid var(--accent);
+    padding: 14px 18px; margin: 16px 0; border-radius: 0 8px 8px 0;
+    font-size: 14px; line-height: 1.6;
+  }
+
+  .warn-box {
+    background: rgba(251,191,36,0.06); border-left: 3px solid var(--yellow);
+    padding: 14px 18px; margin: 16px 0; border-radius: 0 8px 8px 0;
+    font-size: 14px; line-height: 1.6;
+  }
+
+  /* List */
+  .check-list { list-style: none; padding: 0; margin: 12px 0; }
+  .check-list li { padding: 6px 0; font-size: 14px; color: var(--text-dim); display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+  .check-list li::before { content: '→'; color: var(--accent); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  /* Expandable */
+  .expandable { margin: 12px 0; }
+  .expand-trigger {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    font-size: 14px; font-weight: 500; transition: all 0.15s;
+  }
+  .expand-trigger:hover { border-color: var(--accent); }
+  .expand-trigger .arrow { transition: transform 0.2s; }
+  .expand-trigger.open .arrow { transform: rotate(90deg); }
+  .expand-body { display: none; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; }
+  .expand-body.open { display: block; }
+
+  /* Keyboard hints */
+  .kbd-hint { position: fixed; bottom: 16px; right: 24px; font-size: 12px; color: var(--text-dim); opacity: 0.5; }
+  kbd { background: var(--surface2); padding: 2px 6px; border-radius: 3px; border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 900px) { .two-col, .compare, .card-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>목차</h2>
+      <button class="toggle-btn" onclick="toggleSidebar()"><span>◂</span></button>
+    </div>
+    <div class="sidebar-content" id="navList"></div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <span class="slide-counter" id="slideCounter">1 / 27</span>
+      <div class="topbar-controls">
+        <button onclick="prevSlide()">← 이전</button>
+        <button onclick="nextSlide()">다음 →</button>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="slide-area" id="slideArea">
+
+<!-- ==================== SLIDE 1: Title ==================== -->
+<div class="slide" data-title="타이틀" data-section="개관">
+  <div class="title-slide">
+    <div style="margin-bottom:8px"><span class="tag tag-purple">시선AI 내부 회의</span></div>
+    <h1><span class="accent">IntraGenX</span> 투트랙<br>개발 로드맵</h1>
+    <p class="subtitle">Phase 2 R&D 계획 및 트랙 2 코딩 에이전트 전략</p>
+    <div class="meta">
+      <div class="meta-item">📅 2026년 3월</div>
+      <div class="meta-item">🏢 시선AI (Secern AI)</div>
+      <div class="meta-item">⏱ ~45분</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 2: Agenda ==================== -->
+<div class="slide" data-title="어젠다" data-section="개관">
+  <h1>오늘의 어젠다</h1>
+  <p class="subtitle">시선AI가 주도하는 R&D와 트랙 2에 집중합니다</p>
+
+  <div class="card-grid" style="margin-top:24px">
+    <div class="card" style="border-left: 3px solid var(--text-dim)">
+      <div class="card-title">Part 1 — 전체 흐름 개관</div>
+      <div class="card-body">프로젝트 현황, Phase 1 성과, 현재 아키텍처<br><span style="color:var(--text-dim);font-size:12px">슬라이드 3~5 (15분)</span></div>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--accent)">
+      <div class="card-title">Part 2 — Phase 2: 시선AI 본격 투입</div>
+      <div class="card-body">모델/ML, 인프라, 백엔드/API, 품질, 인력 계획<br><span style="color:var(--text-dim);font-size:12px">슬라이드 6~11</span></div>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--green)">
+      <div class="card-title">Part 3 — 트랙 2: 코딩 에이전트 ★</div>
+      <div class="card-body">시장 분석, OpenCode 심화/포크 전략, vLLM·LiteLLM 심화, IDE 전략<br><span style="color:var(--text-dim);font-size:12px">슬라이드 12~23</span></div>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--orange)">
+      <div class="card-title">Part 4 — 종합 및 논의</div>
+      <div class="card-body">통합 타임라인, 리스크, 예산, 논의 포인트<br><span style="color:var(--text-dim);font-size:12px">슬라이드 24~27</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 3: Project Overview ==================== -->
+<div class="slide" data-title="프로젝트 전체 현황" data-section="개관">
+  <h1>프로젝트 전체 현황</h1>
+  <p class="subtitle">투트랙 전략 + 역할 분담 구조</p>
+
+  <div class="compare" style="margin-top:20px">
+    <div class="compare-col">
+      <h3 style="color:var(--accent)">트랙 1 — IntraGenX</h3>
+      <p style="font-size:14px;color:var(--text-dim);margin-top:8px"><strong>Spec-Driven 일괄 코드 생성</strong></p>
+      <ul class="check-list">
+        <li>Top-Down: 설계 문서 → 코드 일괄 생성</li>
+        <li>SI 프로젝트, 금융/공공 시장</li>
+        <li>6단계 결정론적 파이프라인</li>
+        <li>대보DX 주도 → 시선AI R&D 지원</li>
+      </ul>
+    </div>
+    <div class="compare-col">
+      <h3 style="color:var(--green)">트랙 2 — 코딩 에이전트</h3>
+      <p style="font-size:14px;color:var(--text-dim);margin-top:8px"><strong>Agent-First 자율형 CLI 에이전트</strong></p>
+      <ul class="check-list">
+        <li>Bottom-Up: 개발자 ↔ 에이전트 양방향</li>
+        <li>OpenCode 기반, 터미널/IDE 통합</li>
+        <li>Plan/Build/Test 에이전트 분업</li>
+        <li><strong>시선AI 주도</strong>, 2026년 4월 착수</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>역할 분담</h2>
+  <table class="tbl">
+    <tr><th>구분</th><th>대보DX (문기봉 상무)</th><th>시선AI (서브PO: 주용수)</th></tr>
+    <tr><td><strong>트랙 1</strong></td><td>제품 개발, PoC 시연, 고객 대응</td><td>sLLM 인프라, 모델 최적화, PM</td></tr>
+    <tr><td><strong>트랙 2</strong></td><td>sLLM 인프라 공유, UASL 연동 지원</td><td><span class="tag tag-green" style="background:rgba(52,211,153,0.15);color:var(--green)">주도</span> OpenCode 포크, 에이전트 개발</td></tr>
+  </table>
+
+  <div class="highlight">
+    <strong>대외 브랜딩</strong>: IntraGenX — 시선AI(The Brain: LLM 개발) + 대보DX(The Body: 애플리케이션 & 어플라이언스) 합작 브랜드. 소개서 Ver.1.0 (27슬라이드) 제작 완료.
+  </div>
+</div>
+
+<!-- ==================== SLIDE 4: Phase 1 Summary ==================== -->
+<div class="slide" data-title="Phase 1 성과 요약" data-section="개관">
+  <h1>Phase 1 성과 요약</h1>
+  <p class="subtitle">당초 Q2 예정 → 2월 초 대부분 조기 완료 (대보DX 주도, 시선AI 0.6 FTE 서포트)</p>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">MCP 서버</div>
+      <div class="kpi-value" style="color:var(--green)">6종</div>
+      <div class="kpi-sub">xframe5(2) + vue + spring + react + websquare</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">프레임워크</div>
+      <div class="kpi-value" style="color:var(--green)">5개</div>
+      <div class="kpi-sub">xFrame5, WebSquare, Vue3, React 19, Spring Boot</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">GPT-OSS 20B 품질</div>
+      <div class="kpi-value" style="color:var(--green)">94%</div>
+      <div class="kpi-sub">xFrame5 코드 생성 기준</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">MCP 전환 시점</div>
+      <div class="kpi-value" style="color:var(--accent)">1/27</div>
+      <div class="kpi-sub">당초 Q2 → 2개월 조기 완료</div>
+    </div>
+  </div>
+
+  <h2>주요 달성 타임라인</h2>
+  <table class="tbl">
+    <tr><th>일자</th><th>마일스톤</th><th>상태</th></tr>
+    <tr><td>1/27</td><td>MCP 아키텍처 전환 (당초 Q2)</td><td><span class="tag tag-done">✅ 조기 완료</span></td></tr>
+    <tr><td>2/02</td><td>Coco Studio 웹 UI 런칭 (계획 외 추가)</td><td><span class="tag tag-done">✅ 추가 구현</span></td></tr>
+    <tr><td>2/04</td><td>UASL/SUIS 스펙 v1.1 (현재 v3)</td><td><span class="tag tag-done">✅ 추가 구현</span></td></tr>
+    <tr><td>2/11</td><td>신세계 I&C 솔루션 데모</td><td><span class="tag tag-done">✅ 완료</span></td></tr>
+    <tr><td>3월</td><td>React, Spring, WebSquare MCP 확장</td><td><span class="tag tag-done">✅ 완료</span></td></tr>
+    <tr><td>3월</td><td>Demo/Dev 서버 분리, Playground 구축</td><td><span class="tag tag-done">✅ 완료</span></td></tr>
+  </table>
+
+  <div class="highlight">
+    <strong>시선AI Phase 1 기여 (0.6 FTE)</strong>: GPU 인프라 셋업, vLLM 배포 지원, 모델 선정 (GPT-OSS 20B 확정), 기술 자문
+  </div>
+</div>
+
+<!-- ==================== SLIDE 5: Architecture ==================== -->
+<div class="slide" data-title="현재 기술 아키텍처" data-section="개관">
+  <h1>현재 기술 아키텍처</h1>
+  <p class="subtitle">Coco Engine + MCP 서버 6종 + 멀티 모델 라우팅</p>
+
+  <div class="arch-box">┌──────────────────────────────────────────────────┐
+│              Coco Engine (Orchestration)          │
+├──────────────────────────────────────────────────┤
+│  의도 분석 → UASL/SUIS 스펙 생성 → MCP 서버 호출  │
+│  Output Parsing → Symbol Linking → Graph Valid.  │
+└────────────┬──────────────┬──────────────┬───────┘
+             ↓              ↓              ↓
+   ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+   │  xframe5-    │ │  xframe5-    │ │    vue-      │
+   │  compiler    │ │  validator   │ │  compiler    │
+   │  ✅ 운영 중   │ │  ✅ 운영 중   │ │  ✅ 운영 중   │
+   └──────────────┘ └──────────────┘ └──────────────┘
+   ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+   │   spring-    │ │   react-     │ │  websquare-  │
+   │  compiler    │ │  compiler    │ │  compiler    │
+   │  ✅ 운영 중   │ │  ✅ 운영 중   │ │  ✅ 운영 중   │
+   └──────────────┘ └──────────────┘ └──────────────┘</div>
+
+  <h2>6단계 결정론적 파이프라인 (핵심 USP)</h2>
+  <div class="card-grid" style="grid-template-columns: repeat(6, 1fr);">
+    <div class="card" style="padding:12px;text-align:center"><div style="font-size:20px;margin-bottom:4px">1️⃣</div><div style="font-size:11px;font-weight:600">입력 정규화</div></div>
+    <div class="card" style="padding:12px;text-align:center"><div style="font-size:20px;margin-bottom:4px">2️⃣</div><div style="font-size:11px;font-weight:600">컨텍스트 주입</div></div>
+    <div class="card" style="padding:12px;text-align:center"><div style="font-size:20px;margin-bottom:4px">3️⃣</div><div style="font-size:11px;font-weight:600">LLM 생성</div></div>
+    <div class="card" style="padding:12px;text-align:center"><div style="font-size:20px;margin-bottom:4px">4️⃣</div><div style="font-size:11px;font-weight:600">구문 검증</div></div>
+    <div class="card" style="padding:12px;text-align:center"><div style="font-size:20px;margin-bottom:4px">5️⃣</div><div style="font-size:11px;font-weight:600">표준 적용</div></div>
+    <div class="card" style="padding:12px;text-align:center"><div style="font-size:20px;margin-bottom:4px">6️⃣</div><div style="font-size:11px;font-weight:600">감사 로깅</div></div>
+  </div>
+  <p style="text-align:center;margin-top:8px;font-size:13px;color:var(--accent)">동일 입력 → 동일 출력: Cline Enterprise와의 핵심 차별점</p>
+
+  <h2>멀티 모델 라우팅</h2>
+  <table class="tbl">
+    <tr><th>모델</th><th>크기</th><th>용도</th><th>품질</th></tr>
+    <tr><td><strong>GPT-OSS 20B</strong></td><td>20B / 48GB</td><td>코드 생성 (주력)</td><td><span class="tag tag-done">94%</span></td></tr>
+    <tr><td>Qwen2.5-Coder-32B</td><td>32B / 64GB</td><td>코드 생성 (대안)</td><td><span class="tag tag-warn">54%</span></td></tr>
+    <tr><td>Qwen3-4B (LoRA)</td><td>4B / 8GB</td><td>UASL 변환 실험</td><td><span class="tag tag-warn">L3 26.7%</span></td></tr>
+  </table>
+</div>
+
+<!-- ==================== SLIDE 6: Phase 2 Overview ==================== -->
+<div class="slide" data-title="Phase 2 개요" data-section="Phase 2">
+  <h1>Phase 2 개요 (4~6월)</h1>
+  <p class="subtitle">시선AI 본격 투입 — 0.6 FTE → 3.6 FTE 전환</p>
+
+  <div class="highlight" style="margin-bottom:24px">
+    <strong>전환점:</strong> Phase 1에서 MCP 분리, 멀티 프레임워크가 조기 달성되었으므로 Phase 2는 <strong>모델 품질 개선 + 성능 최적화</strong>에 집중합니다.
+  </div>
+
+  <div class="card-grid">
+    <div class="card" style="border-top: 3px solid var(--purple)">
+      <div class="card-title">🧠 A. 모델/ML</div>
+      <div class="card-body">Qwen32B 품질 54%→80%+<br>7B QA 전용 85%+<br>멀티 모델 라우팅 고도화<br>Template 통합</div>
+    </div>
+    <div class="card" style="border-top: 3px solid var(--accent)">
+      <div class="card-title">⚙️ B. 인프라/배포</div>
+      <div class="card-body">동시 10명 65초→40초<br>모니터링 시스템 구축<br>고가용성 (P2, 12월)</div>
+    </div>
+    <div class="card" style="border-top: 3px solid var(--green)">
+      <div class="card-title">🔧 C. 백엔드/API</div>
+      <div class="card-body">API 고도화 (배치/비동기)<br>Spring MCP 서버 설계</div>
+    </div>
+    <div class="card" style="border-top: 3px solid var(--orange)">
+      <div class="card-title">🧪 D. 품질/테스트</div>
+      <div class="card-body">벤치마크 자동화 (P0)<br>부하 테스트 자동화<br>E2E 테스트</div>
+    </div>
+  </div>
+
+  <h2>Phase 2 검증 기준</h2>
+  <table class="tbl">
+    <tr><th>지표</th><th>현재</th><th>목표 (6월)</th></tr>
+    <tr><td>Qwen32B 코드 생성 품질</td><td><span class="tag tag-warn">54%</span></td><td><span class="tag tag-plan">80%+</span></td></tr>
+    <tr><td>7B QA 모델 품질</td><td>테스트 중</td><td><span class="tag tag-plan">85%+</span></td></tr>
+    <tr><td>동시 10명 응답 시간</td><td><span class="tag tag-warn">~65초</span></td><td><span class="tag tag-plan">40초 이내</span></td></tr>
+    <tr><td>Spring MCP 코드 생성</td><td>—</td><td><span class="tag tag-plan">75%+</span></td></tr>
+  </table>
+</div>
+
+<!-- ==================== SLIDE 7: Model/ML ==================== -->
+<div class="slide" data-title="모델/ML 영역" data-section="Phase 2">
+  <h1>A. 모델/ML 영역</h1>
+  <p class="subtitle">모델 품질 개선이 Phase 2의 최우선 과제</p>
+
+  <table class="tbl">
+    <tr><th>항목</th><th>범위</th><th>우선순위</th><th>목표</th></tr>
+    <tr><td><strong>A1. 모델 품질 개선</strong></td><td>Qwen32B 프롬프트/파인튜닝 최적화</td><td><span class="tag tag-risk">P0</span></td><td>54% → 80%+</td></tr>
+    <tr><td><strong>A2. 경량 모델 최적화</strong></td><td>7B 모델로 QA 전용 모델 구축</td><td><span class="tag tag-warn">P1</span></td><td>QA 85%+</td></tr>
+    <tr><td><strong>A3. 멀티 모델 라우팅</strong></td><td>작업별 자동 모델 선택 고도화</td><td><span class="tag tag-warn">P1</span></td><td>6월</td></tr>
+    <tr><td><strong>A4. Template 통합</strong></td><td>모델별 다른 Template 문제 해결</td><td><span class="tag tag-warn">P1</span></td><td>6월</td></tr>
+  </table>
+
+  <h2>4B LoRA 파인튜닝 실험 결과 리뷰</h2>
+  <p>Qwen3-4B-Instruct 기반 — 자연어 → UASL YAML 자동 변환 목적 (2/13 황영준M)</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title"><span class="tag tag-done">달성</span> Model1: 자연어 → Entity Spec</div>
+      <div class="card-body">L1 100%, L2 100% — 목표 초과</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="tag tag-done">달성</span> Model2: L1/L2</div>
+      <div class="card-body">L1 93.3%, L2 93.3% — 목표 달성</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="tag tag-risk">미달</span> Model2: L3 교차참조</div>
+      <div class="card-body">26.7% (목표 50%) — IAS-SUIS intent 불일치 56%가 주요 원인</div>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>L3 미달 원인:</strong> 4B 모델이 긴 출력(3,000~5,000 토큰) 생성 시 IAS-SUIS intent 간 일관성 유지 실패<br>
+    <strong>향후:</strong> 교차참조 패턴 강조 데이터 증강 + RAG 기반 Base 모델 비교 검증 예정
+  </div>
+</div>
+
+<!-- ==================== SLIDE 8: Infra ==================== -->
+<div class="slide" data-title="인프라/배포 영역" data-section="Phase 2">
+  <h1>B. 인프라/배포 영역</h1>
+  <p class="subtitle">성능 최적화 + 모니터링 + 안정성</p>
+
+  <table class="tbl">
+    <tr><th>항목</th><th>범위</th><th>우선순위</th><th>산출물</th></tr>
+    <tr><td><strong>B1. 동시 사용자 최적화</strong></td><td>10명 시 65초 → 40초 이내</td><td><span class="tag tag-warn">P1</span></td><td>KV Cache 최적화</td></tr>
+    <tr><td><strong>B2. 모니터링 시스템</strong></td><td>응답 시간, 에러율, GPU 사용률</td><td><span class="tag tag-warn">P1</span></td><td>대시보드</td></tr>
+    <tr><td><strong>B3. 고가용성 구성</strong></td><td>장애 복구, 로드밸런싱</td><td><span class="tag tag-plan">P2 (12월)</span></td><td>HA 구성</td></tr>
+  </table>
+
+  <h2>현재 서버 인프라 현황</h2>
+  <table class="tbl">
+    <tr><th>환경</th><th>Studio 포트</th><th>Engine 포트</th><th>비고</th></tr>
+    <tr><td><strong>Demo</strong></td><td>5174</td><td>3100</td><td>고객 데모 전용</td></tr>
+    <tr><td><strong>Dev</strong></td><td>5173</td><td>3000</td><td>개발용 (기존)</td></tr>
+    <tr><td><strong>Playground</strong></td><td>4000+ID</td><td>동적</td><td>Docker 기반, FE-BE 연동</td></tr>
+  </table>
+
+  <div class="highlight">
+    <strong>Playground 진화:</strong> 기존 화면별 미리보기 → 시스템 단위 전체 애플리케이션 Docker 배포. 생성된 REST API 서버(백엔드)와 프론트엔드 연동 실행 가능.
+  </div>
+
+  <h2>하드웨어 요구사항</h2>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">GPU 메모리</div>
+      <div class="card-body">최소 48GB → 권장 <strong>64GB+</strong><br>Qwen32B 필수, A100/H100 권장</div>
+    </div>
+    <div class="card">
+      <div class="card-title">시스템 메모리</div>
+      <div class="card-body">최소 128GB → 권장 256GB<br>모델 로딩 + 추론 버퍼</div>
+    </div>
+    <div class="card">
+      <div class="card-title">vLLM</div>
+      <div class="card-body">≥ 0.6.0 필수<br>tool calling 지원 필요</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 9: Backend + QA ==================== -->
+<div class="slide" data-title="백엔드/API + 품질" data-section="Phase 2">
+  <h1>C. 백엔드/API + D. 품질/테스트</h1>
+  <p class="subtitle">API 고도화 및 자동화된 품질 검증 체계 구축</p>
+
+  <div class="two-col">
+    <div>
+      <h2>C. 백엔드/API</h2>
+      <table class="tbl">
+        <tr><th>항목</th><th>내용</th><th>우선순위</th></tr>
+        <tr><td><strong>C2. API 고도화</strong></td><td>배치 처리, 비동기 지원</td><td><span class="tag tag-warn">P1</span></td></tr>
+        <tr><td>Spring MCP 설계</td><td>4월 초 시작</td><td><span class="tag tag-warn">P1</span></td></tr>
+      </table>
+
+      <h3>현재 API 엔드포인트</h3>
+      <div class="arch-box" style="font-size:12px">POST /agent/agentic/v2/stream  # 코드 생성
+POST /agent/review             # 코드 리뷰
+POST /agent/qa                 # Q&A
+GET  /agent/models             # 모델 목록
+GET  /_health                  # 헬스체크</div>
+    </div>
+    <div>
+      <h2>D. 품질/테스트</h2>
+      <table class="tbl">
+        <tr><th>항목</th><th>내용</th><th>우선순위</th></tr>
+        <tr><td><strong>D1. 벤치마크 자동화</strong></td><td>자동 품질 측정 시스템</td><td><span class="tag tag-risk">P0</span></td></tr>
+        <tr><td><strong>D2. 부하 테스트</strong></td><td>RPS, 응답 시간 자동 측정</td><td><span class="tag tag-warn">P1</span></td></tr>
+        <tr><td><strong>D3. E2E 테스트</strong></td><td>전체 파이프라인 검증</td><td><span class="tag tag-warn">P1</span></td></tr>
+      </table>
+
+      <div class="highlight" style="margin-top:16px">
+        <strong>CGF-B 전략 채택:</strong><br>
+        LLM은 스펙 생성만 담당, 코드는 MCP 서버가 프로그램으로 생성 → 모델 의존도 대폭 감소, CGF-A 대비 <strong>65% 속도 개선</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 10: Staffing ==================== -->
+<div class="slide" data-title="인력 투입 계획" data-section="Phase 2">
+  <h1>인력 투입 계획</h1>
+  <p class="subtitle">Phase 2부터 시선AI 본격 전환</p>
+
+  <h2>Phase별 FTE 변화</h2>
+  <div class="kpi-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="kpi">
+      <div class="kpi-label">Phase 1 (1~3월)</div>
+      <div class="kpi-value">0.6</div>
+      <div class="kpi-sub">서포트 (인프라 + vLLM)</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:17%;background:var(--text-dim)"></div></div>
+    </div>
+    <div class="kpi" style="border-color:var(--accent)">
+      <div class="kpi-label">Phase 2 (4~6월)</div>
+      <div class="kpi-value" style="color:var(--accent)">3.6</div>
+      <div class="kpi-sub">본격 개발 ← 현재</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%;background:var(--accent)"></div></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Phase 3 (7~12월)</div>
+      <div class="kpi-value">2.7</div>
+      <div class="kpi-sub">상용화</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:75%;background:var(--green)"></div></div>
+    </div>
+  </div>
+
+  <h2>Phase 2 역할별 상세</h2>
+  <table class="tbl">
+    <tr><th>역할</th><th>인원</th><th>투입률</th><th>주요 업무</th></tr>
+    <tr><td>Tech Lead (서브PO)</td><td>1명</td><td>50%</td><td>아키텍처 설계, 프로젝트 관리</td></tr>
+    <tr><td><strong>ML Engineer</strong></td><td>1명</td><td><strong>100%</strong></td><td>모델 품질 개선, 경량 모델</td></tr>
+    <tr><td>MLOps/Infra</td><td>1명</td><td>60%</td><td>성능 최적화, 모니터링</td></tr>
+    <tr><td><strong>Backend Developer</strong></td><td>1명</td><td><strong>100%</strong></td><td>API 고도화, Spring MCP</td></tr>
+    <tr><td>QA Engineer</td><td>1명</td><td>50%</td><td>벤치마크, 부하 테스트</td></tr>
+    <tr><td colspan="2" style="font-weight:700">합계: 5명</td><td style="font-weight:700">3.6 FTE</td><td></td></tr>
+  </table>
+</div>
+
+<!-- ==================== SLIDE 11: Phase 2 KPI ==================== -->
+<div class="slide" data-title="Phase 2 목표 지표" data-section="Phase 2">
+  <h1>Phase 2 목표 지표</h1>
+  <p class="subtitle">6월 말까지 달성해야 하는 핵심 KPI</p>
+
+  <div class="kpi-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="kpi">
+      <div class="kpi-label">표준 위반율</div>
+      <div class="kpi-value" style="color:var(--green)">&lt; 5%</div>
+      <div class="kpi-sub">파이프라인 통과율 기준</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">외부 네트워크 호출</div>
+      <div class="kpi-value" style="color:var(--green)">0건 ✅</div>
+      <div class="kpi-sub">설계 원칙 유지 중</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">프레임워크 커버리지</div>
+      <div class="kpi-value" style="color:var(--green)">5개 ✅</div>
+      <div class="kpi-sub">xFrame5, WS, Vue3, React, Spring</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Qwen32B 품질</div>
+      <div class="kpi-value" style="color:var(--orange)">54%</div>
+      <div class="kpi-sub">목표: 80%+</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:54%;background:var(--orange)"></div></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">동시 사용자 응답</div>
+      <div class="kpi-value" style="color:var(--orange)">65초</div>
+      <div class="kpi-sub">목표: 40초 이내</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:62%;background:var(--orange)"></div></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">CGF-B 속도 개선</div>
+      <div class="kpi-value" style="color:var(--green)">65%</div>
+      <div class="kpi-sub">CGF-A 대비 달성</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:65%;background:var(--green)"></div></div>
+    </div>
+  </div>
+
+  <h2>Phase 2 마일스톤 일정</h2>
+  <table class="tbl">
+    <tr><th>기간</th><th>마일스톤</th><th>담당</th></tr>
+    <tr><td>4월 초</td><td>Spring MCP 서버 설계</td><td>Backend + Tech Lead</td></tr>
+    <tr><td>4월 중~5월 초</td><td>Spring MCP 서버 구현</td><td>Backend (100%)</td></tr>
+    <tr><td>5월 중</td><td>모델 품질 개선 (80%+)</td><td>ML (100%)</td></tr>
+    <tr><td>5월 말~6월 초</td><td>동시 사용자 최적화 (40초)</td><td>MLOps (60%)</td></tr>
+    <tr><td>6월 중~말</td><td>경량 모델 QA 전용 (85%+)</td><td>ML (100%)</td></tr>
+  </table>
+</div>
+
+<!-- ==================== SLIDE 12: Why Track 2 ==================== -->
+<div class="slide" data-title="왜 트랙 2가 필요한가" data-section="트랙 2">
+  <h1>왜 트랙 2가 필요한가</h1>
+  <p class="subtitle">시장 패러다임 변화와 고객 반응의 Gap</p>
+
+  <div class="compare">
+    <div class="compare-col">
+      <h3 style="color:var(--text-dim)">IDE-First (현재 시장 주류)</h3>
+      <p style="font-size:13px;color:var(--text-dim);margin-top:8px">Cursor, GitHub Copilot, Cline</p>
+      <ul class="check-list">
+        <li>개발자가 주도, AI는 라인 단위 자동 완성</li>
+        <li>인라인 Diff 제안, 시각적 직관성</li>
+        <li>미시적 코드 수정에 최적화</li>
+      </ul>
+    </div>
+    <div class="compare-col winner">
+      <h3 style="color:var(--green)">Agent-First (차세대)</h3>
+      <p style="font-size:13px;color:var(--text-dim);margin-top:8px">Claude Code, OpenCode → <strong>시선AI 목표</strong></p>
+      <ul class="check-list">
+        <li>자연어로 목표 지시 → AI가 자율적으로 실행</li>
+        <li>코드베이스 읽기, 계획 수립, 터미널 실행</li>
+        <li>대규모 리팩토링, 거시적 작업에 최적</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <strong>고객 반응의 Gap:</strong> IntraGenX 1.0은 설계 문서 → 코드 일괄 생성에 효과적이나, 고객들은 이미 Claude Code/Cursor급의 <strong>양방향 에이전틱 파트너</strong>에 익숙해져 있음. 단방향 엔진만으로는 시장 기대에 미달.
+  </div>
+
+  <h2>6대 USP는 유지하면서 에이전트 경험을 추가</h2>
+  <p>트랙 1의 ①결정론적 출력 ②표준 강제 ③완전한 온프레미스 ④Spec-Driven ⑤감사 추적 ⑥LLM 추상화는 그대로 유지하고, 트랙 2에서 개발자가 체감하는 에이전트 경험을 추가합니다.</p>
+</div>
+
+<!-- ==================== SLIDE 13: Competitive ==================== -->
+<div class="slide" data-title="경쟁 솔루션 분석" data-section="트랙 2">
+  <h1>경쟁 솔루션 분석</h1>
+  <p class="subtitle">온프레미스 / 에어갭 타겟 솔루션</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">Tabnine</div>
+      <div class="card-body">
+        <span class="tag tag-done">강점</span> VPC/온프레미스 배포, 프라이버시 최우선<br>
+        <span class="tag tag-risk">한계</span> IDE 자동 완성 주력, 다중 파일 수정 한계
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sourcegraph Cody</div>
+      <div class="card-body">
+        <span class="tag tag-done">강점</span> 대규모 멀티 리포 문맥 파악, 모델 유연성<br>
+        <span class="tag tag-risk">한계</span> 대규모 인프라 비용, 초기 도입 복잡성
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Continue.dev</div>
+      <div class="card-body">
+        <span class="tag tag-done">강점</span> 오픈소스, Ollama 로컬 LLM 연결, 무료<br>
+        <span class="tag tag-risk">한계</span> 높은 기술 진입장벽, 엔터프라이즈 거버넌스 없음
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Cline (VS Code Ext.)</div>
+      <div class="card-body">
+        <span class="tag tag-done">강점</span> 탁월한 IDE UX, Human-in-the-Loop, Apache 2.0<br>
+        <span class="tag tag-risk">한계</span> VS Code 강결합, 독립 CLI/웹 확장 구조적 제약
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>시선AI 포지셔닝:</strong> Tabnine의 에어갭 안정성 + Cody의 문맥 이해 + Continue의 모델 독립성을 결합하되, <strong>터미널 기반 자율형 에이전트(Agent-First)</strong>로 통합하는 차별화된 아키텍처
+  </div>
+</div>
+
+<!-- ==================== SLIDE 14: OpenCode vs Cline ==================== -->
+<div class="slide" data-title="OpenCode 선택 근거" data-section="트랙 2">
+  <h1>OpenCode 선택 근거</h1>
+  <p class="subtitle">Cline vs OpenCode — 시선AI 목표 기준 비교</p>
+
+  <table class="tbl">
+    <tr><th style="width:18%">비교 항목</th><th style="width:30%">Cline (VS Code Ext.)</th><th style="width:30%">OpenCode (TS/Bun CLI)</th><th style="width:22%">판정</th></tr>
+    <tr><td><strong>아키텍처</strong></td><td>VS Code 내부 확장, IDE 종속</td><td>Hono API 기반 클라이언트/서버 분리</td><td style="color:var(--green)"><strong>OpenCode ✓</strong></td></tr>
+    <tr><td><strong>sLLM 통합</strong></td><td>IDE Settings.json 통한 설정</td><td>opencode.json + Vercel AI SDK 네이티브 주입</td><td style="color:var(--green)"><strong>OpenCode ✓</strong></td></tr>
+    <tr><td><strong>SI 워크플로우</strong></td><td>매 단계 GUI 승인 (Human-in-loop)</td><td>Plan/Build 에이전트 물리적 분리</td><td style="color:var(--green)"><strong>OpenCode ✓</strong></td></tr>
+    <tr><td><strong>UX</strong></td><td>IDE Diff 패널, 시각적 직관성 탁월</td><td>TUI 중심, 시각적 피드백 부족</td><td style="color:var(--accent)"><strong>Cline ✓</strong></td></tr>
+    <tr><td><strong>라이선스</strong></td><td>Apache 2.0</td><td>MIT</td><td>무승부</td></tr>
+  </table>
+
+  <div class="highlight" style="border-left-color: var(--green)">
+    <strong>결론:</strong> "독립적인 CLI SW" + "서버형 코딩 에이전트"를 구축하려면 클라이언트-서버 구조로 완벽히 모듈화된 <strong>OpenCode가 장기 확장성에서 압도적으로 유리</strong>. 4단계에서 Cline의 IDE UX를 VS Code 플러그인으로 별도 개발하여 흡수하는 하이브리드 전략.
+  </div>
+
+  <h3>OpenCode 핵심 기술 특성</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">클라이언트/서버 분리</div>
+      <div class="card-body">Hono HTTP API 백엔드 + UI 클라이언트(TUI). 데스크톱 앱, 웹 대시보드로 무한 확장 가능</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Vercel AI SDK</div>
+      <div class="card-body">@ai-sdk/openai-compatible로 opencode.json 수정만으로 자체 sLLM 커스텀 프로바이더 주입</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Agent Teams</div>
+      <div class="card-body">서브 에이전트 P2P 메시징, Plan/Build 모드 분리 → SI 하향식 워크플로우에 부합</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 15: OpenCode Deep Dive ==================== -->
+<div class="slide" data-title="OpenCode 내부 아키텍처 심화" data-section="트랙 2">
+  <h1>OpenCode 내부 아키텍처 심화</h1>
+  <p class="subtitle">anomalyco/opencode — TypeScript + Bun + Turborepo 모노레포</p>
+
+  <div class="arch-box" style="font-size:12px">┌─────────────────────────────────────────────────────────────┐
+│                      OpenCode Monorepo                       │
+├──────────────────────┬──────────────────────────────────────┤
+│   packages/core/     │  Agent Engine (핵심 추론 루프)         │
+│   ├── agent-teams/   │  Plan/Build/Test 에이전트 오케스트레이션│
+│   ├── providers/     │  Vercel AI SDK 기반 모델 추상화         │
+│   └── tools/         │  파일 읽기/쓰기, 터미널 실행, LSP 연동  │
+├──────────────────────┼──────────────────────────────────────┤
+│   packages/server/   │  Hono HTTP API 백엔드                  │
+│   ├── routes/        │  /chat, /tools, /agents 엔드포인트     │
+│   ├── middleware/     │  Auth, CORS, Rate Limiting             │
+│   └── events/        │  SSE 기반 실시간 스트리밍               │
+├──────────────────────┼──────────────────────────────────────┤
+│   packages/tui/      │  Terminal UI 클라이언트 (Ink/React)     │
+│   packages/web/      │  Web Dashboard (향후 확장 가능)         │
+│   packages/shared/   │  공통 타입, 유틸리티                    │
+└──────────────────────┴──────────────────────────────────────┘</div>
+
+  <h2>핵심 아키텍처 특성</h2>
+  <div class="card-grid">
+    <div class="card" style="border-top:3px solid var(--accent)">
+      <div class="card-title">🔌 Provider 추상화</div>
+      <div class="card-body">
+        <code>@ai-sdk/openai-compatible</code> 어댑터<br>
+        <code>opencode.json</code> 설정만으로 자체 sLLM 연동<br>
+        <span style="font-size:12px;color:var(--text-dim)">vLLM endpoint → custom provider로 등록</span>
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--green)">
+      <div class="card-title">🤖 Agent Teams (P2P)</div>
+      <div class="card-body">
+        이벤트 기반 서브 에이전트 간 메시징<br>
+        Plan → Build → Test 단계별 분업<br>
+        <span style="font-size:12px;color:var(--text-dim)">SI 하향식 워크플로우에 완벽 부합</span>
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--orange)">
+      <div class="card-title">🛠️ Tool 시스템</div>
+      <div class="card-body">
+        파일 CRUD, 터미널 실행, LSP 통합<br>
+        MCP 프로토콜로 외부 도구 연동<br>
+        <span style="font-size:12px;color:var(--text-dim)">tool.execute.before/after 훅 가능</span>
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--purple)">
+      <div class="card-title">🔗 Hono HTTP API</div>
+      <div class="card-body">
+        REST API로 에이전트 엔진 노출<br>
+        TUI 외에도 웹/데스크톱/IDE 클라이언트 연결 가능<br>
+        <span style="font-size:12px;color:var(--text-dim)">시선AI 자체 UI 구축의 핵심 기반</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="expandable">
+    <div class="expand-trigger" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+      💬 토론 포인트: OpenCode 아키텍처 관련
+      <span class="arrow">▶</span>
+    </div>
+    <div class="expand-body">
+      <ul class="check-list">
+        <li><strong>Bun 런타임 의존성:</strong> 고객 에어갭 환경에서 Bun 설치/배포가 가능한가? Node.js 폴백이 필요한가?</li>
+        <li><strong>Agent Teams 커스터마이징:</strong> 기존 Plan/Build 외에 시선AI 전용 에이전트(예: UASL 분석 에이전트)를 추가하는 구조가 가능한가?</li>
+        <li><strong>Vercel AI SDK 버전 관리:</strong> 오픈소스 SDK 업데이트 시 자체 Provider 코드 호환성 유지 전략은?</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 16: OpenCode Fork Strategy ==================== -->
+<div class="slide" data-title="OpenCode 포크 전략" data-section="트랙 2">
+  <h1>OpenCode 포크 전략 및 커스터마이징</h1>
+  <p class="subtitle">코어 최소 수정 원칙 — Provider/Plugin 레이어로 분리</p>
+
+  <h2>포크 전략: 3계층 분리</h2>
+  <div class="arch-box" style="font-size:12px">┌─────────────────────────────────────────────────────────┐
+│  Layer 3: 시선AI 전용 패키지 (자체 개발)                  │
+│  ┌────────────┐ ┌────────────┐ ┌──────────────────────┐ │
+│  │ coco-agent │ │ coco-tools │ │ coco-security-hooks  │ │
+│  │ (브랜딩/UX) │ │ (UASL 분석) │ │ (RBAC/감사/SAST)     │ │
+│  └────────────┘ └────────────┘ └──────────────────────┘ │
+├─────────────────────────────────────────────────────────┤
+│  Layer 2: Provider/Plugin 설정 (설정 파일 수준 변경)      │
+│  ┌─────────────────────┐ ┌────────────────────────────┐ │
+│  │ opencode.json       │ │ MCP 서버 설정 (Jira 등)     │ │
+│  │ (sLLM provider 등록) │ │ (사내 인프라 연동)           │ │
+│  └─────────────────────┘ └────────────────────────────┘ │
+├─────────────────────────────────────────────────────────┤
+│  Layer 1: OpenCode 코어 (최소 수정, 업스트림 추적)        │
+│  packages/core, packages/server, packages/tui           │
+│  → git remote add upstream anomalyco/opencode            │
+│  → 주기적 rebase/cherry-pick으로 최신 유지               │
+└─────────────────────────────────────────────────────────┘</div>
+
+  <h2>커스터마이징 로드맵</h2>
+  <table class="tbl">
+    <tr><th>단계</th><th>커스터마이징 범위</th><th>수정 계층</th><th>업스트림 영향</th></tr>
+    <tr><td><strong>1단계</strong><br><span style="font-size:11px">4~5월</span></td><td>opencode.json에 sLLM Provider 등록<br>시스템 프롬프트 튜닝</td><td><span class="tag tag-done">Layer 2</span></td><td>없음</td></tr>
+    <tr><td><strong>2단계</strong><br><span style="font-size:11px">6~7월</span></td><td>coco-tools 패키지: UASL 분석 에이전트<br>사내 MCP 서버 번들</td><td><span class="tag tag-plan">Layer 3</span></td><td>없음</td></tr>
+    <tr><td><strong>3단계</strong><br><span style="font-size:11px">8~9월</span></td><td>coco-security-hooks: RBAC, SAST 파이프라인<br>tool.execute 훅 보안 검증</td><td><span class="tag tag-plan">Layer 3</span></td><td>없음</td></tr>
+    <tr><td><strong>4단계</strong><br><span style="font-size:11px">10~11월</span></td><td>coco-agent: 자체 CLI 브랜딩/UX<br>VS Code/IntelliJ 플러그인 클라이언트</td><td><span class="tag tag-purple">Layer 2+3</span></td><td>최소</td></tr>
+  </table>
+
+  <div class="compare" style="margin-top:20px">
+    <div class="compare-col">
+      <h3 style="color:var(--green)">업스트림 추적 전략</h3>
+      <ul class="check-list">
+        <li><code>git remote add upstream</code>으로 원본 유지</li>
+        <li>Layer 1은 최소 수정 → rebase 충돌 최소화</li>
+        <li>주요 릴리스 시 cherry-pick 방식 적용</li>
+        <li>자동 CI에서 업스트림 변경 감지 알림</li>
+      </ul>
+    </div>
+    <div class="compare-col">
+      <h3 style="color:var(--orange)">리스크 관리</h3>
+      <ul class="check-list">
+        <li>업스트림 breaking change → Layer 2/3에서 흡수</li>
+        <li>코어 패치가 불가피할 경우 PR 제출 검토</li>
+        <li>MIT 라이선스 — 포크 및 상용화 법적 이슈 없음</li>
+        <li>분기점 문서화: <code>FORK_CHANGES.md</code> 관리</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="expandable">
+    <div class="expand-trigger" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+      💬 토론 포인트: 포크 전략 관련
+      <span class="arrow">▶</span>
+    </div>
+    <div class="expand-body">
+      <ul class="check-list">
+        <li><strong>포크 시점:</strong> 4월 초 즉시 포크 vs OpenCode 안정 릴리스 대기? 현재 OpenCode는 활발하게 변경 중</li>
+        <li><strong>기여 전략:</strong> 업스트림에 기여(PR)할 범위와 자체 보유할 범위의 경계선은?</li>
+        <li><strong>모노레포 구조 유지:</strong> Turborepo 구조를 그대로 사용할지, 시선AI 빌드 시스템으로 전환할지?</li>
+        <li><strong>인력 배치:</strong> 포크 유지보수 전담 인력이 필요한가? (현재 3.6 FTE 중)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 17 (was 15): Track 2 Roadmap ==================== -->
+<div class="slide" data-title="트랙 2 4단계 로드맵" data-section="트랙 2">
+  <h1>트랙 2: 4단계 로드맵</h1>
+  <p class="subtitle">시선AI 주도, 2026년 4월 착수 → 12월 Alpha</p>
+
+  <div class="timeline">
+    <div class="tl-item current">
+      <div class="tl-period">1단계 — 4~5월 (1~2개월)</div>
+      <div class="tl-title">코어 통합 + sLLM 연동</div>
+      <div class="tl-desc">
+        OpenCode 포크 + opencode.json 커스텀 Provider 설정<br>
+        자체 sLLM 엔드포인트 연동 (Vercel AI SDK)<br>
+        시스템 프롬프트 튜닝 — tool calling 최적화
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-period">2단계 — 6~7월 (3~4개월)</div>
+      <div class="tl-title">SI 특화 다중 에이전트 + MCP</div>
+      <div class="tl-desc">
+        Agent Teams 오케스트레이션: 설계 분석 / 코드 생성 / 테스트 에이전트 분업<br>
+        기업 통합형 MCP 서버: Jira, Confluence, 정적 분석 도구 연동<br>
+        Plan(설계) ↔ Build(실행) 분리 파이프라인
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-period">3단계 — 8~9월 (5~6개월)</div>
+      <div class="tl-title">보안/거버넌스/에어갭</div>
+      <div class="tl-desc">
+        RBAC 연동 + 플러그인 기반 보안 스캐닝 (SonarQube 등)<br>
+        tool.execute.before 훅으로 코드 조작 전후 검증<br>
+        감사(Audit) 파이프라인 완성
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-period">4단계 — 10~11월 (7~8개월)</div>
+      <div class="tl-title">UX + IDE 통합</div>
+      <div class="tl-desc">
+        자체 CLI 프롬프트 SW + 사내 웹 대시보드 (OpenCode HTTP API 활용)<br>
+        Cline 벤치마킹 VS Code 플러그인 — 시각적 Diff, Human-in-the-loop<br>
+        IntelliJ 플러그인 검토
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-period" style="color:var(--green)">Alpha — 2026.12</div>
+      <div class="tl-title">내부 테스트 + 파일럿 제안</div>
+      <div class="tl-desc">사내 개발팀 실사용 테스트, 초기 파일럿 고객 제안</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 18: vLLM Auth/RBAC Deep Dive ==================== -->
+<div class="slide" data-title="vLLM 인증/RBAC 심화" data-section="트랙 2">
+  <h1>vLLM 인증/RBAC 워크플로우</h1>
+  <p class="subtitle">FastAPI ASGI 미들웨어 — vLLM 코어 무수정, --middleware 옵션 주입</p>
+
+  <h2>인증 워크플로우 상세</h2>
+  <div class="arch-box" style="font-size:11px">개발자 (OpenCode CLI)
+  │
+  │  Authorization: Bearer &lt;JWT&gt;
+  ▼
+┌──────────────────────────────────────────────────────────┐
+│  ASGI 미들웨어 (seyeon_auth_middleware.py)                │
+│  ┌────────────────┐  ┌──────────────┐  ┌──────────────┐ │
+│  │ 1. 토큰 추출    │→│ 2. JWT 검증   │→│ 3. RBAC 주입  │ │
+│  │ Authorization   │  │ 서명 + 만료   │  │ Role → Model │ │
+│  │ 헤더 파싱       │  │ + 블랙리스트  │  │ 접근 권한     │ │
+│  └────────────────┘  └──────────────┘  └──────────────┘ │
+│         ↓ 실패 → 401        ↓ 실패 → 403                 │
+│                                                           │
+│  ┌───────────────┐  ┌────────────────┐                    │
+│  │ 4. Rate Limit │→│ 5. Audit Log   │→ request.state.user│
+│  │ RPM/TPM 초과  │  │ 요청자/모델/   │                    │
+│  │ → 429 반환    │  │ 토큰수 기록    │                    │
+│  └───────────────┘  └────────────────┘                    │
+└──────────────────────────────┬───────────────────────────┘
+                               ↓ (인증 통과)
+                        ┌──────────────┐
+                        │  vLLM Engine │
+                        │  /v1/chat/   │
+                        │  completions │
+                        └──────────────┘</div>
+
+  <h2>RBAC 역할별 모델 접근 매트릭스</h2>
+  <table class="tbl">
+    <tr><th>역할 (Role)</th><th>7B (QA/검증)</th><th>20B (코드 생성)</th><th>32B (추론/설계)</th><th>RPM 한도</th></tr>
+    <tr><td><strong>Junior Developer</strong></td><td><span class="tag tag-done">✅</span></td><td><span class="tag tag-done">✅</span></td><td><span class="tag tag-risk">❌</span></td><td>30</td></tr>
+    <tr><td><strong>Senior Developer</strong></td><td><span class="tag tag-done">✅</span></td><td><span class="tag tag-done">✅</span></td><td><span class="tag tag-done">✅</span></td><td>60</td></tr>
+    <tr><td><strong>Architect</strong></td><td><span class="tag tag-done">✅</span></td><td><span class="tag tag-done">✅</span></td><td><span class="tag tag-done">✅</span></td><td>120</td></tr>
+    <tr><td><strong>CI/CD Pipeline</strong></td><td><span class="tag tag-done">✅</span></td><td><span class="tag tag-done">✅</span></td><td><span class="tag tag-risk">❌</span></td><td>200</td></tr>
+  </table>
+
+  <h2>구현 핵심 포인트</h2>
+  <div class="card-grid" style="grid-template-columns: repeat(2, 1fr)">
+    <div class="card">
+      <div class="card-title">🔧 미들웨어 주입 방식</div>
+      <div class="card-body"><code>vllm serve model --middleware seyeon_auth.middleware</code><br>vLLM 코어 코드 수정 없음 → 엔진 업데이트에 독립적</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔒 에어갭 인증 전략</div>
+      <div class="card-body">외부 IdP 접근 불가 → 사내 라이선스 서버 + Redis 블랙리스트<br>JWT 서명 키 로컬 보관, 오프라인 검증</div>
+    </div>
+  </div>
+
+  <div class="expandable">
+    <div class="expand-trigger" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+      💬 토론 포인트: 인증/RBAC 관련
+      <span class="arrow">▶</span>
+    </div>
+    <div class="expand-body">
+      <ul class="check-list">
+        <li><strong>순수 ASGI vs BaseHTTPMiddleware:</strong> 성능을 위해 순수 ASGI 구현 권장이지만, 개발 편의성과 트레이드오프. 우리 트래픽 규모에서 의미 있는 차이인가?</li>
+        <li><strong>기존 Coco Admin의 RBAC과 통합:</strong> 트랙 1의 Coco Admin에 이미 사용자 관리가 있는데, 통합할지 별도 구축할지?</li>
+        <li><strong>라이선스 서버 아키텍처:</strong> 시선AI 자체 라이선스 서버를 처음부터 구축? 기존 오픈소스(Keycloak 등) 기반?</li>
+        <li><strong>감사 로그 저장소:</strong> 로컬 파일 vs 사내 ELK 스택 vs 전용 DB? 용량 산정은?</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 19: vLLM Model Encryption ==================== -->
+<div class="slide" data-title="vLLM 모델 암호화 파이프라인" data-section="트랙 2">
+  <h1>모델 가중치 암호화 파이프라인</h1>
+  <p class="subtitle">CoreWeave Tensorizer + libsodium — 지식 재산 보호의 핵심</p>
+
+  <h2>암호화 ↔ 복호화 전체 흐름</h2>
+  <div class="arch-box" style="font-size:11px">═══ 오프라인 단계 (모델 준비) ══════════════════════════════════
+
+ HuggingFace 포맷 sLLM    tensorize_vllm_model.py
+ (파인튜닝 완료)     ──→   --encryption-keyfile master.key
+                          EncryptionParams.random() 가능
+                              │
+                              ▼
+                    ┌──────────────────┐   ┌───────────────┐
+                    │ 암호화된 Tensor   │   │  master.key   │
+                    │ (메타데이터 평문, │   │  (별도 보관)  │
+                    │  가중치만 암호화) │   │  HSM/KMS 연동 │
+                    └──────────────────┘   └───────────────┘
+                              │                     │
+                    S3/로컬 스토리지 저장      Vault/HSM 보관
+
+═══ 런타임 단계 (vLLM 서버 구동) ════════════════════════════════
+
+  vllm serve s3://bucket/encrypted-model/v1
+    --load-format tensorizer
+    --model-loader-extra-config '{
+       "encryption_keyfile": "/secure/keys/master.key",
+       "s3_access_key_id": "...", ...
+    }'
+         │
+         ▼
+  ┌─────────────────────────────────────────────┐
+  │  TensorizerArgs → DecryptionParams 생성      │
+  │  암호화 상태로 메모리 버퍼링                  │
+  │  GPU 전송 파이프라인 최종 단계에서 복호화     │
+  │  평문 가중치 → GPU VRAM 적재                 │
+  └─────────────────────────────────────────────┘
+
+  결과: 디스크에는 암호화 상태 유지, GPU VRAM에서만 평문 존재</div>
+
+  <h2>보안 계층 비교</h2>
+  <table class="tbl">
+    <tr><th>보안 계층</th><th>보호 대상</th><th>기술</th><th>한계</th></tr>
+    <tr><td>OS 디스크 암호화</td><td>물리적 디스크 도난</td><td>LUKS, BitLocker</td><td><span class="tag tag-risk">런타임 무방비</span></td></tr>
+    <tr><td>전송 구간 암호화</td><td>네트워크 스니핑</td><td>TLS/mTLS</td><td><span class="tag tag-risk">저장 상태 무방비</span></td></tr>
+    <tr><td style="color:var(--green)"><strong>Tensorizer 암호화</strong></td><td><strong>모델 가중치 자체</strong></td><td><strong>libsodium + keyfile</strong></td><td><span class="tag tag-done">키 없이 사용 불가</span></td></tr>
+    <tr><td style="color:var(--accent)">커스텀 로더 (확장)</td><td>국정원 인증 등 특수 규정</td><td>register_model_loader</td><td>개발 리소스 필요</td></tr>
+  </table>
+
+  <div class="card-grid" style="grid-template-columns: repeat(2, 1fr)">
+    <div class="card" style="border-top:3px solid var(--green)">
+      <div class="card-title">✅ Tensorizer 방식 장점</div>
+      <div class="card-body">
+        메타데이터(텐서 이름, 형태)는 평문 → 빠른 구조 파악<br>
+        실제 가중치 배열만 암호화 → 성능/보안 균형<br>
+        vLLM 네이티브 지원 (추가 개발 최소)
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--purple)">
+      <div class="card-title">🔮 커스텀 로더 확장</div>
+      <div class="card-body">
+        <code>register_model_loader("seyeon_secure")</code><br>
+        사내 KMS와 실시간 통신하여 키 획득<br>
+        국정원 인증 암호 모듈 / HSM 연동 가능<br>
+        <span style="font-size:11px;color:var(--text-dim)">금융권 특수 요구사항 대응</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="expandable">
+    <div class="expand-trigger" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+      💬 토론 포인트: 모델 암호화 관련
+      <span class="arrow">▶</span>
+    </div>
+    <div class="expand-body">
+      <ul class="check-list">
+        <li><strong>M1~M2 우선순위:</strong> Tensorizer 기본 적용으로 시작할지, 처음부터 커스텀 로더까지 구현할지?</li>
+        <li><strong>키 관리 전략:</strong> master.key를 어떤 방식으로 안전하게 관리? 서버 재시작 시 자동 복호화와 보안의 균형?</li>
+        <li><strong>성능 영향:</strong> 암호화/복호화 오버헤드가 모델 로딩 시간에 미치는 영향? (벤치마크 필요)</li>
+        <li><strong>LoRA 어댑터 암호화:</strong> 베이스 모델뿐 아니라 LoRA 가중치도 별도 암호화해야 하나?</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 20: LiteLLM Deep Dive ==================== -->
+<div class="slide" data-title="LiteLLM 멀티모델 라우팅" data-section="트랙 2">
+  <h1>LiteLLM 멀티모델 라우팅 심화</h1>
+  <p class="subtitle">단일 엔드포인트 → 역할별 vLLM 클러스터 동적 분배</p>
+
+  <h2>왜 프록시 레이어가 필요한가?</h2>
+  <div class="highlight">
+    <strong>vLLM의 구조적 한계:</strong> 하나의 vLLM 인스턴스 = 하나의 베이스 모델. 이종 모델(7B + 20B + 32B)을 동시에 서빙하려면 별도의 라우팅 프록시가 <strong>필수</strong>.
+  </div>
+
+  <h2>config.yaml 실전 예시</h2>
+  <div class="arch-box" style="font-size:11px;color:var(--green)">model_list:
+  # ─── 빠른 코드 작성/QA 검증용 소형 모델 ───
+  - model_name: seyeon-fast-coder
+    litellm_params:
+      model: openai/Qwen-2.5-Coder-7B
+      api_base: "http://vllm-backend-small:8000/v1"
+
+  # ─── 주력 코드 생성 모델 ───
+  - model_name: seyeon-code-gen
+    litellm_params:
+      model: openai/GPT-OSS-20B
+      api_base: "http://vllm-backend-main:8001/v1"
+
+  # ─── 복잡한 아키텍처 추론/Plan 에이전트용 ───
+  - model_name: seyeon-reasoning-agent
+    litellm_params:
+      model: openai/Seyeon-IntraGenX-32B
+      api_base: "http://vllm-backend-large:8002/v1"
+
+  # ─── 프로토콜 변환: claude-* → 로컬 sLLM 우회 ───
+  - model_name: claude-3-sonnet*
+    litellm_params:
+      model: openai/Seyeon-IntraGenX-32B
+      api_base: "http://vllm-backend-large:8002/v1"
+
+router_settings:
+  routing_strategy: "latency-based-routing"
+  num_retries: 2
+  fallbacks:
+    - seyeon-reasoning-agent: [seyeon-code-gen]
+    - seyeon-code-gen: [seyeon-fast-coder]</div>
+
+  <h2>4가지 핵심 기능</h2>
+  <div class="card-grid" style="grid-template-columns: repeat(2, 1fr)">
+    <div class="card" style="border-top:3px solid var(--accent)">
+      <div class="card-title">1. 모델 알리아싱</div>
+      <div class="card-body">개발자는 <code>localhost:4000/v1</code>만 바라봄<br>백엔드 모델 버전 교체도 설정 파일 수정만으로 무중단</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--green)">
+      <div class="card-title">2. 프로토콜 변환</div>
+      <div class="card-body">Anthropic Messages API → OpenAI 호환 포맷 자동 번역<br><code>claude-*</code> 와일드카드로 에어갭 내 투명한 오프라인 운용</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--orange)">
+      <div class="card-title">3. 부하 분산 + 폴백</div>
+      <div class="card-body"><code>latency-based</code> / <code>least-busy</code> 전략<br>주력 모델 장애 시 자동 2차 모델 전환 → Zero Downtime</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--purple)">
+      <div class="card-title">4. 거버넌스</div>
+      <div class="card-body">Virtual Keys로 팀/프로젝트별 할당량 통제<br>RPM/TPM 기반 속도 제한 → 무한 루프 버그 방지</div>
+    </div>
+  </div>
+
+  <h2>통합 아키텍처</h2>
+  <div class="arch-box" style="font-size:12px">┌────────────────────────────────────────────────────┐
+│          개발자 도구 (OpenCode CLI / IDE)            │
+└───────────────────────┬────────────────────────────┘
+                        ↓
+┌───────────────────────┴────────────────────────────┐
+│             LiteLLM 프록시 & 라우터                  │
+│  ┌──────────┐  ┌──────────┐  ┌──────────────────┐  │
+│  │ 모델 매핑  │  │ 부하 분산 │  │ 속도제한/거버넌스 │  │
+│  └──────────┘  └──────────┘  └──────────────────┘  │
+└────────┬───────────────┬───────────────┬───────────┘
+         ↓               ↓               ↓
+  ┌────────────┐  ┌────────────┐  ┌────────────┐
+  │   vLLM     │  │   vLLM     │  │   vLLM     │
+  │  7B (QA)   │  │ 20B (코드)  │  │ 32B (추론)  │
+  │ + 인증 MW  │  │ + 인증 MW  │  │ + 인증 MW  │
+  │ + 암호화   │  │ + 암호화   │  │ + 암호화   │
+  └────────────┘  └────────────┘  └────────────┘</div>
+
+  <div class="expandable">
+    <div class="expand-trigger" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+      💬 토론 포인트: LiteLLM 관련
+      <span class="arrow">▶</span>
+    </div>
+    <div class="expand-body">
+      <ul class="check-list">
+        <li><strong>에이전틱 루프에서의 모델 선택:</strong> Plan 단계는 32B, Build 단계는 20B, Verify 단계는 7B — 이 자동 라우팅 로직을 LiteLLM에서 구현할지, OpenCode 에이전트 레벨에서 구현할지?</li>
+        <li><strong>LiteLLM 자체도 SPOF:</strong> LiteLLM 프록시가 죽으면 전체 서비스 중단. HA 구성이 필요한가?</li>
+        <li><strong>프로토콜 변환의 한계:</strong> claude-* → openai 변환 시 tool_use, vision 등 고급 기능이 완벽히 호환되는가?</li>
+        <li><strong>비용 추적:</strong> 온프레미스에서도 GPU 시간/토큰 기반 내부 과금이 필요한가? (부서별 배분)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 21: Hybrid Interface Strategy ==================== -->
+<div class="slide" data-title="하이브리드 인터페이스 전략" data-section="트랙 2">
+  <h1>하이브리드 인터페이스 전략</h1>
+  <p class="subtitle">CLI + Web + VS Code + IntelliJ — 모든 개발자 경험을 커버</p>
+
+  <h2>4단계 인터페이스 확장 계획</h2>
+  <div class="arch-box" style="font-size:12px">                  ┌──────────────────────────────────┐
+                  │     OpenCode Hono HTTP API       │
+                  │     (단일 백엔드 엔진)             │
+                  └─────────┬──────────┬─────────────┘
+           ┌────────────────┼──────────┼────────────────┐
+           ↓                ↓          ↓                ↓
+   ┌──────────────┐ ┌───────────┐ ┌──────────┐ ┌──────────────┐
+   │  Coco CLI    │ │ Web 대시보드│ │ VS Code  │ │  IntelliJ    │
+   │  (TUI)       │ │ (React)   │ │ Extension│ │  Plugin      │
+   │              │ │           │ │          │ │              │
+   │ ✅ 기본 제공  │ │ ✅ 자체 개발│ │ 🎯 핵심!  │ │ 🔍 검토 중    │
+   │ 파워 유저    │ │ 관리자/대시 │ │ 대다수   │ │ SI 금융권    │
+   │ CI/CD 통합   │ │ 보드 용도  │ │ 개발자   │ │ 점유율 높음  │
+   └──────────────┘ └───────────┘ └──────────┘ └──────────────┘</div>
+
+  <h2>VS Code 플러그인 — Cline 벤치마킹</h2>
+  <div class="compare">
+    <div class="compare-col">
+      <h3 style="color:var(--accent)">Cline에서 벤치마킹할 것</h3>
+      <ul class="check-list">
+        <li><strong>시각적 Diff 패널:</strong> 변경 사항을 에디터 내부에서 즉시 확인</li>
+        <li><strong>Human-in-the-Loop:</strong> 파일 쓰기/터미널 실행 전 개발자 승인</li>
+        <li><strong>특화 모드:</strong> Code / Architect / Ask / Debug 전환</li>
+        <li><strong>사이드바 UX:</strong> 대화형 인터페이스가 IDE에 자연스럽게 통합</li>
+      </ul>
+    </div>
+    <div class="compare-col">
+      <h3 style="color:var(--green)">시선AI 차별화 포인트</h3>
+      <ul class="check-list">
+        <li><strong>에어갭 네이티브:</strong> 사내 sLLM으로 완전 오프라인 동작</li>
+        <li><strong>UASL 스펙 시각화:</strong> 트랙 1의 설계 문서를 IDE에서 미리보기</li>
+        <li><strong>감사 추적 패널:</strong> 코드 생성 이력/검증 결과 IDE 내 표시</li>
+        <li><strong>프레임워크 가이드:</strong> xFrame5, WebSquare 등 사내 프레임워크 컨텍스트 자동 주입</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>IntelliJ 플러그인 검토</h2>
+  <div class="card-grid" style="grid-template-columns: repeat(3, 1fr)">
+    <div class="card">
+      <div class="card-title">🎯 시장 근거</div>
+      <div class="card-body">금융권/공공 SI에서 IntelliJ(Eclipse 포함) 점유율이 VS Code보다 높음. Java/Spring 프로젝트 주력.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔧 기술 전략</div>
+      <div class="card-body">OpenCode Hono API를 동일하게 호출하는 Kotlin 기반 플러그인. VS Code와 같은 백엔드 공유.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">📅 일정</div>
+      <div class="card-body">4단계(10~11월)에 설계/프로토타입. VS Code 플러그인 우선, IntelliJ는 후순위.</div>
+    </div>
+  </div>
+
+  <div class="expandable">
+    <div class="expand-trigger" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+      💬 토론 포인트: 인터페이스 전략 관련
+      <span class="arrow">▶</span>
+    </div>
+    <div class="expand-body">
+      <ul class="check-list">
+        <li><strong>VS Code vs IntelliJ 우선순위:</strong> 개발 리소스가 제한적인데, VS Code 먼저? IntelliJ 먼저? 동시 진행 가능한가?</li>
+        <li><strong>Human-in-the-Loop 수준:</strong> Cline처럼 매 단계 승인? 아니면 Plan만 승인 후 Build는 자동 실행? SI 환경의 거버넌스 요구와 개발자 편의 사이 밸런스는?</li>
+        <li><strong>웹 대시보드 범위:</strong> 관리자 전용(모니터링/설정)인지, 개발자도 사용할 웹 IDE 수준인지?</li>
+        <li><strong>Eclipse 지원:</strong> SI 현장에서 Eclipse 사용 비율이 여전히 높은데, 별도 지원이 필요한가?</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 22: Tech Sharing ==================== -->
+<div class="slide" data-title="트랙 간 기술 공유" data-section="트랙 2">
+  <h1>트랙 간 기술 공유</h1>
+  <p class="subtitle">두 트랙이 공유하는 자산과 시너지</p>
+
+  <div class="card-grid" style="grid-template-columns: repeat(3,1fr)">
+    <div class="card" style="border-top:3px solid var(--accent)">
+      <div class="card-title">sLLM 인프라</div>
+      <div class="card-body">vLLM 서빙 엔진, 모델 웨이트 (GPT-OSS 20B, Qwen 계열), GPU 하드웨어 공유</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--green)">
+      <div class="card-title">UASL 스펙</div>
+      <div class="card-body">프레임워크 중립 UI 스펙 언어, Entity Spec / IAS / SUIS, v3까지 진화</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--purple)">
+      <div class="card-title">RBAC / 감사 추적</div>
+      <div class="card-body">역할 기반 접근 제어, 전 과정 감사 로깅, 에어갭 보안 정책</div>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <strong>⚠️ MCP — 같은 프로토콜, 다른 용도</strong><br><br>
+    양쪽 모두 <strong>MCP(Model Context Protocol)</strong>라는 동일한 프로토콜 표준을 사용하되, <strong>용도가 다릅니다</strong>:<br><br>
+    <strong>트랙 1</strong>: MCP 서버가 <strong>코드 생성 엔진</strong> 역할 — Coco Engine이 xframe5-compiler, vue-compiler 등을 MCP 프로토콜로 호출<br>
+    <strong>트랙 2</strong>: MCP 서버가 <strong>개발 도구 접근</strong> 역할 — 에이전트가 Jira, Confluence, Git 등 외부 서비스에 MCP 프로토콜로 접근<br><br>
+    <span style="color:var(--accent)">→ 동일한 프로토콜 위에서 서로 다른 도구(Tool)를 제공하는 것이 핵심 차이</span>
+  </div>
+
+  <h2>시너지 포인트</h2>
+  <ul class="check-list">
+    <li>트랙 1에서 검증된 sLLM 파인튜닝 노하우 → 트랙 2 에이전트용 모델에 적용</li>
+    <li>UASL 스펙 → 트랙 2 에이전트의 자동 설계 분석에 활용 가능</li>
+    <li>트랙 1의 6단계 검증 파이프라인 → 트랙 2의 보안 훅(3단계)에 재사용</li>
+    <li>인프라 비용 절감: 동일 GPU 클러스터를 LiteLLM으로 양 트랙이 공유</li>
+  </ul>
+</div>
+
+<!-- ==================== SLIDE 23: Legacy Modernization ==================== -->
+<div class="slide" data-title="레거시 모더니제이션" data-section="트랙 2">
+  <h1>레거시 모더니제이션 활용</h1>
+  <p class="subtitle">Explore → Plan → Build 에이전트 분업으로 레거시 코드 전환</p>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-period">Step 1</div>
+      <div class="tl-title">🔍 Explore 에이전트 — 발견 및 추상화</div>
+      <div class="tl-desc">레거시 코드베이스 전체를 순회하며 핵심 비즈니스 로직 추출 → 문서화. 구형 코드 속 숨겨진 의존성과 패턴을 자동 식별.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-period">Step 2</div>
+      <div class="tl-title">📋 Plan 에이전트 — 구조 설계 및 전환 계획</div>
+      <div class="tl-desc">추출된 로직 기반으로 최신 프레임워크(Spring Boot 3.x 등)에 맞는 디렉토리 구조, 모듈 분리 계획 수립. SI 하향식 업무 흐름에 완벽 부합.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-period">Step 3</div>
+      <div class="tl-title">🔨 Build 에이전트 — 코드 생성 및 자가 검증</div>
+      <div class="tl-desc">새 언어로 코드 작성 + 단위 테스트 자동 생성/실행. 전환 과정의 위험성을 극적으로 감소.</div>
+    </div>
+  </div>
+
+  <h2>Design-to-Code의 한계 극복</h2>
+  <div class="two-col">
+    <div>
+      <h3>현재 한계</h3>
+      <ul class="check-list">
+        <li>입력 문서 품질에 지나치게 의존</li>
+        <li>정적인 일괄 생성 방식</li>
+        <li>비즈니스 로직 구현은 여전히 수작업</li>
+      </ul>
+    </div>
+    <div>
+      <h3>트랙 2로 극복</h3>
+      <ul class="check-list">
+        <li>Vision Analysis + RAG 결합으로 문맥 보강</li>
+        <li>에이전트가 자율적으로 오류 추적/수정</li>
+        <li>MCP로 사내 지식(Confluence 등) 실시간 참조</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>핵심 시장:</strong> 공공/금융 대형 SI 프로젝트에서 COBOL, 구형 C++, 초기 Java → 최신 아키텍처 전환이 가장 빈번하고 중요한 워크플로우. 이 지점에서 대체 불가능한 가치를 증명해야 합니다.
+  </div>
+</div>
+
+<!-- ==================== SLIDE 24: Integrated Timeline ==================== -->
+<div class="slide" data-title="통합 타임라인" data-section="종합">
+  <h1>통합 타임라인</h1>
+  <p class="subtitle">트랙 1 + 트랙 2 병행 간트 차트</p>
+
+  <div class="gantt">
+    <div class="gantt-months">
+      <span>1월</span><span>2월</span><span>3월</span><span>4월</span><span>5월</span><span>6월</span><span>7월</span><span>8월</span><span>9월</span><span>10월</span><span>11월</span><span>12월</span>
+    </div>
+
+    <div class="gantt-row">
+      <div class="gantt-label" style="font-weight:700;color:var(--accent)">트랙 1</div>
+      <div class="gantt-track"></div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label" style="font-size:12px">Phase 1 (PoC)</div>
+      <div class="gantt-track">
+        <div class="gantt-bar" style="left:0%;width:25%;background:var(--green)">✅ 완료</div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label" style="font-size:12px">Phase 2 (R&D)</div>
+      <div class="gantt-track">
+        <div class="gantt-bar" style="left:25%;width:25%;background:var(--accent)">4~6월</div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label" style="font-size:12px">Phase 3 (상용화)</div>
+      <div class="gantt-track">
+        <div class="gantt-bar" style="left:50%;width:50%;background:var(--purple);opacity:0.7">7~12월</div>
+      </div>
+    </div>
+
+    <div class="gantt-row" style="margin-top:12px">
+      <div class="gantt-label" style="font-weight:700;color:var(--green)">트랙 2</div>
+      <div class="gantt-track"></div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label" style="font-size:12px">1단계 코어</div>
+      <div class="gantt-track">
+        <div class="gantt-bar" style="left:25%;width:16.7%;background:var(--green)">4~5월</div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label" style="font-size:12px">2단계 에이전트</div>
+      <div class="gantt-track">
+        <div class="gantt-bar" style="left:41.7%;width:16.7%;background:var(--green);opacity:0.8">6~7월</div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label" style="font-size:12px">3단계 보안</div>
+      <div class="gantt-track">
+        <div class="gantt-bar" style="left:58.3%;width:16.7%;background:var(--green);opacity:0.6">8~9월</div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label" style="font-size:12px">4단계 UX</div>
+      <div class="gantt-track">
+        <div class="gantt-bar" style="left:75%;width:16.7%;background:var(--green);opacity:0.5">10~11월</div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label" style="font-size:12px">Alpha 릴리스</div>
+      <div class="gantt-track">
+        <div class="gantt-bar" style="left:91.7%;width:8.3%;background:var(--yellow)">12월</div>
+      </div>
+    </div>
+
+    <div class="gantt-row" style="margin-top:12px">
+      <div class="gantt-label" style="font-weight:700;color:var(--orange)">vLLM R&D</div>
+      <div class="gantt-track"></div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label" style="font-size:12px">암호화+인증</div>
+      <div class="gantt-track">
+        <div class="gantt-bar" style="left:25%;width:33.3%;background:var(--orange);opacity:0.7">M1~M4</div>
+      </div>
+    </div>
+    <div class="gantt-row">
+      <div class="gantt-label" style="font-size:12px">LiteLLM+통합</div>
+      <div class="gantt-track">
+        <div class="gantt-bar" style="left:58.3%;width:33.3%;background:var(--orange);opacity:0.5">M5~M8</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>핵심 마일스톤:</strong> Phase 2 완료(6월) → Phase 3 상용화(12월) / 트랙 2 Alpha(12월) — 두 트랙 모두 연내 성과물 목표
+  </div>
+</div>
+
+<!-- ==================== SLIDE 25: Risks ==================== -->
+<div class="slide" data-title="리스크 및 대응" data-section="종합">
+  <h1>리스크 및 대응</h1>
+  <p class="subtitle">기술/인력/일정 리스크와 완화 방안</p>
+
+  <table class="tbl">
+    <tr><th>리스크</th><th>확률</th><th>영향</th><th>완화 방안</th></tr>
+    <tr>
+      <td><strong>모델 품질 목표 미달</strong><br><span style="font-size:12px;color:var(--text-dim)">Qwen32B 80%+ 달성 실패</span></td>
+      <td><span class="tag tag-warn">30%</span></td>
+      <td>중간</td>
+      <td>GPT-OSS 20B(94%) 백업 유지, CGF-B 전략으로 모델 의존도 감소</td>
+    </tr>
+    <tr>
+      <td><strong>동시 사용자 성능 미달</strong><br><span style="font-size:12px;color:var(--text-dim)">40초 이내 미달</span></td>
+      <td><span class="tag tag-plan">15%</span></td>
+      <td>중간</td>
+      <td>A100 확보, 배치 처리 강화, KV Cache 최적화</td>
+    </tr>
+    <tr>
+      <td><strong>트랙 1+2 병행 인력 부족</strong><br><span style="font-size:12px;color:var(--text-dim)">3.6 FTE로 양 트랙 커버 가능?</span></td>
+      <td><span class="tag tag-warn">35%</span></td>
+      <td>높음</td>
+      <td>트랙 2는 시선AI 전담, 트랙 1 R&D는 시기별 집중도 조절</td>
+    </tr>
+    <tr>
+      <td><strong>OpenCode 포크 유지보수</strong><br><span style="font-size:12px;color:var(--text-dim)">업스트림 변화 추적 부담</span></td>
+      <td><span class="tag tag-plan">20%</span></td>
+      <td>중간</td>
+      <td>코어 최소 수정 원칙, Provider/플러그인 레이어로 분리</td>
+    </tr>
+    <tr>
+      <td><strong>고객 PoC 범위 확대</strong><br><span style="font-size:12px;color:var(--text-dim)">예상 범위 초과</span></td>
+      <td><span class="tag tag-plan">25%</span></td>
+      <td>중간</td>
+      <td>PoC 범위 사전 협의 철저화, 단계별 마일스톤 합의</td>
+    </tr>
+  </table>
+
+  <div class="warn-box">
+    <strong>가장 큰 리스크:</strong> 시선AI 인력이 트랙 1 Phase 2 R&D + 트랙 2 코딩 에이전트를 동시에 병행 추진해야 하는 점. 우선순위와 시기별 집중도 조절이 핵심.
+  </div>
+</div>
+
+<!-- ==================== SLIDE 26: Budget ==================== -->
+<div class="slide" data-title="예산 개요" data-section="종합">
+  <h1>예산 개요</h1>
+  <p class="subtitle">시선AI 부담분 중심</p>
+
+  <h2>인력 비용</h2>
+  <table class="tbl">
+    <tr><th>기간</th><th>FTE</th><th>월 비용 (예상)</th><th>합계</th></tr>
+    <tr><td>Phase 1 (1~3월)</td><td>0.6</td><td>~500만원</td><td>1,500만원</td></tr>
+    <tr><td><strong>Phase 2 (4~6월)</strong></td><td><strong>3.6</strong></td><td><strong>~2,900만원</strong></td><td><strong>8,700만원</strong></td></tr>
+    <tr><td>Phase 3 (7~12월)</td><td>2.7</td><td>~2,200만원</td><td>13,200만원</td></tr>
+    <tr style="background:var(--surface2)"><td colspan="3" style="font-weight:700">연간 합계</td><td style="font-weight:700;font-size:18px">2.34억원</td></tr>
+  </table>
+
+  <h2>인프라 비용</h2>
+  <div class="card-grid" style="grid-template-columns: repeat(3,1fr)">
+    <div class="card">
+      <div class="card-title">GPU (대보DX 공유 시)</div>
+      <div class="card-body" style="font-size:20px;font-weight:700;color:var(--green)">0원</div>
+    </div>
+    <div class="card">
+      <div class="card-title">GPU (별도 구매 시)</div>
+      <div class="card-body" style="font-size:20px;font-weight:700;color:var(--orange)">2,800만원</div>
+      <div class="card-body">A100 80GB</div>
+    </div>
+    <div class="card">
+      <div class="card-title">클라우드 백업</div>
+      <div class="card-body" style="font-size:20px;font-weight:700;color:var(--text-dim)">월 65~150만원</div>
+      <div class="card-body">GCP a2-1g</div>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>Phase 1 대비 절감:</strong> 당초 3.1 FTE 계획에서 0.6 FTE로 운영하여 <strong>0.6억원 절감</strong>. Phase 2부터 본격 투입으로 전환.
+  </div>
+</div>
+
+<!-- ==================== SLIDE 27: Discussion ==================== -->
+<div class="slide" data-title="논의 포인트 + Q&A" data-section="종합">
+  <h1>오늘 논의할 것들</h1>
+  <p class="subtitle">결정이 필요한 사항 + 열린 질문</p>
+
+  <div class="card-grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="card" style="border-left: 3px solid var(--red)">
+      <div class="card-title">🔴 결정 필요</div>
+      <div class="card-body">
+        <ul class="check-list" style="margin:0">
+          <li><strong>트랙 2 4월 착수 확정 여부</strong> — 인력, 우선순위 확정</li>
+          <li><strong>Phase 2 우선순위</strong> — 모델 품질(P0) vs 성능 최적화(P1) 순서</li>
+          <li><strong>인력 배분</strong> — 트랙 1 R&D와 트랙 2 에이전트 간 비율</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--yellow)">
+      <div class="card-title">🟡 논의 필요</div>
+      <div class="card-body">
+        <ul class="check-list" style="margin:0">
+          <li>OpenCode 포크 시점과 초기 팀 구성</li>
+          <li>vLLM 인프라 고도화 R&D 범위 (인증/암호화/LiteLLM 중 우선순위)</li>
+          <li>4B LoRA L3 미달 → 추가 실험 진행 여부</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-grid" style="grid-template-columns: 1fr 1fr; margin-top:8px">
+    <div class="card" style="border-left: 3px solid var(--accent)">
+      <div class="card-title">🔵 확인 사항</div>
+      <div class="card-body">
+        <ul class="check-list" style="margin:0">
+          <li>GPU 인프라 추가 확보 필요성 (A100 별도 구매?)</li>
+          <li>Phase 3 상용 출시 일정 (12월) 유지 가능?</li>
+          <li>트랙 2 Alpha와 Phase 3 v1.0의 관계</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--green)">
+      <div class="card-title">🟢 다음 단계</div>
+      <div class="card-body">
+        <ul class="check-list" style="margin:0">
+          <li>4월 초: Phase 2 킥오프 + Spring MCP 설계 착수</li>
+          <li>4월 중: OpenCode 포크 및 sLLM 연동 시작</li>
+          <li>4월 말: 벤치마크 자동화 시스템 1차 완성</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:40px;padding:32px;background:var(--surface);border-radius:12px;border:1px solid var(--border)">
+    <h2 style="margin:0 0 8px;font-size:24px">Q&A</h2>
+    <p style="color:var(--text-dim);margin:0">질문과 의견을 자유롭게 공유해주세요</p>
+  </div>
+</div>
+
+    </div><!-- slide-area -->
+  </div><!-- main -->
+</div><!-- app -->
+
+<div class="kbd-hint">
+  <kbd>←</kbd> <kbd>→</kbd> 이동 &nbsp;&nbsp; <kbd>S</kbd> 사이드바
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+let current = 0;
+
+function buildNav() {
+  const nav = document.getElementById('navList');
+  let lastSection = '';
+  slides.forEach((s, i) => {
+    const section = s.dataset.section;
+    if (section !== lastSection) {
+      const sec = document.createElement('div');
+      sec.className = 'nav-section';
+      sec.textContent = section;
+      nav.appendChild(sec);
+      lastSection = section;
+    }
+    const item = document.createElement('div');
+    item.className = 'nav-item';
+    item.innerHTML = `<span class="num">${i + 1}</span> ${s.dataset.title}`;
+    item.onclick = () => goTo(i);
+    nav.appendChild(item);
+  });
+}
+
+function goTo(i) {
+  if (i < 0 || i >= slides.length) return;
+  slides[current].classList.remove('active');
+  current = i;
+  slides[current].classList.add('active');
+  updateUI();
+}
+
+function nextSlide() { goTo(current + 1); }
+function prevSlide() { goTo(current - 1); }
+
+function updateUI() {
+  document.getElementById('slideCounter').textContent = `${current + 1} / ${slides.length}`;
+  document.getElementById('progressFill').style.width = `${((current + 1) / slides.length) * 100}%`;
+  document.querySelectorAll('.nav-item').forEach((el, i) => {
+    el.classList.toggle('active', i === current);
+    if (i === current) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  });
+  document.getElementById('slideArea').scrollTop = 0;
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prevSlide(); }
+  if (e.key === 's' || e.key === 'S') toggleSidebar();
+});
+
+buildNav();
+goTo(0);
+</script>
+</body>
+</html>
