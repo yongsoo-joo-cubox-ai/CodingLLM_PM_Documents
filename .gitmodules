@@ -1,12 +1,15 @@
 [submodule "_public/vllm"]
 	path = _public/vllm
 	url = https://github.com/vllm-project/vllm.git
+	ignore = dirty
 [submodule "_public/opencode"]
 	path = _public/opencode
 	url = https://github.com/anomalyco/opencode.git
+	ignore = dirty
 [submodule "_public/litellm"]
 	path = _public/litellm
 	url = https://github.com/BerriAI/litellm.git
+	ignore = dirty
 [submodule "SecernCode"]
 	path = SecernCode
 	url = https://github.com/CUBOX-Co-Ltd/SecernCode.git

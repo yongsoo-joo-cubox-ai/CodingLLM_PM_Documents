@@ -286,7 +286,7 @@
     </div>
     <div class="card" style="border-left: 3px solid var(--green)">
       <div class="card-title">Part 3 — 트랙 2: 코딩 에이전트 ★</div>
-      <div class="card-body">시장 분석, OpenCode 심화/포크 전략, vLLM·LiteLLM 심화, IDE 전략<br><span style="color:var(--text-dim);font-size:12px">슬라이드 12~23</span></div>
+      <div class="card-body">시장 분석, SecernCode(Go) 아키텍처/전략, vLLM·LiteLLM 심화, IDE 전략<br><span style="color:var(--text-dim);font-size:12px">슬라이드 12~23</span></div>
     </div>
     <div class="card" style="border-left: 3px solid var(--orange)">
       <div class="card-title">Part 4 — 종합 및 논의</div>
@@ -316,9 +316,9 @@
       <p style="font-size:14px;color:var(--text-dim);margin-top:8px"><strong>Agent-First 자율형 CLI 에이전트</strong></p>
       <ul class="check-list">
         <li>Bottom-Up: 개발자 ↔ 에이전트 양방향</li>
-        <li>OpenCode 기반, 터미널/IDE 통합</li>
+        <li>SecernCode(Go) 기반, TUI/WebUI/CLI</li>
         <li>Plan/Build/Test 에이전트 분업</li>
-        <li><strong>시선AI 주도</strong>, 2026년 4월 착수</li>
+        <li><strong>시선AI 주도</strong>, 2026년 3월 MVP 완료</li>
       </ul>
     </div>
   </div>
@@ -327,7 +327,7 @@
   <table class="tbl">
     <tr><th>구분</th><th>대보DX (문기봉 상무)</th><th>시선AI (서브PO: 주용수)</th></tr>
     <tr><td><strong>트랙 1</strong></td><td>제품 개발, PoC 시연, 고객 대응</td><td>sLLM 인프라, 모델 최적화, PM</td></tr>
-    <tr><td><strong>트랙 2</strong></td><td>sLLM 인프라 공유, UASL 연동 지원</td><td><span class="tag tag-green" style="background:rgba(52,211,153,0.15);color:var(--green)">주도</span> OpenCode 포크, 에이전트 개발</td></tr>
+    <tr><td><strong>트랙 2</strong></td><td>sLLM 인프라 공유, UASL 연동 지원</td><td><span class="tag tag-green" style="background:rgba(52,211,153,0.15);color:var(--green)">주도</span> SecernCode(Go) 독자 구현</td></tr>
   </table>
 
   <div class="highlight">
@@ -684,7 +684,7 @@ GET  /_health                  # 헬스체크</div>
     </div>
     <div class="compare-col winner">
       <h3 style="color:var(--green)">Agent-First (차세대)</h3>
-      <p style="font-size:13px;color:var(--text-dim);margin-top:8px">Claude Code, OpenCode → <strong>시선AI 목표</strong></p>
+      <p style="font-size:13px;color:var(--text-dim);margin-top:8px">Claude Code → <strong>SecernCode(Go)로 구현</strong></p>
       <ul class="check-list">
         <li>자연어로 목표 지시 → AI가 자율적으로 실행</li>
         <li>코드베이스 읽기, 계획 수립, 터미널 실행</li>
@@ -742,225 +742,259 @@ GET  /_health                  # 헬스체크</div>
   </div>
 </div>
 
-<!-- ==================== SLIDE 14: OpenCode vs Cline ==================== -->
-<div class="slide" data-title="OpenCode 선택 근거" data-section="트랙 2">
-  <h1>OpenCode 선택 근거</h1>
-  <p class="subtitle">Cline vs OpenCode — 시선AI 목표 기준 비교</p>
+<!-- ==================== SLIDE 14: SecernCode(Go) 선택 근거 ==================== -->
+<div class="slide" data-title="SecernCode(Go) 선택 근거" data-section="트랙 2">
+  <h1>SecernCode(Go) 선택 근거</h1>
+  <p class="subtitle">Go vs TypeScript — 폐쇄망·온프레미스 환경 기준 비교</p>
 
   <table class="tbl">
-    <tr><th style="width:18%">비교 항목</th><th style="width:30%">Cline (VS Code Ext.)</th><th style="width:30%">OpenCode (TS/Bun CLI)</th><th style="width:22%">판정</th></tr>
-    <tr><td><strong>아키텍처</strong></td><td>VS Code 내부 확장, IDE 종속</td><td>Hono API 기반 클라이언트/서버 분리</td><td style="color:var(--green)"><strong>OpenCode ✓</strong></td></tr>
-    <tr><td><strong>sLLM 통합</strong></td><td>IDE Settings.json 통한 설정</td><td>opencode.json + Vercel AI SDK 네이티브 주입</td><td style="color:var(--green)"><strong>OpenCode ✓</strong></td></tr>
-    <tr><td><strong>SI 워크플로우</strong></td><td>매 단계 GUI 승인 (Human-in-loop)</td><td>Plan/Build 에이전트 물리적 분리</td><td style="color:var(--green)"><strong>OpenCode ✓</strong></td></tr>
-    <tr><td><strong>UX</strong></td><td>IDE Diff 패널, 시각적 직관성 탁월</td><td>TUI 중심, 시각적 피드백 부족</td><td style="color:var(--accent)"><strong>Cline ✓</strong></td></tr>
-    <tr><td><strong>라이선스</strong></td><td>Apache 2.0</td><td>MIT</td><td>무승부</td></tr>
+    <tr><th style="width:22%">비교 항목</th><th style="width:30%">Go (SecernCode)</th><th style="width:30%">TypeScript (기각된 대안)</th><th style="width:18%">판정</th></tr>
+    <tr><td><strong>배포 방식</strong></td><td>단일 바이너리 (~50MB), USB 복사 → 실행</td><td>node_modules + Node.js/Bun 런타임 필요</td><td style="color:var(--green)"><strong>Go ✓</strong></td></tr>
+    <tr><td><strong>폐쇄망 적합성</strong></td><td>바이너리 하나로 설치 완료</td><td>npm 패키지 수백 개 수동 이관 필요</td><td style="color:var(--green)"><strong>Go ✓</strong></td></tr>
+    <tr><td><strong>런타임 의존</strong></td><td>없음 (OS만 맞으면 동작)</td><td>Node.js 설치 필수</td><td style="color:var(--green)"><strong>Go ✓</strong></td></tr>
+    <tr><td><strong>메모리 사용량</strong></td><td>~20~30 MB</td><td>~100~200 MB (V8 엔진 포함)</td><td style="color:var(--green)"><strong>Go ✓</strong></td></tr>
+    <tr><td><strong>동시성</strong></td><td>goroutine (경량 스레드)</td><td>단일 스레드 + async</td><td style="color:var(--green)"><strong>Go ✓</strong></td></tr>
+    <tr><td><strong>보안 감사</strong></td><td>정적 바이너리 — 변경 불가능성 입증 용이</td><td>수백 npm 패키지별 취약점 검토 필요</td><td style="color:var(--green)"><strong>Go ✓</strong></td></tr>
+    <tr><td><strong>AI SDK</strong></td><td>openai-go (vLLM 단일 프로바이더)</td><td>75+ 프로바이더 SDK (대부분 미사용)</td><td style="color:var(--accent)">환경 의존</td></tr>
   </table>
 
   <div class="highlight" style="border-left-color: var(--green)">
-    <strong>결론:</strong> "독립적인 CLI SW" + "서버형 코딩 에이전트"를 구축하려면 클라이언트-서버 구조로 완벽히 모듈화된 <strong>OpenCode가 장기 확장성에서 압도적으로 유리</strong>. 4단계에서 Cline의 IDE UX를 VS Code 플러그인으로 별도 개발하여 흡수하는 하이브리드 전략.
+    <strong>결론:</strong> 폐쇄망·금융·공공 규제 환경에서 <strong>Go 단일 바이너리의 배포 용이성과 보안 감사 적합성이 결정적 강점</strong>. AI SDK 부재는 vLLM 단일 프로바이더 환경에서 단점이 아님 — openai-go로 tool calling·스트리밍·재시도를 완전 구현 (총 1,494행).
   </div>
 
-  <h3>OpenCode 핵심 기술 특성</h3>
+  <h3>SecernCode 핵심 기술 특성</h3>
   <div class="card-grid">
     <div class="card">
-      <div class="card-title">클라이언트/서버 분리</div>
-      <div class="card-body">Hono HTTP API 백엔드 + UI 클라이언트(TUI). 데스크톱 앱, 웹 대시보드로 무한 확장 가능</div>
+      <div class="card-title">단일 바이너리 배포</div>
+      <div class="card-body">Go 1.24 크로스 컴파일 — <code>GOOS=linux go build</code> 한 줄로 생성. 런타임·의존성 없이 USB 복사만으로 설치</div>
     </div>
     <div class="card">
-      <div class="card-title">Vercel AI SDK</div>
-      <div class="card-body">@ai-sdk/openai-compatible로 opencode.json 수정만으로 자체 sLLM 커스텀 프로바이더 주입</div>
+      <div class="card-title">Intelligent Routing</div>
+      <div class="card-body">태스크 유형별 최적 모델 자동 선택: 27B(복잡한 추론) / 8B(QA·검증). LiteLLM 프록시와 연계</div>
     </div>
     <div class="card">
-      <div class="card-title">Agent Teams</div>
-      <div class="card-body">서브 에이전트 P2P 메시징, Plan/Build 모드 분리 → SI 하향식 워크플로우에 부합</div>
+      <div class="card-title">MCP 네이티브</div>
+      <div class="card-body">폐쇄망 내부 시스템(DB, Git, Jira 등)을 Model Context Protocol로 표준 연결. 동적 플러그인 없이 보안 유지</div>
     </div>
   </div>
 </div>
 
-<!-- ==================== SLIDE 15: OpenCode Deep Dive ==================== -->
-<div class="slide" data-title="OpenCode 내부 아키텍처 심화" data-section="트랙 2">
-  <h1>OpenCode 내부 아키텍처 심화</h1>
-  <p class="subtitle">anomalyco/opencode — TypeScript + Bun + Turborepo 모노레포</p>
+<!-- ==================== SLIDE 15: SecernCode 8-Layer 아키텍처 ==================== -->
+<div class="slide" data-title="SecernCode 8-Layer 아키텍처" data-section="트랙 2">
+  <h1>SecernCode 8-Layer 아키텍처</h1>
+  <p class="subtitle">Go 1.24 단일 바이너리 — 8개 레이어로 구성된 에이전트 엔진</p>
 
-  <div class="arch-box" style="font-size:12px">┌─────────────────────────────────────────────────────────────┐
-│                      OpenCode Monorepo                       │
-├──────────────────────┬──────────────────────────────────────┤
-│   packages/core/     │  Agent Engine (핵심 추론 루프)         │
-│   ├── agent-teams/   │  Plan/Build/Test 에이전트 오케스트레이션│
-│   ├── providers/     │  Vercel AI SDK 기반 모델 추상화         │
-│   └── tools/         │  파일 읽기/쓰기, 터미널 실행, LSP 연동  │
-├──────────────────────┼──────────────────────────────────────┤
-│   packages/server/   │  Hono HTTP API 백엔드                  │
-│   ├── routes/        │  /chat, /tools, /agents 엔드포인트     │
-│   ├── middleware/     │  Auth, CORS, Rate Limiting             │
-│   └── events/        │  SSE 기반 실시간 스트리밍               │
-├──────────────────────┼──────────────────────────────────────┤
-│   packages/tui/      │  Terminal UI 클라이언트 (Ink/React)     │
-│   packages/web/      │  Web Dashboard (향후 확장 가능)         │
-│   packages/shared/   │  공통 타입, 유틸리티                    │
-└──────────────────────┴──────────────────────────────────────┘</div>
+  <div class="arch-box" style="font-size:11px">┌─────────────────────────────────────────────────┐
+│  Layer 1 — TUI / WebUI / CLI                    │
+│  Chat input · IntraGenX brand · /undo /redo     │
+│  Session management · Custom commands            │
+└──────────────────────┬──────────────────────────┘
+                       │
+┌──────────────────────▼──────────────────────────┐
+│  Layer 2 — App Orchestrator (app.go)            │
+│  Sessions · Messages · History · Permissions     │
+└──────────────────────┬──────────────────────────┘
+                       │
+┌──────────────────────▼──────────────────────────┐
+│  Layer 3 — Agent Loop (processGeneration)       │
+│  Build prompt → Call LLM → Parse resp.          │
+│  Tool use? → Execute tool → 루프 재시작          │
+└──────────────────────┬──────────────────────────┘
+          ▲            │           ▲
+          │            │           │
+┌─────────┴──┐  ┌──────▼─────┐  ┌─┴──────────────┐
+│ Layer 4    │  │ Layer 5    │  │ Layer 6        │
+│ Context    │  │ Tools      │  │ Model Router   │
+│ Eng.       │  │ (11종)     │  │                │
+│ AGENTS.md  │  │ File R/W   │  │ Task Classifier│
+│ Sys prompt │  │ Bash, LSP  │  │ → Route →      │
+│ Compaction │  │ MCP, Lint  │  │ 모델 선택       │
+│ RAG/Skills │  │ Grep/Glob  │  │ 27B/8B 자동    │
+└────────────┘  └────────────┘  └───────┬────────┘
+                                        │
+                        ┌───────────────▼─────────┐
+                        │ Layer 7 — LLM Provider  │
+                        │ openai-go (vLLM compat.) │
+                        │ Large(27B) / Small(8B)  │
+                        └───────────────┬─────────┘
+                                        │
+                        ┌───────────────▼─────────┐
+                        │ Layer 8 — Infrastructure│
+                        │ NVIDIA GPU · Go Binary  │
+                        │ On-premise · Air-gapped │
+                        └─────────────────────────┘</div>
 
   <h2>핵심 아키텍처 특성</h2>
   <div class="card-grid">
     <div class="card" style="border-top:3px solid var(--accent)">
-      <div class="card-title">🔌 Provider 추상화</div>
+      <div class="card-title">🔌 LLM Provider (openai-go)</div>
       <div class="card-body">
-        <code>@ai-sdk/openai-compatible</code> 어댑터<br>
-        <code>opencode.json</code> 설정만으로 자체 sLLM 연동<br>
-        <span style="font-size:12px;color:var(--text-dim)">vLLM endpoint → custom provider로 등록</span>
+        OpenAI 호환 API로 vLLM 직접 연동<br>
+        tool calling·스트리밍·재시도 완전 구현 (1,494행)<br>
+        <span style="font-size:12px;color:var(--text-dim)">vLLM 단일 프로바이더 — SDK 오버헤드 없음</span>
       </div>
     </div>
     <div class="card" style="border-top:3px solid var(--green)">
-      <div class="card-title">🤖 Agent Teams (P2P)</div>
+      <div class="card-title">🤖 Agent Loop (Layer 3)</div>
       <div class="card-body">
-        이벤트 기반 서브 에이전트 간 메시징<br>
-        Plan → Build → Test 단계별 분업<br>
-        <span style="font-size:12px;color:var(--text-dim)">SI 하향식 워크플로우에 완벽 부합</span>
+        processGeneration: 프롬프트 → LLM → 파싱 → 도구 실행 반복<br>
+        goroutine 기반 병렬 도구 실행<br>
+        <span style="font-size:12px;color:var(--text-dim)">느린 sLLM에서도 UI 반응성 유지</span>
       </div>
     </div>
     <div class="card" style="border-top:3px solid var(--orange)">
-      <div class="card-title">🛠️ Tool 시스템</div>
+      <div class="card-title">🛠️ Tools (11종, Layer 5)</div>
       <div class="card-body">
-        파일 CRUD, 터미널 실행, LSP 통합<br>
-        MCP 프로토콜로 외부 도구 연동<br>
-        <span style="font-size:12px;color:var(--text-dim)">tool.execute.before/after 훅 가능</span>
+        파일 R/W, Bash, Grep/Glob, LSP, MCP<br>
+        Skills, Lint, Diagnostics 등<br>
+        <span style="font-size:12px;color:var(--text-dim)">MCP로 외부 시스템 연동 — 동적 플러그인 없이 보안 유지</span>
       </div>
     </div>
     <div class="card" style="border-top:3px solid var(--purple)">
-      <div class="card-title">🔗 Hono HTTP API</div>
+      <div class="card-title">🧭 Model Router (Layer 6)</div>
       <div class="card-body">
-        REST API로 에이전트 엔진 노출<br>
-        TUI 외에도 웹/데스크톱/IDE 클라이언트 연결 가능<br>
-        <span style="font-size:12px;color:var(--text-dim)">시선AI 자체 UI 구축의 핵심 기반</span>
+        태스크 유형 분류 → 최적 모델 자동 라우팅<br>
+        27B (복잡한 추론/설계) / 8B (QA/검증)<br>
+        <span style="font-size:12px;color:var(--text-dim)">GPU 리소스 효율 극대화</span>
       </div>
     </div>
   </div>
 
   <div class="expandable">
     <div class="expand-trigger" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-      💬 토론 포인트: OpenCode 아키텍처 관련
+      💬 토론 포인트: SecernCode 아키텍처 관련
       <span class="arrow">▶</span>
     </div>
     <div class="expand-body">
       <ul class="check-list">
-        <li><strong>Bun 런타임 의존성:</strong> 고객 에어갭 환경에서 Bun 설치/배포가 가능한가? Node.js 폴백이 필요한가?</li>
-        <li><strong>Agent Teams 커스터마이징:</strong> 기존 Plan/Build 외에 시선AI 전용 에이전트(예: UASL 분석 에이전트)를 추가하는 구조가 가능한가?</li>
-        <li><strong>Vercel AI SDK 버전 관리:</strong> 오픈소스 SDK 업데이트 시 자체 Provider 코드 호환성 유지 전략은?</li>
+        <li><strong>Bubble Tea TUI 성능:</strong> 복잡한 UI(다중 패널, 실시간 스트리밍)에서 성능 한계가 있는가? WebUI로 보완 가능한가?</li>
+        <li><strong>에이전트 커스터마이징:</strong> Agent Loop에 UASL 분석 에이전트 등 도메인 특화 에이전트를 추가하는 확장 구조는?</li>
+        <li><strong>goroutine 동시성:</strong> 병렬 도구 실행 시 리소스 경합 관리 전략은? (파일 잠금, LLM 호출 제한 등)</li>
       </ul>
     </div>
   </div>
 </div>
 
-<!-- ==================== SLIDE 16: OpenCode Fork Strategy ==================== -->
-<div class="slide" data-title="OpenCode 포크 전략" data-section="트랙 2">
-  <h1>OpenCode 포크 전략 및 커스터마이징</h1>
-  <p class="subtitle">코어 최소 수정 원칙 — Provider/Plugin 레이어로 분리</p>
+<!-- ==================== SLIDE 16: SecernCode 독자 구현 전략 ==================== -->
+<div class="slide" data-title="SecernCode 독자 구현 전략" data-section="트랙 2">
+  <h1>SecernCode Go 독자 구현 전략</h1>
+  <p class="subtitle">opencode-ai/opencode(Go, MIT) 코드 참조 기반 — 독립 프로젝트로 운영</p>
 
-  <h2>포크 전략: 3계층 분리</h2>
+  <h2>프로젝트 모듈 구조</h2>
   <div class="arch-box" style="font-size:12px">┌─────────────────────────────────────────────────────────┐
-│  Layer 3: 시선AI 전용 패키지 (자체 개발)                  │
-│  ┌────────────┐ ┌────────────┐ ┌──────────────────────┐ │
-│  │ coco-agent │ │ coco-tools │ │ coco-security-hooks  │ │
-│  │ (브랜딩/UX) │ │ (UASL 분석) │ │ (RBAC/감사/SAST)     │ │
-│  └────────────┘ └────────────┘ └──────────────────────┘ │
+│  SecernCode (Go 1.24, 단일 바이너리)                     │
 ├─────────────────────────────────────────────────────────┤
-│  Layer 2: Provider/Plugin 설정 (설정 파일 수준 변경)      │
-│  ┌─────────────────────┐ ┌────────────────────────────┐ │
-│  │ opencode.json       │ │ MCP 서버 설정 (Jira 등)     │ │
-│  │ (sLLM provider 등록) │ │ (사내 인프라 연동)           │ │
-│  └─────────────────────┘ └────────────────────────────┘ │
+│  cmd/                   CLI 진입점 (Cobra/Viper)         │
 ├─────────────────────────────────────────────────────────┤
-│  Layer 1: OpenCode 코어 (최소 수정, 업스트림 추적)        │
-│  packages/core, packages/server, packages/tui           │
-│  → git remote add upstream anomalyco/opencode            │
-│  → 주기적 rebase/cherry-pick으로 최신 유지               │
+│  internal/              비공개 핵심 모듈                  │
+│  ├── app/               App Orchestrator (세션/메시지)    │
+│  ├── llm/               LLM Provider (openai-go)         │
+│  ├── agent/             Agent Loop (processGeneration)   │
+│  ├── tools/             도구 11종 (File, Bash, MCP ...)  │
+│  ├── config/            설정 관리 (.secerncode.json)      │
+│  ├── tui/               Bubble Tea TUI                   │
+│  ├── webui/             Go net/http WebUI 서버            │
+│  └── permission/        권한 관리 (auto-allow 등)         │
+├─────────────────────────────────────────────────────────┤
+│  .claude/               AGENTS.md, 스킬, 스크립트         │
+│  docs/                  feature_summary, 아키텍처 문서    │
 └─────────────────────────────────────────────────────────┘</div>
 
-  <h2>커스터마이징 로드맵</h2>
+  <h2>Stage별 개발 계획</h2>
   <table class="tbl">
-    <tr><th>단계</th><th>커스터마이징 범위</th><th>수정 계층</th><th>업스트림 영향</th></tr>
-    <tr><td><strong>1단계</strong><br><span style="font-size:11px">4~5월</span></td><td>opencode.json에 sLLM Provider 등록<br>시스템 프롬프트 튜닝</td><td><span class="tag tag-done">Layer 2</span></td><td>없음</td></tr>
-    <tr><td><strong>2단계</strong><br><span style="font-size:11px">6~7월</span></td><td>coco-tools 패키지: UASL 분석 에이전트<br>사내 MCP 서버 번들</td><td><span class="tag tag-plan">Layer 3</span></td><td>없음</td></tr>
-    <tr><td><strong>3단계</strong><br><span style="font-size:11px">8~9월</span></td><td>coco-security-hooks: RBAC, SAST 파이프라인<br>tool.execute 훅 보안 검증</td><td><span class="tag tag-plan">Layer 3</span></td><td>없음</td></tr>
-    <tr><td><strong>4단계</strong><br><span style="font-size:11px">10~11월</span></td><td>coco-agent: 자체 CLI 브랜딩/UX<br>VS Code/IntelliJ 플러그인 클라이언트</td><td><span class="tag tag-purple">Layer 2+3</span></td><td>최소</td></tr>
+    <tr><th>Stage</th><th>개발 범위</th><th>핵심 모듈</th><th>상태</th></tr>
+    <tr><td><strong>Stage 0</strong><br><span style="font-size:11px">~3월</span></td><td>MVP: TUI/CLI/WebUI, vLLM 연동, Model Router, MCP</td><td><span class="tag tag-done">전체</span></td><td style="color:var(--green)"><strong>완료</strong></td></tr>
+    <tr><td><strong>Stage 1</strong><br><span style="font-size:11px">4~5월</span></td><td>eGovFrame RAG + Qwen3-Coder tool parser + 벤치마크</td><td><span class="tag tag-plan">agent/, tools/</span></td><td>착수 예정</td></tr>
+    <tr><td><strong>Stage 2</strong><br><span style="font-size:11px">6~7월</span></td><td>SI MCP 서버(Jira, Git) + Plan/Build/Test 분리</td><td><span class="tag tag-plan">tools/, agent/</span></td><td>계획</td></tr>
+    <tr><td><strong>Stage 3</strong><br><span style="font-size:11px">8~9월</span></td><td>RBAC, 감사 로깅, 보안 스캐닝</td><td><span class="tag tag-plan">permission/</span></td><td>계획</td></tr>
+    <tr><td><strong>Stage 4</strong><br><span style="font-size:11px">10~11월</span></td><td>VS Code 확장 + 세션 공유 + 대시보드</td><td><span class="tag tag-purple">webui/, 신규</span></td><td>계획</td></tr>
   </table>
 
   <div class="compare" style="margin-top:20px">
     <div class="compare-col">
-      <h3 style="color:var(--green)">업스트림 추적 전략</h3>
+      <h3 style="color:var(--green)">코드 참조 전략</h3>
       <ul class="check-list">
-        <li><code>git remote add upstream</code>으로 원본 유지</li>
-        <li>Layer 1은 최소 수정 → rebase 충돌 최소화</li>
-        <li>주요 릴리스 시 cherry-pick 방식 적용</li>
-        <li>자동 CI에서 업스트림 변경 감지 알림</li>
+        <li>opencode-ai/opencode (Go, MIT) 코드 참조</li>
+        <li>포크가 아닌 독립 프로젝트로 운영</li>
+        <li>핵심 아키텍처 패턴 참고, 도메인 로직은 자체 구현</li>
+        <li>업스트림 추적 부담 없음 — 필요 시 선택적 반영</li>
       </ul>
     </div>
     <div class="compare-col">
-      <h3 style="color:var(--orange)">리스크 관리</h3>
+      <h3 style="color:var(--orange)">Go 선택 리스크 관리</h3>
       <ul class="check-list">
-        <li>업스트림 breaking change → Layer 2/3에서 흡수</li>
-        <li>코어 패치가 불가피할 경우 PR 제출 검토</li>
-        <li>MIT 라이선스 — 포크 및 상용화 법적 이슈 없음</li>
-        <li>분기점 문서화: <code>FORK_CHANGES.md</code> 관리</li>
+        <li>Go 개발자 확보: Java/TS 경력자 전환 교육 용이</li>
+        <li>핵심 LLM 연동 코드 ~1,500행 — 낮은 Bus factor 리스크</li>
+        <li>MIT 라이선스 — 상용화 법적 이슈 없음</li>
+        <li>Go 모듈 의존성 관리 간결 — <code>go.sum</code> 단일 파일</li>
       </ul>
     </div>
   </div>
 
   <div class="expandable">
     <div class="expand-trigger" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
-      💬 토론 포인트: 포크 전략 관련
+      💬 토론 포인트: 독자 구현 전략 관련
       <span class="arrow">▶</span>
     </div>
     <div class="expand-body">
       <ul class="check-list">
-        <li><strong>포크 시점:</strong> 4월 초 즉시 포크 vs OpenCode 안정 릴리스 대기? 현재 OpenCode는 활발하게 변경 중</li>
-        <li><strong>기여 전략:</strong> 업스트림에 기여(PR)할 범위와 자체 보유할 범위의 경계선은?</li>
-        <li><strong>모노레포 구조 유지:</strong> Turborepo 구조를 그대로 사용할지, 시선AI 빌드 시스템으로 전환할지?</li>
-        <li><strong>인력 배치:</strong> 포크 유지보수 전담 인력이 필요한가? (현재 3.6 FTE 중)</li>
+        <li><strong>코드 참조 범위:</strong> opencode-ai/opencode에서 참조할 패턴과 자체 구현할 영역의 경계는?</li>
+        <li><strong>Go 개발자 채용:</strong> 장기적으로 Go 전문 개발자 채용이 필요한가, 기존 팀 교육으로 충분한가?</li>
+        <li><strong>eGovFrame RAG:</strong> Stage 1의 RAG 파이프라인 구현 시 Go 생태계 RAG 라이브러리 선택지는?</li>
+        <li><strong>인력 배치:</strong> Stage 1~2 동시 진행 가능한가? (현재 인력 규모 기준)</li>
       </ul>
     </div>
   </div>
 </div>
 
-<!-- ==================== SLIDE 17 (was 15): Track 2 Roadmap ==================== -->
-<div class="slide" data-title="트랙 2 4단계 로드맵" data-section="트랙 2">
-  <h1>트랙 2: 4단계 로드맵</h1>
-  <p class="subtitle">시선AI 주도, 2026년 4월 착수 → 12월 Alpha</p>
+<!-- ==================== SLIDE 17: Track 2 Stage 0~4 로드맵 ==================== -->
+<div class="slide" data-title="트랙 2 Stage 0~4 로드맵" data-section="트랙 2">
+  <h1>트랙 2: Stage 0~4 + Alpha 로드맵</h1>
+  <p class="subtitle">시선AI 주도 — Stage 0 MVP 완료(2026.03), 12월 Alpha 목표</p>
 
   <div class="timeline">
-    <div class="tl-item current">
-      <div class="tl-period">1단계 — 4~5월 (1~2개월)</div>
-      <div class="tl-title">코어 통합 + sLLM 연동</div>
+    <div class="tl-item" style="border-left-color: var(--green)">
+      <div class="tl-period" style="color:var(--green)">Stage 0 — ~2026.03 ✅ 완료</div>
+      <div class="tl-title">SecernCode MVP</div>
       <div class="tl-desc">
-        OpenCode 포크 + opencode.json 커스텀 Provider 설정<br>
-        자체 sLLM 엔드포인트 연동 (Vercel AI SDK)<br>
-        시스템 프롬프트 튜닝 — tool calling 최적화
+        Go 단일 바이너리, TUI/CLI/WebUI 3모드 구현<br>
+        vLLM 연동 + openai-go 기반 tool calling/스트리밍<br>
+        Model Router (27B/8B 자동 선택), MCP 네이티브, AGENTS.md 자동 로드
+      </div>
+    </div>
+    <div class="tl-item current">
+      <div class="tl-period">Stage 1 — 2026.04~05</div>
+      <div class="tl-title">eGovFrame RAG + Qwen3-Coder</div>
+      <div class="tl-desc">
+        eGovFrame 표준 프레임워크 RAG 파이프라인 통합<br>
+        Qwen3-Coder tool parser 최적화<br>
+        벤치마크 자동화 스위트 구축
       </div>
     </div>
     <div class="tl-item">
-      <div class="tl-period">2단계 — 6~7월 (3~4개월)</div>
+      <div class="tl-period">Stage 2 — 2026.06~07</div>
       <div class="tl-title">SI 특화 다중 에이전트 + MCP</div>
       <div class="tl-desc">
-        Agent Teams 오케스트레이션: 설계 분석 / 코드 생성 / 테스트 에이전트 분업<br>
-        기업 통합형 MCP 서버: Jira, Confluence, 정적 분석 도구 연동<br>
-        Plan(설계) ↔ Build(실행) 분리 파이프라인
+        Plan/Build/Test 에이전트 분리 오케스트레이션<br>
+        SI용 MCP 서버: Jira, Git, 정적 분석 도구 연동<br>
+        auto-fix 루프 (테스트 실패 → 자동 수정 → 재실행)
       </div>
     </div>
     <div class="tl-item">
-      <div class="tl-period">3단계 — 8~9월 (5~6개월)</div>
+      <div class="tl-period">Stage 3 — 2026.08~09</div>
       <div class="tl-title">보안/거버넌스/에어갭</div>
       <div class="tl-desc">
-        RBAC 연동 + 플러그인 기반 보안 스캐닝 (SonarQube 등)<br>
-        tool.execute.before 훅으로 코드 조작 전후 검증<br>
-        감사(Audit) 파이프라인 완성
+        RBAC 연동 + 보안 스캐닝 (SonarQube 등)<br>
+        도구 실행 전후 검증 파이프라인<br>
+        감사(Audit) 로깅 완성
       </div>
     </div>
     <div class="tl-item">
-      <div class="tl-period">4단계 — 10~11월 (7~8개월)</div>
+      <div class="tl-period">Stage 4 — 2026.10~11</div>
       <div class="tl-title">UX + IDE 통합</div>
       <div class="tl-desc">
-        자체 CLI 프롬프트 SW + 사내 웹 대시보드 (OpenCode HTTP API 활용)<br>
-        Cline 벤치마킹 VS Code 플러그인 — 시각적 Diff, Human-in-the-loop<br>
+        VS Code 확장 — SecernCode HTTP API 연동, 시각적 Diff, Human-in-the-loop<br>
+        세션 공유 + 엔터프라이즈 대시보드<br>
         IntelliJ 플러그인 검토
       </div>
     </div>
@@ -978,7 +1012,7 @@ GET  /_health                  # 헬스체크</div>
   <p class="subtitle">FastAPI ASGI 미들웨어 — vLLM 코어 무수정, --middleware 옵션 주입</p>
 
   <h2>인증 워크플로우 상세</h2>
-  <div class="arch-box" style="font-size:11px">개발자 (OpenCode CLI)
+  <div class="arch-box" style="font-size:11px">개발자 (SecernCode CLI/TUI)
   │
   │  Authorization: Bearer &lt;JWT&gt;
   ▼
@@ -1191,7 +1225,7 @@ router_settings:
 
   <h2>통합 아키텍처</h2>
   <div class="arch-box" style="font-size:12px">┌────────────────────────────────────────────────────┐
-│          개발자 도구 (OpenCode CLI / IDE)            │
+│          개발자 도구 (SecernCode CLI/TUI / IDE)            │
 └───────────────────────┬────────────────────────────┘
                         ↓
 ┌───────────────────────┴────────────────────────────┐
@@ -1215,7 +1249,7 @@ router_settings:
     </div>
     <div class="expand-body">
       <ul class="check-list">
-        <li><strong>에이전틱 루프에서의 모델 선택:</strong> Plan 단계는 32B, Build 단계는 20B, Verify 단계는 7B — 이 자동 라우팅 로직을 LiteLLM에서 구현할지, OpenCode 에이전트 레벨에서 구현할지?</li>
+        <li><strong>에이전틱 루프에서의 모델 선택:</strong> Plan 단계는 32B, Build 단계는 20B, Verify 단계는 7B — 이 자동 라우팅 로직을 LiteLLM에서 구현할지, SecernCode 에이전트 레벨에서 구현할지?</li>
         <li><strong>LiteLLM 자체도 SPOF:</strong> LiteLLM 프록시가 죽으면 전체 서비스 중단. HA 구성이 필요한가?</li>
         <li><strong>프로토콜 변환의 한계:</strong> claude-* → openai 변환 시 tool_use, vision 등 고급 기능이 완벽히 호환되는가?</li>
         <li><strong>비용 추적:</strong> 온프레미스에서도 GPU 시간/토큰 기반 내부 과금이 필요한가? (부서별 배분)</li>
@@ -1231,7 +1265,7 @@ router_settings:
 
   <h2>4단계 인터페이스 확장 계획</h2>
   <div class="arch-box" style="font-size:12px">                  ┌──────────────────────────────────┐
-                  │     OpenCode Hono HTTP API       │
+                  │     SecernCode HTTP API (Go)     │
                   │     (단일 백엔드 엔진)             │
                   └─────────┬──────────┬─────────────┘
            ┌────────────────┼──────────┼────────────────┐
@@ -1275,7 +1309,7 @@ router_settings:
     </div>
     <div class="card">
       <div class="card-title">🔧 기술 전략</div>
-      <div class="card-body">OpenCode Hono API를 동일하게 호출하는 Kotlin 기반 플러그인. VS Code와 같은 백엔드 공유.</div>
+      <div class="card-body">SecernCode HTTP API를 동일하게 호출하는 Kotlin 기반 플러그인. VS Code와 같은 백엔드 공유.</div>
     </div>
     <div class="card">
       <div class="card-title">📅 일정</div>
@@ -1501,10 +1535,10 @@ router_settings:
       <td>트랙 2는 시선AI 전담, 트랙 1 R&D는 시기별 집중도 조절</td>
     </tr>
     <tr>
-      <td><strong>OpenCode 포크 유지보수</strong><br><span style="font-size:12px;color:var(--text-dim)">업스트림 변화 추적 부담</span></td>
+      <td><strong>Go 개발자 확보</strong><br><span style="font-size:12px;color:var(--text-dim)">Bus factor 리스크</span></td>
       <td><span class="tag tag-plan">20%</span></td>
       <td>중간</td>
-      <td>코어 최소 수정 원칙, Provider/플러그인 레이어로 분리</td>
+      <td>Java/TS 경력자 전환 교육 용이 (핵심 코드 ~1,500행), opencode-ai/opencode Go 코드 참조 가능</td>
     </tr>
     <tr>
       <td><strong>고객 PoC 범위 확대</strong><br><span style="font-size:12px;color:var(--text-dim)">예상 범위 초과</span></td>
@@ -1566,7 +1600,7 @@ router_settings:
       <div class="card-title">🔴 결정 필요</div>
       <div class="card-body">
         <ul class="check-list" style="margin:0">
-          <li><strong>트랙 2 4월 착수 확정 여부</strong> — 인력, 우선순위 확정</li>
+          <li><strong>트랙 2 Stage 1 착수 확정</strong> — Stage 0 MVP 완료 기반, 인력 배치 확정</li>
           <li><strong>Phase 2 우선순위</strong> — 모델 품질(P0) vs 성능 최적화(P1) 순서</li>
           <li><strong>인력 배분</strong> — 트랙 1 R&D와 트랙 2 에이전트 간 비율</li>
         </ul>
@@ -1576,7 +1610,7 @@ router_settings:
       <div class="card-title">🟡 논의 필요</div>
       <div class="card-body">
         <ul class="check-list" style="margin:0">
-          <li>OpenCode 포크 시점과 초기 팀 구성</li>
+          <li>SecernCode Stage 1 착수 및 팀 구성</li>
           <li>vLLM 인프라 고도화 R&D 범위 (인증/암호화/LiteLLM 중 우선순위)</li>
           <li>4B LoRA L3 미달 → 추가 실험 진행 여부</li>
         </ul>
@@ -1600,7 +1634,7 @@ router_settings:
       <div class="card-body">
         <ul class="check-list" style="margin:0">
           <li>4월 초: Phase 2 킥오프 + Spring MCP 설계 착수</li>
-          <li>4월 중: OpenCode 포크 및 sLLM 연동 시작</li>
+          <li>3월: SecernCode MVP 완료, 4월: Stage 1 착수</li>
           <li>4월 말: 벤치마크 자동화 시스템 1차 완성</li>
         </ul>
       </div>
