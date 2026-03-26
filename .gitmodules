@@ -7,3 +7,7 @@
 [submodule "_public/litellm"]
 	path = _public/litellm
 	url = https://github.com/BerriAI/litellm.git
+[submodule "SecernCode"]
+	path = SecernCode
+	url = https://github.com/CUBOX-Co-Ltd/SecernCode.git
+	branch = dev

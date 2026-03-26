@@ -2,13 +2,21 @@
   "permissions": {
     "allow": [
       "mcp__serena__activate_project",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(bash .claude/scripts/scan-packages.sh --full)",
+      "Bash(python3 -c \":*)",
+      "Bash(python3 -m json.tool)",
+      "Skill(sync-secerncode-docs)",
+      "Bash(grep -v '_test\\\\.go$')",
+      "Bash(xargs -I{} basename {})",
+      "Bash(grep -oE '`[a-zA-Z0-9_./-]+\\\\.go`')",
+      "Bash(python3:*)",
+      "mcp__plugin_oh-my-claudecode_t__state_list_active",
+      "Bash(bash .claude/scripts/scan-packages.sh --health-check)",
+      "Bash(bash .claude/scripts/scan-packages.sh internal/api)"
     ],
     "additionalDirectories": [
-      "/Users/ysjoo/Library/CloudStorage/GoogleDrive-yongsoo.joo@cubox.ai/공유 드라이브/CodingLLM_Project",
-      "/Users/ysjoo/Documents/GitHub/_coding_llm/_public/vllm",
-      "/Users/ysjoo/Documents/GitHub/_coding_llm/_public/litellm",
-      "/Users/ysjoo/Documents/GitHub/_coding_llm/_public/opencode"
+      "/Users/ysjoo/Library/CloudStorage/GoogleDrive-yongsoo.joo@cubox.ai/공유 드라이브/CodingLLM_Project"
     ]
   }
 }
