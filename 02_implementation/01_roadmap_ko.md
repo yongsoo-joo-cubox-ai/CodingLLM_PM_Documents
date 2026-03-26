@@ -4,8 +4,8 @@
 |------|------|
 | **문서번호** | SAI-IMPL-2026-001 |
 | **작성일** | 2026년 1월 21일 |
-| **개정일** | 2026년 3월 19일 |
-| **버전** | v5.2 |
+| **개정일** | 2026년 3월 26일 |
+| **버전** | v6.0 |
 | **보안등급** | 대외비 |
 | **작성** | Secern AI |
 
@@ -16,7 +16,7 @@
 > **TL;DR**
 > - **Phase 1 완료** (1~3월): MCP 서버 6종, Coco Studio, UASL v3, 부산은행 PoC 준비
 > - **Phase 2 진행 예정** (4~6월): Spring MCP, 멀티 모델, HA, 세션 관리 등
-> - **트랙 2** (4월 착수): OpenCode 기반 자율형 코딩 에이전트, 시선AI 주도
+> - **트랙 2** (Stage 0 완료): SecernCode(Go) MVP 완성, vLLM 연동, Stage 1(eGovFrame RAG + Qwen3-Coder) 착수 예정
 > - 전체 목표: 3개 프레임워크 지원, GPT-OSS 90%+ 정확도, 부산은행 PoC 통과
 >
 > **대상**: PM-개발자 | **소요**: ~15분 | **용어**: [용어집](../05_knowledge_base/glossary_ko.md)
@@ -145,17 +145,19 @@
 
 > **v3.0 특기사항**: Phase 1의 주요 항목이 당초 2026 Q2 예정에서 2026년 2월 초에 대부분 완료됨. 프레임워크 분리(MCP)는 원래 Phase 2 항목이었으나 Phase 1에서 선제 구현됨.
 
-### 트랙 2: 코딩 에이전트 로드맵 (2026 Q2 착수)
+### 트랙 2: 코딩 에이전트 로드맵 (SecernCode, Go 기반)
 
-> **시선AI 주도, 2026년 4월 착수.** 트랙 1(부산은행 PoC)과 병행 추진. OpenCode(anomalyco/opencode) 포크 기반.
+> **시선AI 주도.** Stage 0(MVP) 완료, Stage 1부터 트랙 1(부산은행 PoC)과 병행 추진. SecernCode — Go 1.24 기반 자체 구현체.
 > 상세: [트랙 2 기술 전략 리서치](../01_strategy/05_track2_tech_strategy_ko.md)
 
-| 단계 | 내용 | 핵심 기술 | 예상 기간 |
-|------|------|----------|----------|
-| **1단계** | 코어 통합 + sLLM 연동 | OpenCode 포크, opencode.json 커스텀 Provider, 시스템 프롬프트 튜닝 | 1~2개월 |
-| **2단계** | SI 특화 다중 에이전트 + MCP | Agent Teams 오케스트레이션, Jira/Confluence MCP 서버, 설계-코드-테스트 에이전트 분업 | 3~4개월 |
-| **3단계** | 보안/거버넌스/에어갭 | RBAC 연동, 플러그인 기반 보안 스캐닝, 감사 파이프라인 | 5~6개월 |
-| **4단계** | UX + IDE 통합 | 데스크톱 앱, 사내 대시보드, VS Code/IntelliJ 플러그인 | 7~8개월 |
+| 단계 | 기간 | 내용 | 핵심 기술 | 상태 |
+|------|------|------|----------|------|
+| **Stage 0** | ~2026-03 | SecernCode MVP: Go 바이너리, TUI/CLI/WebUI, vLLM 연동, Model Router, MCP, AGENTS.md | Go 1.24, Cobra/Viper, Bubble Tea, SQLite, openai-go | **완료** |
+| **Stage 1** | 2026-04~05 | eGovFrame RAG 통합 + Qwen3-Coder tool parser + 벤치마크 자동화 | RAG 파이프라인, 모델 파서, 자동 평가 스위트 | 착수 예정 |
+| **Stage 2** | 2026-06~07 | SI용 MCP 서버(Jira, Git) + Plan/Build/Test 에이전트 분리 + auto-fix 루프 | MCP 서버 확장, 다중 에이전트 오케스트레이션 | 계획 |
+| **Stage 3** | 2026-08~09 | RBAC, 감사 로깅, 보안 스캐닝 | RBAC 연동, 감사 파이프라인, 플러그인 보안 스캐너 | 계획 |
+| **Stage 4** | 2026-10~11 | VS Code 확장 + 세션 공유 + 엔터프라이즈 대시보드 | VS Code Extension API, 세션 동기화, 대시보드 UI | 계획 |
+| **Alpha** | 2026-12 | 내부 테스트 + 파일럿 제안 | 전 Stage 통합, 사내 검증 | 계획 |
 
 **트랙 간 기술 공유**: 온프레미스 sLLM 인프라(vLLM, 모델 웨이트), UASL 스펙, RBAC/감사 추적 개념은 두 트랙이 공유
 
@@ -177,14 +179,15 @@
 | 1 | Coco Studio | 웹 기반 질의응답/코드생성/리뷰 UI | `Critical` | ✅ 완료 **(추가)** |
 | 1 | 코드 프리뷰 | xFrame5/Vue3 생성 코드 실시간 미리보기 + Mockup 데이터 | `High` | ✅ 완료 **(추가)** |
 | 1 | UASL/SUIS | 프레임워크 중립 UI 스펙 언어 + CGF-B 파이프라인 | `Critical` | ✅ 완료 **(추가)** |
-| 2 | VS Code 확장 | → **트랙 2로 이관** (2026 Q2 착수, OpenCode 기반 IDE 통합) | `High` | 📋 트랙 2 |
-| 2 | 터미널 실행 | → **트랙 2로 이관** (2026 Q2 착수, 에이전틱 루프 기반 터미널 에이전트) | `High` | 📋 트랙 2 |
+| 2 | VS Code 확장 | → **트랙 2로 이관** (SecernCode Stage 4, IDE 통합) | `High` | 📋 트랙 2 |
+| 2 | 터미널 실행 | → **트랙 2로 이관** (SecernCode Stage 0 완료, 에이전틱 루프 기반 터미널 에이전트) | `High` | ✅ 트랙 2 Stage 0 완료 |
 | 2 | 검증 API | POST /agent/validate + 배치 검증 + JUnit/SARIF 출력 | `High` | 📋 계획 |
 | ~~2~~ | ~~멀티 프레임워크~~ | ~~Spring, React, Nexacro, WebSquare MCP 서버~~ | ~~`High`~~ | ✅ **Phase 1에서 완료** (5종) |
 | 2 | 모델 품질 개선 | Qwen32B 54%→80%+, 7B QA 85%+ | `Critical` | 📋 계획 |
-| T2 | OpenCode 코어 통합 | 포크 + 커스텀 Provider + sLLM 연동 (2026 Q2 착수) | `High` | 📋 리서치 완료 |
-| T2 | 다중 에이전트 오케스트레이션 | Plan/Build/Test 에이전트 분업, MCP 도구 확장 | `High` | 📋 계획 |
-| T2 | VS Code 확장 | 자율형 에이전트를 IDE에 통합 | `High` | 📋 계획 |
+| T2 | SecernCode MVP (Stage 0) | Go 바이너리, TUI/CLI/WebUI, vLLM 연동, Model Router, MCP, AGENTS.md | `High` | ✅ 완료 |
+| T2 | eGovFrame RAG + 벤치마크 (Stage 1) | RAG 파이프라인, Qwen3-Coder tool parser, 자동 평가 스위트 | `High` | 📋 착수 예정 |
+| T2 | 다중 에이전트 오케스트레이션 (Stage 2) | Plan/Build/Test 에이전트 분리, MCP 서버(Jira, Git), auto-fix 루프 | `High` | 📋 계획 |
+| T2 | VS Code 확장 (Stage 4) | 자율형 에이전트를 IDE에 통합, 세션 공유, 대시보드 | `High` | 📋 계획 |
 
 ---
 
@@ -346,9 +349,10 @@ $ coco models health
 | 부산은행 PoC | (계획 외) | **2026 Q2 예상** | PoC 결과 보고 | 📋 준비 중 |
 | Phase 2 착수 | 2026 Q3 | **2026 Q2** | 모델 품질 + 성능 최적화 | 📋 계획 |
 | 상용 출시 | 2026 Q4 | 2026 Q4 | v1.0 | 📋 계획 유지 |
-| 트랙 2 1단계 | (신규) | **2026.04~05** | OpenCode 포크 + sLLM 연동 | 📋 4월 착수 예정 |
-| 트랙 2 2단계 | (신규) | **2026.06~07** | 다중 에이전트 + MCP 도구 | 📋 계획 |
-| 트랙 2 Alpha | (신규) | **2026.12** | 내부 테스트 + 파일럿 제안 | 📋 계획 |
+| 트랙 2 Stage 0 | (신규) | **~2026.03 완료** | SecernCode MVP: Go 바이너리, TUI/CLI/WebUI, vLLM, Model Router, MCP | ✅ 완료 |
+| 트랙 2 Stage 1 | (신규) | **2026.04~05** | eGovFrame RAG 통합 + Qwen3-Coder tool parser + 벤치마크 자동화 | 📋 착수 예정 |
+| 트랙 2 Stage 2 | (신규) | **2026.06~07** | SI용 MCP 서버(Jira, Git) + Plan/Build/Test 에이전트 분리 + auto-fix 루프 | 📋 계획 |
+| 트랙 2 Alpha | (신규) | **2026.12** | 내부 테스트 + 파일럿 제안 (달성 가능성 상향) | 📋 계획 |
 
 ---
 
@@ -373,3 +377,4 @@ $ coco models health
 | 5.0 | 2026-03-19 | 투트랙 로드맵 재구조화: 트랙 1(IntraGenX)/트랙 2(코딩 에이전트) 분리, Phase 3 에이전트 로드맵 추가, VS Code/터미널을 트랙 2로 이관 | PM (주용수) |
 | 5.1 | 2026-03-19 | vLLM R&D 교차 참조 추가 | PM (주용수) |
 | 5.2 | 2026-03-19 | TL;DR 블록 추가, 파일명 넘버링 적용 | PM (주용수) |
+| 6.0 | 2026-03-26 | Track 2 SecernCode(Go) 기반 전면 갱신, Stage 0 추가, OpenCode 포크 계획 폐기 반영 | 분석팀 |

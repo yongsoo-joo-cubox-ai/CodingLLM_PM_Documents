@@ -210,7 +210,7 @@ CodingLLM_PM_Documents/
 - **대외 브랜드**: IntraGenX — "AI 기반 차세대 시스템 개발 플랫폼" (시선AI + 대보DX 합작)
 - **투트랙 전략**:
   - **트랙 1 (IntraGenX)**: Spec-Driven 일괄 코드 생성 — SI 프로젝트, Top-Down
-  - **트랙 2 (코딩 에이전트)**: OpenCode 기반 자율형 CLI 에이전트 — 개발자, Bottom-Up (2026년 4월 착수, 시선AI 주도)
+  - **트랙 2 (코딩 에이전트)**: SecernCode(Go) 기반 자율형 에이전트 — 개발자, Bottom-Up (2026년 3월 MVP 완료, 시선AI 주도)
 - **MCP 용어 구분**: 양쪽 모두 MCP(Model Context Protocol) 동일 프로토콜 사용, 용도가 다름 — 트랙 1: 코드 생성 엔진 서버(xframe5-compiler 등), 트랙 2: 개발 도구 접근 서버(Jira, Confluence 등)
 - **대상 환경**: 폐쇄망, 온프레미스 LLM, 규제 산업 기업 (금융권 PoC 진행 중)
 - **6대 USP**: ①결정론적 출력, ②표준 강제, ③완전한 온프레미스, ④Spec-Driven 코드 생성, ⑤감사 추적, ⑥LLM 추상화

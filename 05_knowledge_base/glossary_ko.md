@@ -4,8 +4,8 @@
 |------|------|
 | **문서번호** | SAI-KB-2026-001 |
 | **작성일** | 2026년 3월 19일 |
-| **개정일** | 2026년 3월 19일 |
-| **버전** | v1.1 |
+| **개정일** | 2026년 3월 26일 |
+| **버전** | v1.2 |
 | **보안등급** | 일반 |
 | **작성** | Secern AI |
 
@@ -56,11 +56,11 @@
 
 ### 트랙 2
 
-> 코딩 에이전트 — OpenCode 기반 CLI | [트랙 2 기술 전략](../01_strategy/05_track2_tech_strategy_ko.md), [로드맵](../02_implementation/01_roadmap_ko.md)
+> 코딩 에이전트 — SecernCode(Go) 개발 | [트랙 2 기술 전략](../01_strategy/05_track2_tech_strategy_ko.md), [로드맵](../02_implementation/01_roadmap_ko.md)
 
 **경영진용**: 개발자가 터미널에서 AI와 대화하며 코딩하는 도구. 폐쇄망에서도 사용 가능한 Copilot 대안.
 
-**개발자용**: OpenCode 포크 CLI 에이전트. MCP(Model Context Protocol)로 외부 도구 접근. 온프레미스 sLLM 지원이 차별점.
+**개발자용**: OpenCode를 참조하여 Go로 독자 구현한 SecernCode CLI 에이전트. MCP(Model Context Protocol)로 외부 도구 접근. 온프레미스 sLLM 지원 및 단일 바이너리 배포가 차별점.
 
 ### 6대 USP
 
@@ -140,7 +140,7 @@
 
 **경영진용**: AI가 스스로 코드를 분석·수정·테스트하는 자율형 개발 도우미.
 
-**개발자용**: 에이전틱 루프(plan → execute → observe → refine)로 자율 코딩하는 OpenCode 기반 CLI 에이전트.
+**개발자용**: 에이전틱 루프(plan → execute → observe → refine)로 자율 코딩하는 SecernCode(Go) 기반 에이전트. TUI/CLI/WebUI 3모드 지원.
 
 ---
 
@@ -362,9 +362,9 @@
 
 > 오픈소스 터미널 AI 코딩 도구 | [트랙 2 기술 전략](../01_strategy/05_track2_tech_strategy_ko.md)
 
-**경영진용**: 터미널에서 AI와 대화하며 코딩하는 오픈소스 도구. 트랙 2의 기반 기술.
+**경영진용**: 터미널에서 AI와 대화하며 코딩하는 오픈소스 도구. 트랙 2 SecernCode의 참조 구현체.
 
-**개발자용**: TypeScript + Bun 런타임 기반(모노레포, Turborepo). MCP 지원, Vercel AI SDK로 멀티 프로바이더 연동. 포크하여 온프레미스 sLLM 최적화 추가 예정.
+**개발자용**: TypeScript + Bun 런타임 기반(모노레포, Turborepo). MCP 지원, Vercel AI SDK로 멀티 프로바이더 연동. SecernCode는 이를 참조하여 Go로 독자 구현한 제품 — 아키텍처 레퍼런스로 활용하되 코드 포크가 아님.
 
 ### Cline
 
@@ -373,6 +373,38 @@
 **경영진용**: VS Code에서 동작하는 AI 코딩 도우미. 트랙 2의 주요 경쟁 제품.
 
 **개발자용**: VS Code 확장(Apache 2.0). 클라우드 LLM 최적화로 온프레미스 sLLM 호환성이 약점.
+
+### SecernCode
+
+> 트랙 2 Go 기반 코딩 에이전트 | [SecernCode 개발 현황](../02_implementation/07_secerncode_status_ko.md)
+
+**경영진용**: 시선AI가 개발하는 자체 AI 코딩 어시스턴트. 폐쇄망 기업 환경에서 단일 파일 하나로 설치·실행 가능.
+
+**개발자용**: Go 언어 기반 CLI 에이전트. OpenCode를 아키텍처 레퍼런스로 삼아 독자 구현. 단일 바이너리 배포로 의존성 없이 폐쇄망 설치 가능. Intelligent Routing, AGENTS.md 자동 주입, Bubble Tea TUI 지원.
+
+### Intelligent Routing (모델 라우팅)
+
+> 태스크 복잡도 기반 모델 자동 선택 | [SecernCode 개발 현황](../02_implementation/07_secerncode_status_ko.md)
+
+**경영진용**: AI 작업 난이도에 따라 큰 모델과 작은 모델을 자동 골라쓰는 기능. 속도와 비용을 최적화.
+
+**개발자용**: 태스크 복잡도 분류에 따라 대형 모델(27B)과 경량 모델(8B)을 자동 선택하는 SecernCode 내장 기능. 단순 질의·자동완성은 8B, 멀티스텝 에이전틱 태스크는 27B로 라우팅.
+
+### AGENTS.md
+
+> 에이전트 행동 규칙 파일 | [SecernCode 개발 현황](../02_implementation/07_secerncode_status_ko.md)
+
+**경영진용**: 각 프로젝트 폴더에 두면 AI 에이전트가 자동으로 읽는 "프로젝트 규칙서". 코딩 컨벤션·금지 명령 등을 지정.
+
+**개발자용**: 프로젝트 루트에 배치하는 에이전트 행동 규칙 파일. SecernCode가 실행 시 자동 감지·로드하여 시스템 프롬프트에 주입. 프로젝트별 코딩 표준, 허용/금지 도구, 워크플로우 규칙 정의에 활용.
+
+### Bubble Tea
+
+> Go 언어용 터미널 UI 프레임워크 | [SecernCode 개발 현황](../02_implementation/07_secerncode_status_ko.md)
+
+**경영진용**: 터미널에서 보기 좋은 대화형 화면을 만드는 Go 언어 도구. SecernCode의 터미널 인터페이스에 사용.
+
+**개발자용**: Charm 팀이 만든 Go TUI 프레임워크. Elm 아키텍처(Model-Update-View) 기반. SecernCode의 인터랙티브 TUI 모드 구현에 사용.
 
 ---
 
@@ -590,6 +622,7 @@
 |------|----------|-----------|
 | 6대 USP | 제품/전략 | Coco의 6가지 핵심 차별점 |
 | API 허용목록 | 보안/거버넌스 | 허용 API 화이트리스트 |
+| AGENTS.md | 스펙/코드생성 | SecernCode 에이전트 행동 규칙 파일 |
 | ASGI | 인프라/배포 | Python 비동기 서버 표준 |
 | CGF-B | 제품/전략 | 6단계 결정론적 파이프라인 |
 | Cline | 스펙/코드생성 | VS Code AI 에이전트 (경쟁 제품) |
@@ -651,7 +684,7 @@
 | 토큰 | AI/LLM 기술 | LLM 처리 단위 |
 | 투트랙 전략 | 제품/전략 | 트랙 1 + 트랙 2 병행 |
 | 트랙 1 | 제품/전략 | Spec-Driven 일괄 생성 |
-| 트랙 2 | 제품/전략 | OpenCode 기반 CLI |
+| 트랙 2 | 제품/전략 | SecernCode(Go) 자율형 에이전트 |
 | 파인튜닝 | AI/LLM 기술 | 도메인 미세조정 |
 | 폐쇄망 / 에어갭 | 인프라/배포 | 인터넷 격리 네트워크 |
 | 프롬프트 | AI/LLM 기술 | LLM 입력 지시문 |
