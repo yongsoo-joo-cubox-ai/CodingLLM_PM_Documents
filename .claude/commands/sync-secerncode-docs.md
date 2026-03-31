@@ -23,7 +23,7 @@ SecernCode 프로젝트의 MD 문서를 코드 변경에 맞춰 자동 갱신한
 ### 0단계: 헬스체크
 
 ```bash
-bash /Users/ysjoo/Documents/GitHub/_coding_llm/SecernCode/.claude/scripts/scan-packages.sh --health-check
+bash /Users/ysjoo/Documents/GitHub/_coding_llm/CodingLLM_PM_Documents/SecernCode/.claude/scripts/scan-packages.sh --health-check
 ```
 
 - 결과가 `"health": "error"` → 중단. 스킬 업데이트 필요 안내 (어떤 체크가 실패했는지 보고)
@@ -33,7 +33,7 @@ bash /Users/ysjoo/Documents/GitHub/_coding_llm/SecernCode/.claude/scripts/scan-p
 ### 1단계: 사전 점검 및 코드 최신화
 
 ```bash
-cd /Users/ysjoo/Documents/GitHub/_coding_llm/SecernCode
+cd /Users/ysjoo/Documents/GitHub/_coding_llm/CodingLLM_PM_Documents/SecernCode
 git status --short
 ```
 
@@ -50,7 +50,7 @@ git pull --ff-only
 ### 2단계: 패키지 스캔
 
 ```bash
-bash /Users/ysjoo/Documents/GitHub/_coding_llm/SecernCode/.claude/scripts/scan-packages.sh $ARGUMENTS
+bash /Users/ysjoo/Documents/GitHub/_coding_llm/CodingLLM_PM_Documents/SecernCode/.claude/scripts/scan-packages.sh $ARGUMENTS
 ```
 
 스크립트가 JSON을 출력한다. 결과에서:
@@ -74,7 +74,7 @@ bash /Users/ysjoo/Documents/GitHub/_coding_llm/SecernCode/.claude/scripts/scan-p
 
 해당 디렉토리의 .go 파일을 읽고 AGENTS.md를 새로 생성한다. 기존 AGENTS.md 파일의 형식을 따를 것.
 
-템플릿 참고: `/Users/ysjoo/Documents/GitHub/_coding_llm/SecernCode/internal/llm/agent/AGENTS.md`
+템플릿 참고: `/Users/ysjoo/Documents/GitHub/_coding_llm/CodingLLM_PM_Documents/SecernCode/internal/llm/agent/AGENTS.md`
 
 구조:
 ```markdown
@@ -141,7 +141,7 @@ bash /Users/ysjoo/Documents/GitHub/_coding_llm/SecernCode/.claude/scripts/scan-p
 모든 갱신이 성공하면:
 
 ```bash
-git rev-parse HEAD > /Users/ysjoo/Documents/GitHub/_coding_llm/SecernCode/.claude/.last-sync
+git rev-parse HEAD > /Users/ysjoo/Documents/GitHub/_coding_llm/CodingLLM_PM_Documents/SecernCode/.claude/.last-sync
 ```
 
 하나라도 실패한 경우 `.last-sync`를 갱신하지 않는다.

@@ -4,8 +4,8 @@
 |------|------|
 | **문서번호** | SAI-IMPL-2026-001 |
 | **작성일** | 2026년 1월 21일 |
-| **개정일** | 2026년 3월 26일 |
-| **버전** | v6.0 |
+| **개정일** | 2026년 3월 30일 |
+| **버전** | v6.1 |
 | **보안등급** | 대외비 |
 | **작성** | Secern AI |
 
@@ -14,10 +14,10 @@
 ---
 
 > **TL;DR**
-> - **Phase 1 완료** (1~3월): MCP 서버 6종, Coco Studio, UASL v3, 부산은행 PoC 준비
+> - **Phase 1 완료** (1~3월): MCP 서버 6종, Coco Studio, UASL v3, 부산은행 PoC 완료
 > - **Phase 2 진행 예정** (4~6월): Spring MCP, 멀티 모델, HA, 세션 관리 등
 > - **트랙 2** (Stage 0 완료): SecernCode(Go) MVP 완성, vLLM 연동, Stage 1(eGovFrame RAG + Qwen3-Coder) 착수 예정
-> - 전체 목표: 3개 프레임워크 지원, GPT-OSS 90%+ 정확도, 부산은행 PoC 통과
+> - 전체 목표: 3개 프레임워크 지원, GPT-OSS 90%+ 정확도 달성, Phase 2 상용화 추진
 >
 > **대상**: PM-개발자 | **소요**: ~15분 | **용어**: [용어집](../05_knowledge_base/glossary_ko.md)
 
@@ -136,7 +136,7 @@
 | generate, batch, models | | 파이프라인 독립 서비스화 | |
 | **멀티 모델 라우팅** | ✅ 완료 | **멀티 프레임워크** | ~~📋 계획~~ → Phase 1에서 완료 |
 | 다중 모델, 작업별 라우팅 | | Spring, React, Nexacro 등 | |
-| **멀티 프레임워크** | ✅ 완료 | **부산은행 PoC** | 📋 계획 (금융권 레퍼런스) |
+| **멀티 프레임워크** | ✅ 완료 | **부산은행 PoC** | ✅ 완료 (고객 반응 미온적) |
 | xFrame5, WebSquare, Vue3, React 19, Spring Boot MCP 서버 | | | |
 | **Coco Studio** | ✅ 완료 | **모델 품질 개선** | 📋 계획 |
 | 웹 UI + 코드 프리뷰 | (계획 외 추가) | Qwen32B 80%+, 7B QA 85%+ | |
@@ -147,8 +147,8 @@
 
 ### 트랙 2: 코딩 에이전트 로드맵 (SecernCode, Go 기반)
 
-> **시선AI 주도.** Stage 0(MVP) 완료, Stage 1부터 트랙 1(부산은행 PoC)과 병행 추진. SecernCode — Go 1.24 기반 자체 구현체.
-> 상세: [트랙 2 기술 전략 리서치](../01_strategy/05_track2_tech_strategy_ko.md)
+> **시선AI 주도.** Stage 0(MVP) 완료, Stage 1 착수 예정. SecernCode — Go 1.24 기반 자체 구현체.
+> 상세: [트랙 2 기술 전략 리서치](../01_strategy/05_track2_tech_strategy_ko.md) | [구현 기획서 (Phase 상세)](../SecernCode/docs/secerncode_implementation_spec_v2.md) | [현황 보고서](./07_secerncode_status_ko.md)
 
 | 단계 | 기간 | 내용 | 핵심 기술 | 상태 |
 |------|------|------|----------|------|
@@ -158,6 +158,10 @@
 | **Stage 3** | 2026-08~09 | RBAC, 감사 로깅, 보안 스캐닝 | RBAC 연동, 감사 파이프라인, 플러그인 보안 스캐너 | 계획 |
 | **Stage 4** | 2026-10~11 | VS Code 확장 + 세션 공유 + 엔터프라이즈 대시보드 | VS Code Extension API, 세션 동기화, 대시보드 UI | 계획 |
 | **Alpha** | 2026-12 | 내부 테스트 + 파일럿 제안 | 전 Stage 통합, 사내 검증 | 계획 |
+
+> **용어 안내 — Stage vs. Phase**: 트랙 2는 **Stage**(대단계)와 **Phase**(내부 구현 단위)로 구분된다. 각 Stage는 내부적으로 여러 Phase로 구성되며, Phase는 구현 기획서에서 정의한다. 예: Stage 0(MVP)은 Phase 1~6으로 구성. 상세: [구현 기획서](../SecernCode/docs/secerncode_implementation_spec_v2.md)
+
+> ⚠️ **모델 버전 참고**: 트랙 1에서는 Qwen2.5-Coder-32B를, 트랙 2(SecernCode)에서는 Qwen3.5-Coder-27B를 사용 중이다. 트랙별 모델 버전은 향후 통합 정비 예정이며, Stage 1에서 Qwen3-Coder tool parser 검증 후 확정한다.
 
 **트랙 간 기술 공유**: 온프레미스 sLLM 인프라(vLLM, 모델 웨이트), UASL 스펙, RBAC/감사 추적 개념은 두 트랙이 공유
 
@@ -314,7 +318,7 @@ $ coco models health
 - **거버넌스 유지**: 모든 기능이 기존 파이프라인과 감사 로깅 통합
 - **투트랙 전략**: 트랙 1(거버넌스)과 트랙 2(에이전트)로 SI와 개발자 시장 동시 공략
 - **점진적 확장**: 트랙 2에서 VS Code/터미널 에이전트로 더 넓은 개발자 접근
-- **부산은행 PoC 성공**: 금융권 첫 레퍼런스로 시장 신뢰 확보
+- **부산은행 PoC 완료**: 금융권 PoC 실시 완료, 고객 반응 미온적으로 추후 확대 여부 불투명
 
 ---
 
@@ -346,7 +350,7 @@ $ coco models health
 | 멀티 모델 라우팅 | 2026 Q2 | 2026 Q1-Q2 | 모델 라우터 | ✅ 완료 |
 | 멀티 프레임워크 (React, Spring, WebSquare) | 2026 Q2 | **2026.03** | 5개 프레임워크 MCP 서버 | ✅ 완료 |
 | Phase 1 완료 | 2026 Q2 말 | **✅ 2026.03 완료** | PoC 데모 완료 | ✅ 완료 |
-| 부산은행 PoC | (계획 외) | **2026 Q2 예상** | PoC 결과 보고 | 📋 준비 중 |
+| 부산은행 PoC | (계획 외) | **2026.03 완료** | PoC 결과 보고 | ✅ 완료 (고객 반응 미온적, 추후 불투명) |
 | Phase 2 착수 | 2026 Q3 | **2026 Q2** | 모델 품질 + 성능 최적화 | 📋 계획 |
 | 상용 출시 | 2026 Q4 | 2026 Q4 | v1.0 | 📋 계획 유지 |
 | 트랙 2 Stage 0 | (신규) | **~2026.03 완료** | SecernCode MVP: Go 바이너리, TUI/CLI/WebUI, vLLM, Model Router, MCP | ✅ 완료 |
@@ -364,6 +368,8 @@ $ coco models health
 - [[02_implementation/03_cost_analysis_ko|비용 분석]]: 인프라 비용 상세 분석
 - [[01_strategy/02_competitive_strategy_ko|경쟁 전략]]: Cline Enterprise 대응 전략
 - [[02_implementation/05_api_reference_ko|API 레퍼런스]]: API 엔드포인트 명세
+- [[SecernCode/docs/secerncode_implementation_spec_v2|SecernCode 구현 기획서]]: Stage 0 Phase 상세 구현 명세 (트랙 2)
+- [[02_implementation/07_secerncode_status_ko|SecernCode 현황 보고서]]: 트랙 2 구현 진행 현황
 
 ---
 
@@ -378,3 +384,5 @@ $ coco models health
 | 5.1 | 2026-03-19 | vLLM R&D 교차 참조 추가 | PM (주용수) |
 | 5.2 | 2026-03-19 | TL;DR 블록 추가, 파일명 넘버링 적용 | PM (주용수) |
 | 6.0 | 2026-03-26 | Track 2 SecernCode(Go) 기반 전면 갱신, Stage 0 추가, OpenCode 포크 계획 폐기 반영 | 분석팀 |
+| 6.1 | 2026-03-30 | 부산은행 PoC 완료 반영 (고객 반응 미온적, 추후 불투명), 목표 지표 업데이트 | PM (주용수) |
+| 6.2 | 2026-03-31 | 트랙 2 Stage/Phase 용어 관계 주석 추가, SecernCode 구현 기획서·현황 보고서 교차 참조, 모델 버전 불일치 주석 추가 | PM (주용수) |

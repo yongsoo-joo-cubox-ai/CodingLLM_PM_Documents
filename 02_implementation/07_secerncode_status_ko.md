@@ -17,7 +17,10 @@
 > - SecernCode는 폐쇄망 환경 전용 AI 코딩 에이전트로, Go 단일 바이너리(~50MB) 하나로 배포·실행
 > - 외부 API 없이 로컬 vLLM + Qwen3.5-27B로 완전 오프라인 동작하며, TUI/WebUI/CLI 3가지 모드 지원
 > - Phase 1~4 및 Phase 6 구현 완료 (2026년 3월 말 기준); eGovFrame RAG(Phase 5)는 진행 중
+> - **로드맵 매핑**: Phase 1~6은 로드맵 상 **Stage 0(MVP)**에 해당. Stage 1 이후는 별도 Phase 체계 사용 예정
 > - 대상 독자: 경영진, 기술 팀 리더 | 소요 시간: 약 10분
+>
+> **관련 문서**: [로드맵 — 트랙 2 Stage 체계](./01_roadmap_ko.md) | [구현 기획서 (Phase 상세)](../SecernCode/docs/secerncode_implementation_spec_v2.md)
 
 ---
 
@@ -155,6 +158,8 @@ SecernCode는 망분리(에어갭) 환경에서 외부 API 호출 없이 로컬 
 
 ### 6.1 구현 완료 (2026년 3월 말 기준)
 
+> **Stage 매핑**: 아래 Phase 1~4 및 Phase 6은 로드맵([01_roadmap_ko.md](./01_roadmap_ko.md))의 **트랙 2 Stage 0(MVP)** 범위에 해당한다. 상세 구현 설계는 [SecernCode 구현 기획서](../SecernCode/docs/secerncode_implementation_spec_v2.md)를 참조.
+
 | Phase | 기능 | 설명 |
 |-------|------|------|
 | **Phase 1** | vLLM 연동 | OpenAI-compatible API로 로컬 Qwen3.5-27B 연동 |
@@ -182,6 +187,8 @@ SecernCode는 망분리(에어갭) 환경에서 외부 API 호출 없이 로컬 
 | | vLLM CUDA Graph 최적화 | `--enforce-eager` 제거 + prefix caching 적용 → 응답 속도 **6.9~7.3배** 개선 |
 
 ### 6.2 진행 중 / 예정
+
+> **Stage 매핑**: Phase 5(eGovFrame RAG)는 로드맵 상 **Stage 1** 범위에 해당한다.
 
 | Phase | 항목 | 상태 | 설명 |
 |-------|------|------|------|
@@ -278,3 +285,4 @@ SecernCode는 망분리(에어갭) 환경에서 외부 API 호출 없이 로컬 
 |------|------|----------|--------|
 | 1.0 | 2026-03-26 | 초안 작성 | 분석팀 |
 | 1.1 | 2026-03-26 | 성능 최적화 기능 3건 추가 (병렬 도구 실행, 토큰 트리밍, CUDA Graph) | 분석팀 |
+| 1.2 | 2026-03-31 | Stage/Phase 용어 매핑 주석 추가 (Stage 0 = Phase 1~6, Stage 1 = Phase 5), 로드맵·구현 기획서 교차 참조 추가 | PM (주용수) |
