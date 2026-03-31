@@ -9,7 +9,7 @@
 | **보안등급** | 대외비 |
 | **작성** | Secern AI |
 
-> **문서 7/7** | 이전: [vLLM R&D 계획](./06_vllm_rd_plan_ko.md) | 다음: 없음 | [폴더 인덱스](./README.md)
+> **문서 7/10** | 이전: [vLLM R&D 계획](./06_vllm_rd_plan_ko.md) | 다음: [vLLM 인프라 PRD](./08_vllm_infra_prd_ko.md) | [폴더 인덱스](./README.md)
 
 ---
 

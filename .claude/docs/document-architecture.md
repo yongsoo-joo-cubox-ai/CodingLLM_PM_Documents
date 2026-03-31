@@ -13,6 +13,15 @@
 | **현황 추적** | 로드맵 내 Phase 상태 | `02_implementation/07_secerncode_status_ko.md` |
 | **문서 소유** | PM (주용수) | 개발팀 (황영준M) — PM이 현황 보고서만 관리 |
 
+#### 공유 인프라 (SecernInfra)
+
+| 구분 | 공유 인프라 (SecernInfra) |
+|------|--------------------------|
+| **전략·로드맵** | PM 레포 `02_implementation/09_vllm_infra_roadmap_ko.md` |
+| **기술 상세** | `SecernInfra/` 서브모듈 `docs/` (stage0_spec, stage1_spec, stage2_spec) |
+| **현황 추적** | 09 로드맵 Stage 상태 컬럼 |
+| **문서 소유** | PM (주용수) — 코드+문서 모두 |
+
 ## Stage / Phase 용어 체계
 
 트랙 2(SecernCode)는 두 계층의 단계 체계를 사용한다.
@@ -47,6 +56,17 @@ PM이 `01_roadmap_ko.md`에서 정의하는 비즈니스 마일스톤 단위.
 
 > **주의**: 트랙 1도 "Phase 1/2"를 사용하지만, 이는 트랙 2의 Stage/Phase와 **독립적**인 체계이다.
 
+#### Stage 네임스페이스 접두사
+
+프로젝트 간 Stage 번호 충돌을 방지하기 위해 접두사를 사용한다:
+
+| 프로젝트 | 접두사 | 예시 |
+|----------|--------|------|
+| SecernCode | `SC-` | SC-S0, SC-S1, SC-S2 |
+| SecernInfra (vLLM) | `Infra-` | Infra-S0, Infra-S1, Infra-S2 |
+
+로드맵 및 현황 문서에서 Stage를 언급할 때 반드시 접두사를 사용하여 어느 프로젝트의 Stage인지 명시한다.
+
 ## 레포 간 교차 참조 규칙
 
 ### 방향별 링크 방식
@@ -55,6 +75,8 @@ PM이 `01_roadmap_ko.md`에서 정의하는 비즈니스 마일스톤 단위.
 |------|------|------|
 | **PM → SecernCode** | 상대경로 링크 (`../SecernCode/docs/...`) | 서브모듈이 PM 레포 안에 포함 |
 | **SecernCode → PM** | **텍스트로 문서명만 참조** (링크 없음) | SecernCode는 독립 레포, PM 경로 접근 불가 |
+| **PM → SecernInfra** | 상대경로 링크 (`../SecernInfra/docs/...`) | 서브모듈이 PM 안에 포함 |
+| **SecernInfra → PM** | **텍스트로 문서명만 참조** (링크 없음) | 독립 레포, PM 경로 접근 불가 |
 
 ### PM에서 SecernCode 참조 시 패턴
 

@@ -51,8 +51,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### 서브모듈 문서 관리
 
 - SecernCode 문서 변경: SecernCode 레포 커밋 → PM 레포에서 `git add SecernCode`
+- SecernInfra 문서 변경: SecernInfra 레포 커밋 → PM 레포에서 `git add SecernInfra`
 - PM 레포 `02_implementation/README.md`에 서브모듈 문서 참조 테이블 유지
-- 새 서브모듈 추가 시: CLAUDE.md + `.claude/docs/document-structure.md` + README 모두 업데이트
+- 새 서브모듈 추가 시: CLAUDE.md + `.claude/docs/document-structure.md` + `.claude/docs/document-architecture.md` + README 모두 업데이트
 
 ### 모델 버전 관리
 
