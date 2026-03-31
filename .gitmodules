@@ -14,3 +14,7 @@
 	path = SecernCode
 	url = https://github.com/CUBOX-Co-Ltd/SecernCode.git
 	branch = dev
+[submodule "secern-vllm-ext"]
+	path = secern-vllm-ext
+	url = https://github.com/CUBOX-Co-Ltd/secern-vllm-ext.git
+	branch = dev

@@ -17,7 +17,7 @@
 > - **Phase 1 완료** (1~3월): MCP 서버 6종, Coco Studio, UASL v3, 부산은행 PoC 완료
 > - **Phase 2 진행 예정** (4~6월): Spring MCP, 멀티 모델, HA, 세션 관리 등
 > - **트랙 2** (Stage 0 완료): SecernCode(Go) MVP 완성, vLLM 연동, Stage 1(eGovFrame RAG + Qwen3-Coder) 착수 예정
-> - **vLLM 인프라** (Infra-S0~S3): 모델 암호화 → LiteLLM 멀티 모델 → Go 인증 게이트웨이, SecernInfra 레포 신규
+> - **vLLM 인프라** (Infra-S0~S3): 모델 암호화 → LiteLLM 멀티 모델 → Go 인증 게이트웨이, secern-vllm-ext 레포 신규
 > - 전체 목표: 3개 프레임워크 지원, GPT-OSS 90%+ 정확도 달성, Phase 2 상용화 추진
 >
 > **대상**: PM-개발자 | **소요**: ~15분 | **용어**: [용어집](../05_knowledge_base/glossary_ko.md)
@@ -166,10 +166,10 @@
 
 **트랙 간 기술 공유**: 온프레미스 sLLM 인프라(vLLM, 모델 웨이트), UASL 스펙, RBAC/감사 추적 개념은 두 트랙이 공유
 
-### vLLM 인프라 고도화 로드맵 (SecernInfra)
+### vLLM 인프라 고도화 로드맵 (secern-vllm-ext)
 
 > **공유 인프라.** Track 1 + Track 2 동일 vLLM 클러스터 사용. 담당: 주용수.
-> 상세: [vLLM 인프라 PRD](./08_vllm_infra_prd_ko.md) | [vLLM 인프라 로드맵](./09_vllm_infra_roadmap_ko.md) | [SecernInfra 레포](../SecernInfra/)
+> 상세: [vLLM 인프라 PRD](./08_vllm_infra_prd_ko.md) | [vLLM 인프라 로드맵](./09_vllm_infra_roadmap_ko.md) | [secern-vllm-ext 레포](../secern-vllm-ext/)
 
 | 단계 | 기간 | 내용 | 핵심 기술 | 상태 |
 |------|------|------|----------|------|
@@ -178,7 +178,7 @@
 | **Infra-S2** | 2026-07~09 | 인증/RBAC 게이트웨이 (Go) | Go gateway, Redis, JWT | 계획 |
 | **Infra-S3** | 2026 Q4+ | 엔터프라이즈 보안 강화 (조건부) | HSM, 국정원 인증 | 조건부 |
 
-> **용어 안내**: SecernCode와 동일하게 Stage(대단계) + Phase(구현 단위) 체계. Stage별 구현 기획서는 `SecernInfra/docs/stage{N}_spec.md`에 위치. 네임스페이스 접두사: `Infra-S{N}` (SecernCode는 `SC-S{N}`).
+> **용어 안내**: SecernCode와 동일하게 Stage(대단계) + Phase(구현 단위) 체계. Stage별 구현 기획서는 `secern-vllm-ext/docs/stage{N}_spec.md`에 위치. 네임스페이스 접두사: `Infra-S{N}` (SecernCode는 `SC-S{N}`).
 
 > **참고**: 트랙 1과 트랙 2 모두 **MCP(Model Context Protocol) 동일 프로토콜**을 사용하되, 용도가 다름 — 트랙 1: 코드 생성 엔진 MCP 서버(xframe5-compiler 등), 트랙 2: 개발 도구 접근 MCP 서버(Jira, Confluence 등)
 
@@ -387,7 +387,7 @@ $ coco models health
 - [[SecernCode/docs/secerncode_implementation_spec_v2|SecernCode 구현 기획서]]: Stage 0 Phase 상세 구현 명세 (트랙 2)
 - [[02_implementation/07_secerncode_status_ko|SecernCode 현황 보고서]]: 트랙 2 구현 진행 현황
 - [[02_implementation/08_vllm_infra_prd_ko|vLLM 인프라 PRD]]: vLLM 인프라 고도화 요구사항 (v0.3)
-- [[02_implementation/09_vllm_infra_roadmap_ko|vLLM 인프라 로드맵]]: Infra-S0~S3 실행 계획 + SecernInfra 레포
+- [[02_implementation/09_vllm_infra_roadmap_ko|vLLM 인프라 로드맵]]: Infra-S0~S3 실행 계획 + secern-vllm-ext 레포
 
 ---
 
@@ -404,4 +404,4 @@ $ coco models health
 | 6.0 | 2026-03-26 | Track 2 SecernCode(Go) 기반 전면 갱신, Stage 0 추가, OpenCode 포크 계획 폐기 반영 | 분석팀 |
 | 6.1 | 2026-03-30 | 부산은행 PoC 완료 반영 (고객 반응 미온적, 추후 불투명), 목표 지표 업데이트 | PM (주용수) |
 | 6.2 | 2026-03-31 | 트랙 2 Stage/Phase 용어 관계 주석 추가, SecernCode 구현 기획서·현황 보고서 교차 참조, 모델 버전 불일치 주석 추가 | PM (주용수) |
-| 6.3 | 2026-03-31 | vLLM 인프라 고도화 로드맵(Infra-S0~S3) 섹션 추가, SecernInfra 레포 참조, 마일스톤에 Infra 행 추가, 관련 문서에 08(PRD)/09(로드맵) 추가, TL;DR 갱신 | PM (주용수) |
+| 6.3 | 2026-03-31 | vLLM 인프라 고도화 로드맵(Infra-S0~S3) 섹션 추가, secern-vllm-ext 레포 참조, 마일스톤에 Infra 행 추가, 관련 문서에 08(PRD)/09(로드맵) 추가, TL;DR 갱신 | PM (주용수) |

@@ -514,11 +514,11 @@
 
 **개발자용**: 텐서 스트리밍 직렬화 라이브러리. vLLM 연동으로 콜드 스타트 단축. libsodium 기반 암호화 지원(`EncryptionParams`).
 
-### SecernInfra
+### secern-vllm-ext
 
 > vLLM 인프라 확장 코드 레포 | [vLLM 인프라 로드맵](../02_implementation/09_vllm_infra_roadmap_ko.md)
 
-**경영진용**: AI 추론 서버의 보안·인증·배포 자동화를 담당하는 인프라 코드 저장소. SecernCode가 코딩 에이전트라면, SecernInfra는 그 에이전트가 사용하는 서버 인프라.
+**경영진용**: AI 추론 서버의 보안·인증·배포 자동화를 담당하는 인프라 코드 저장소. SecernCode가 코딩 에이전트라면, secern-vllm-ext는 그 에이전트가 사용하는 서버 인프라.
 
 **개발자용**: Go 1.24 + Python(Cython) 기반 레포. secernai-gateway(Go 인증 프록시), secernai-keygen(Go 키 관리 CLI), Cython .so(vLLM 커스텀 로더), Helm umbrella chart를 포함. PM 레포에 서브모듈로 관리.
 
@@ -528,7 +528,7 @@
 
 **경영진용**: AI 서버 접속 시 사용자 인증과 권한을 검증하는 보안 관문. 컴파일된 형태로 배포되어 소스 코드가 노출되지 않음.
 
-**개발자용**: Go 리버스 프록시. JWT 검증, RBAC, 감사 로깅 수행. LiteLLM 앞단에 K8s Deployment로 배치. HPA 지원. SecernInfra `cmd/gateway/` + `internal/auth/`에서 구현.
+**개발자용**: Go 리버스 프록시. JWT 검증, RBAC, 감사 로깅 수행. LiteLLM 앞단에 K8s Deployment로 배치. HPA 지원. secern-vllm-ext `cmd/gateway/` + `internal/auth/`에서 구현.
 
 ### secernai-keygen
 
@@ -536,7 +536,7 @@
 
 **경영진용**: AI 모델 암호화에 사용되는 비밀 키를 안전하게 생성·관리하는 도구.
 
-**개발자용**: Go CLI 바이너리. libsodium 기반 암호화 키 생성, 로테이션, 백업 지원. Tensorizer `EncryptionParams`와 호환. SecernInfra `cmd/keygen/`에서 구현.
+**개발자용**: Go CLI 바이너리. libsodium 기반 암호화 키 생성, 로테이션, 백업 지원. Tensorizer `EncryptionParams`와 호환. secern-vllm-ext `cmd/keygen/`에서 구현.
 
 ### Cython
 
@@ -552,7 +552,7 @@
 
 **경영진용**: 여러 서버 컴포넌트를 한 번에 설치·업데이트하는 배포 자동화 도구. 복잡한 설정을 단순화.
 
-**개발자용**: Kubernetes 애플리케이션 패키지 매니저. SecernInfra에서 umbrella chart로 vLLM/LiteLLM/Gateway/Redis를 통합 배포. `helm install` 한 번으로 전체 스택 구동. 에어갭 배포 시 `helm package`로 tarball 생성.
+**개발자용**: Kubernetes 애플리케이션 패키지 매니저. secern-vllm-ext에서 umbrella chart로 vLLM/LiteLLM/Gateway/Redis를 통합 배포. `helm install` 한 번으로 전체 스택 구동. 에어갭 배포 시 `helm package`로 tarball 생성.
 
 ### Playground
 
@@ -705,7 +705,7 @@
 | SSO | 보안/거버넌스 | 통합 인증 |
 | SUIS | 스펙/코드생성 | 화면 명세 언어 |
 | Tensorizer | 인프라/배포 | 모델 직렬화 도구 |
-| SecernInfra | 인프라/배포 | vLLM 인프라 확장 레포 |
+| secern-vllm-ext | 인프라/배포 | vLLM 인프라 확장 레포 |
 | secernai-gateway | 인프라/배포 | Go 인증/RBAC 프록시 |
 | secernai-keygen | 인프라/배포 | 암호화 키 관리 CLI |
 | Cython | 인프라/배포 | Python→.so 컴파일러 |

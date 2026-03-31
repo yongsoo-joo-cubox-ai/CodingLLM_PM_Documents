@@ -75,7 +75,7 @@ CodingLLM_PM_Documents/
 ├── SecernCode/            # 서브모듈 (트랙 2 Go 프로젝트)
 │   └── docs/              # 기술 문서 (구현 기획서, 기능 분석 등)
 │
-├── SecernInfra/            # 서브모듈 (vLLM 인프라 확장, Go+Python)
+├── secern-vllm-ext/            # 서브모듈 (vLLM 인프라 확장, Go+Python)
 │   ├── src/                # Go 런타임 (gateway, keygen) + Python (Cython)
 │   ├── deploy/             # Docker, Helm chart, K8s 매니페스트
 │   └── docs/               # Stage별 구현 기획서
@@ -100,7 +100,7 @@ CodingLLM_PM_Documents/
 | `02_implementation/06_vllm_rd_plan_ko.md` | vLLM 인프라 고도화 R&D 계획 (인증/암호화/LiteLLM 멀티 모델) |
 | `02_implementation/07_secerncode_status_ko.md` | SecernCode(Go) Track 2 구현 현황 보고서 |
 | `02_implementation/08_vllm_infra_prd_ko.md` | vLLM 인프라 고도화 PRD (모델 암호화/LiteLLM/Go 인증 게이트웨이) |
-| `02_implementation/09_vllm_infra_roadmap_ko.md` | vLLM 인프라 고도화 로드맵 — Infra-S0~S3 + SecernInfra 실행 계획 |
+| `02_implementation/09_vllm_infra_roadmap_ko.md` | vLLM 인프라 고도화 로드맵 — Infra-S0~S3 + secern-vllm-ext 실행 계획 |
 | `03_development/` | 개발 진행 자료 - 테스트, 벤치마크 |
 | `03_development/2026-01-15_project_intro/` | 프로젝트 소개 — 부하 테스트, 모델 벤치마크 |
 | `03_development/2026-01-24_progress/` | 1월 진행 — VRAM 산정, MCP 아키텍처, 경량 모델 QA |
@@ -119,7 +119,7 @@ CodingLLM_PM_Documents/
 | `SecernCode/docs/secerncode_implementation_spec_v2.md` | SecernCode Stage 0 구현 기획서 — 8-Layer 아키텍처, Phase 1~6 |
 | `SecernCode/docs/stage1_spec.md` | SecernCode Stage 1 기획서 — eGovFrame RAG, 모델 검증, 벤치마크 |
 | `SecernCode/docs/feature_summary.md` | SecernCode 기능 요약 |
-| `SecernInfra/docs/stage0_spec.md` | SecernInfra Infra-S0 구현 기획서 — 모델 암호화 |
-| `SecernInfra/docs/stage1_spec.md` | SecernInfra Infra-S1 구현 기획서 — LiteLLM + K8s |
-| `SecernInfra/docs/stage2_spec.md` | SecernInfra Infra-S2 구현 기획서 — Go 인증 게이트웨이 |
+| `secern-vllm-ext/docs/stage0_spec.md` | secern-vllm-ext Infra-S0 구현 기획서 — 모델 암호화 |
+| `secern-vllm-ext/docs/stage1_spec.md` | secern-vllm-ext Infra-S1 구현 기획서 — LiteLLM + K8s |
+| `secern-vllm-ext/docs/stage2_spec.md` | secern-vllm-ext Infra-S2 구현 기획서 — Go 인증 게이트웨이 |
 | `SecernCode/docs/coding_agent_feature_analysis.md` | 코딩 에이전트 기능 분석 — 경쟁 제품 비교 |
