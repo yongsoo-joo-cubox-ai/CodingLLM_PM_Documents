@@ -4,7 +4,7 @@
 |------|------|
 | **문서번호** | SAI-IMPL-2026-008 |
 | **작성일** | 2026년 3월 30일 |
-| **버전** | v0.6 |
+| **버전** | v0.7 |
 | **개정일** | 2026년 4월 2일 |
 | **보안등급** | 대외비 |
 | **작성** | Secern AI |
@@ -504,13 +504,50 @@ vLLM v0.14.0에서 AWQ Marlin + Tensorizer 역직렬화 시 `process_weights_aft
 
 | 대안 | 실현 가능성 | 리스크 |
 |------|------------|--------|
-| ① 비양자화 FP16 모델 사용 | **확실** | GPU 메모리 3배 (64GB vs 19GB) |
-| ② Phase 4 커스텀 로더에서 workspace만 선택 생성 | **가능성 높음** (PoC 검증 필요) | 양자화 레이어 탐지 + 이중 변환 방지 필요. 실제 검증 전 단언 불가 |
-| ③ vLLM 업스트림 패치 대기 | 불확실 | 수정 시점 예측 불가 |
+| ① 비양자화 FP16 모델 + Tensorizer | **검증 완료** (B-1 실측) | GPU 메모리 3배 (64GB vs 19GB) |
+| ② 커스텀 로더 workspace 선택 생성 | ❌ **PoC 실패** (2026-04-02) | workspace 주입 → CUDA error, 전체 호출 → 이중 변환 |
+| ③ safetensors + 파일 레벨 libsodium | **확실** | Tensorizer 빠른 로딩 포기, tmpfs 메모리 추가 소요 |
+| ④ vLLM 업스트림 패치 대기 | 불확실 | 수정 시점 예측 불가 |
+
+**PoC 추가 실측 결과 (2026-04-02)**:
+
+| PoC | 내용 | 결과 |
+|-----|------|------|
+| workspace v1 | `quant_method.kernel.workspace` 설정 | ❌ 대상 오류 (0개 주입) |
+| workspace v2 | `module.workspace` 설정 (256개) | ❌ CUDA illegal memory access |
+| workspace v3 | `process_weights_after_loading()` 전체 | ❌ 이중 변환 차원 불일치 (`b_q_weight.size(0) = 320 != 5120`) |
+
+→ **결론**: 대안 ② 불가 확인. **투트랙 전략 채택**: Track A(비양자화+Tensorizer) + Track B(AWQ+safetensors). 상세: ADR-ENC-001 참조.
+
+**팩트 체크 (2026-04-02)**: "불가능"은 과장. 정확히는 vLLM 경고 문구대로 **"불안정(unstable)"**. vLLM GitHub [#9434](https://github.com/vllm-project/vllm/issues/9434) 참조. 비양자화 모델에서는 Tensorizer 전체 파이프라인(암호화 포함) 정상 동작 확인됨.
 
 ---
 
 ## ADR (Architecture Decision Record)
+
+### ADR-ENC-001: 투트랙 암호화 아키텍처 (v0.7, 2026-04-02)
+
+**배경**: 초기 계획(v0.1~0.6)은 Tensorizer 내장 libsodium 암호화 단일 경로였으나, Phase 2~3 실측에서 AWQ 양자화 모델과의 비호환성이 확인됨. 3건의 커스텀 패치 PoC도 실패.
+
+**결정**: 투트랙 암호화 전략 채택
+
+| Track | 대상 모델 | 암호화 방식 | 로딩 방식 | 상태 |
+|-------|----------|------------|----------|------|
+| **Track A** | 비양자화 (FP16/BF16) | Tensorizer 내장 libsodium | `--load-format tensorizer` | **검증 완료** (B-1) |
+| **Track B** | AWQ 양자화 | safetensors + 파일 레벨 libsodium | 복호화 → `--load-format auto` | 구현 예정 |
+
+**Track B의 DEC-02 재정의**: Tensorizer의 텐서 레벨 On-the-fly 복호화 대신, tmpfs(RAM 디스크)에서 파일 전체 복호화 후 vLLM 로딩. 로딩 완료 후 tmpfs 파일 즉시 삭제(shred). 디스크(persistent storage)에 평문 잔존 0건.
+
+**Track B → A 통합 조건 (재검토 트리거)**:
+1. vLLM이 `tensorizer_loader.py`에서 양자화 후처리를 지원하는 업데이트 시
+2. Tensorizer 라이브러리의 양자화 모델 암호화 직렬화 버그 수정 릴리스 시
+3. 모델 전략이 비양자화(FP16/BF16)로 전환될 시 → Track A 즉시 사용 가능
+
+**초기 계획 히스토리**: v0.1~0.6은 Tensorizer 단일 경로. PRD v0.7에서 투트랙으로 전환. 검증 경과: `secern-vllm-ext/docs/phase3_review.md` 참조.
+
+---
+
+### ADR-001 (초기, v0.1): 인프라 아키텍처
 
 ### Decision
 vLLM의 공식 확장 포인트(Tensorizer, --middleware, register_model_loader)와 LiteLLM 프록시를 조합하여 모델 암호화, 멀티 모델 셀렉션, 인증/RBAC 인프라를 구축한다.
@@ -566,3 +603,4 @@ vLLM의 공식 확장 포인트(Tensorizer, --middleware, register_model_loader)
 | 0.4 | 2026-04-02 | **Phase 1 W1 실측 결과 반영**: OQ-4 Go 결정(32B+30B 동시 서빙 가능), R3 리스크 해소, 기준선 모델 GPT-OSS 20B→Qwen2.5-32B-AWQ 변경(서버 부재), DEC-03 기준선 확정(35.2초/68.3 tok/s), 운영 환경 반영(vLLM v0.14.0 Docker, Python 3.12), 모델명 7B→30B-MoE 갱신(ENC-01/LIT-02/LIT-06), W1 마일스톤 통과 기록 | PM (주용수) |
 | 0.5 | 2026-04-02 | OQ-11 추가 — AWQ+Tensorizer 역직렬화 호환성 문제 실측 확인, Phase 2 실행 결과 반영 | PM (주용수) |
 | 0.6 | 2026-04-02 | OQ-11 상세화 — 이중 변환 위험 분석, 대안별 실현 가능성·리스크 평가 추가 | PM (주용수) |
+| 0.7 | 2026-04-02 | **투트랙 암호화 전략** — ADR-ENC-001 추가, OQ-11 PoC 3건 실패 결과 반영, 팩트 체크("불가능"→"불안정") 수정, Track A(비양자화+Tensorizer) + Track B(AWQ+safetensors) 구조 확정 | PM (주용수) |
