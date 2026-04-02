@@ -4,7 +4,7 @@
 |------|------|
 | **문서번호** | SAI-IMPL-2026-008 |
 | **작성일** | 2026년 3월 30일 |
-| **버전** | v0.4 |
+| **버전** | v0.5 |
 | **개정일** | 2026년 4월 2일 |
 | **보안등급** | 대외비 |
 | **작성** | Secern AI |
@@ -494,6 +494,7 @@ Phase 1(모델 암호화)은 **주용수**가 주도하며, SecernCode Stage 1(e
 | OQ-8 | 고객사 K8s 환경에 NVIDIA GPU Operator가 사전 설치되어 있는가? | K8s 배포 | Infra-S1 전 | GPU Pod 스케줄링 방식 결정 |
 | OQ-9 | 에어갭 프라이빗 이미지 레지스트리 종류는? (Harbor, Nexus 등) | K8s 배포 | Infra-S1 전 | 에어갭 번들 스크립트 타겟 |
 | OQ-10 | Ingress Controller 및 TLS 인증서 관리 방식은? | K8s 배포 | Infra-S2 전 | Helm chart Ingress 템플릿 설계 |
+| OQ-11 | AWQ 양자화 모델에서 Tensorizer 역직렬화가 정상 동작하는가? | **Phase 2 실측 (2026-04-02)** | ❌ **실패 확인**: vLLM v0.14.0에서 AWQ Marlin + Tensorizer 역직렬화 시 `process_weights_after_loading()` 미호출로 `workspace` 버퍼 미생성. 직렬화 자체(19GB, 15초)는 정상. **대안**: ①비양자화 FP16 모델 사용 ②vLLM 업스트림 패치 대기 ③Phase 4 커스텀 로더에서 후처리 직접 호출 |
 
 ---
 
@@ -551,3 +552,4 @@ vLLM의 공식 확장 포인트(Tensorizer, --middleware, register_model_loader)
 | 0.2 | 2026-03-30 | Architect/Critic 피드백 반영: 인증 게이트웨이 배치 모순 해소(C1), VRAM 산정 정정 및 W1 실측 게이트(C2), 라우팅 책임 분리 ADR(M1), Option C 비교 분석(M2), 리소스 충돌 해소(M3), Rate Limiting 단일 책임(G1~G7) 등 | PM (주용수) |
 | 0.3 | 2026-03-31 | 인증 게이트웨이 Python FastAPI → Go 리버스 프록시(secernai-gateway) 전환, K8s 배포 아키텍처(§5.5) 추가, R8(Python 소스 보안) 추가, OQ-8~10(K8s) 추가, secern-vllm-ext 레포 참조 추가, Phase 3 마일스톤 Go/Helm 반영, ADR Follow-ups 갱신, 로드맵(09) 네비게이션 연결 | PM (주용수) |
 | 0.4 | 2026-04-02 | **Phase 1 W1 실측 결과 반영**: OQ-4 Go 결정(32B+30B 동시 서빙 가능), R3 리스크 해소, 기준선 모델 GPT-OSS 20B→Qwen2.5-32B-AWQ 변경(서버 부재), DEC-03 기준선 확정(35.2초/68.3 tok/s), 운영 환경 반영(vLLM v0.14.0 Docker, Python 3.12), 모델명 7B→30B-MoE 갱신(ENC-01/LIT-02/LIT-06), W1 마일스톤 통과 기록 | PM (주용수) |
+| 0.5 | 2026-04-02 | OQ-11 추가 — AWQ+Tensorizer 역직렬화 호환성 문제 실측 확인, Phase 2 실행 결과 반영 | PM (주용수) |
