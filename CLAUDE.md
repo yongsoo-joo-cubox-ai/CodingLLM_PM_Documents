@@ -95,6 +95,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | [document-structure.md](.claude/docs/document-structure.md) | 폴더 구조 트리 + 전체 문서 목록 |
 | [document-rules.md](.claude/docs/document-rules.md) | 파일명, 네비게이션, TL;DR, 메타데이터 템플릿 상세 |
 | [document-architecture.md](.claude/docs/document-architecture.md) | 투트랙 체계, Stage/Phase, 교차 참조, 서브모듈 관리, 확장 가이드 |
-| [server-api.md](.claude/docs/server-api.md) | 서버 환경 (Demo/Dev/Playground) + API 엔드포인트 |
+| [server-api.md](.claude/docs/server-api.md) | 서버 환경 (Demo/Dev/Playground), GPU 서버 접속·할당 현황, API 엔드포인트 |
 | [gdrive-sync.md](.claude/docs/gdrive-sync.md) | Google Drive 동기화 커맨드, 스크립트, 사전 요구사항 |
 | [git-lfs.md](.claude/docs/git-lfs.md) | LFS 할당량, 사용량, 추적 대상, 관리 규칙 |

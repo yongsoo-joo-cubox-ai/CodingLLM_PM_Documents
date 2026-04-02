@@ -10,5 +10,7 @@
 .playwright-mcp/
 .omc/
 
-# 비활성화된 외부 참조 프로젝트
+# 서브모듈 미등록 외부 참조 프로젝트
 _public/claw-code/
+_public/claude-code/
+_public/claude-code-docs/
