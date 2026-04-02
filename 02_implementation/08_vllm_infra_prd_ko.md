@@ -4,7 +4,7 @@
 |------|------|
 | **문서번호** | SAI-IMPL-2026-008 |
 | **작성일** | 2026년 3월 30일 |
-| **버전** | v0.5 |
+| **버전** | v0.6 |
 | **개정일** | 2026년 4월 2일 |
 | **보안등급** | 대외비 |
 | **작성** | Secern AI |
@@ -494,7 +494,19 @@ Phase 1(모델 암호화)은 **주용수**가 주도하며, SecernCode Stage 1(e
 | OQ-8 | 고객사 K8s 환경에 NVIDIA GPU Operator가 사전 설치되어 있는가? | K8s 배포 | Infra-S1 전 | GPU Pod 스케줄링 방식 결정 |
 | OQ-9 | 에어갭 프라이빗 이미지 레지스트리 종류는? (Harbor, Nexus 등) | K8s 배포 | Infra-S1 전 | 에어갭 번들 스크립트 타겟 |
 | OQ-10 | Ingress Controller 및 TLS 인증서 관리 방식은? | K8s 배포 | Infra-S2 전 | Helm chart Ingress 템플릿 설계 |
-| OQ-11 | AWQ 양자화 모델에서 Tensorizer 역직렬화가 정상 동작하는가? | **Phase 2 실측 (2026-04-02)** | ❌ **실패 확인**: vLLM v0.14.0에서 AWQ Marlin + Tensorizer 역직렬화 시 `process_weights_after_loading()` 미호출로 `workspace` 버퍼 미생성. 직렬화 자체(19GB, 15초)는 정상. **대안**: ①비양자화 FP16 모델 사용 ②vLLM 업스트림 패치 대기 ③Phase 4 커스텀 로더에서 후처리 직접 호출 |
+| OQ-11 | AWQ 양자화 모델에서 Tensorizer 역직렬화가 정상 동작하는가? | **Phase 2 실측 (2026-04-02)** | ❌ **실패 확인**: 아래 상세 참조 |
+
+**OQ-11 상세 (2026-04-02 실측)**:
+
+vLLM v0.14.0에서 AWQ Marlin + Tensorizer 역직렬화 시 `process_weights_after_loading()` 미호출로 `workspace` 런타임 버퍼 미생성. 직렬화(19GB) 및 역직렬화(15초, 1.3GB/s) 자체는 정상이나, 추론 시 `AttributeError: 'QKVParallelLinear' object has no attribute 'workspace'` 발생.
+
+**이중 변환 위험**: `process_weights_after_loading()`은 ①가중치 포맷 변환 ②workspace 생성을 모두 수행. Tensorizer 직렬화 시점에 가중치는 이미 변환 완료 상태이므로, 이 함수를 그대로 재호출하면 **이중 변환으로 데이터 손상**. workspace 생성만 별도 호출해야 함.
+
+| 대안 | 실현 가능성 | 리스크 |
+|------|------------|--------|
+| ① 비양자화 FP16 모델 사용 | **확실** | GPU 메모리 3배 (64GB vs 19GB) |
+| ② Phase 4 커스텀 로더에서 workspace만 선택 생성 | **가능성 높음** (PoC 검증 필요) | 양자화 레이어 탐지 + 이중 변환 방지 필요. 실제 검증 전 단언 불가 |
+| ③ vLLM 업스트림 패치 대기 | 불확실 | 수정 시점 예측 불가 |
 
 ---
 
@@ -553,3 +565,4 @@ vLLM의 공식 확장 포인트(Tensorizer, --middleware, register_model_loader)
 | 0.3 | 2026-03-31 | 인증 게이트웨이 Python FastAPI → Go 리버스 프록시(secernai-gateway) 전환, K8s 배포 아키텍처(§5.5) 추가, R8(Python 소스 보안) 추가, OQ-8~10(K8s) 추가, secern-vllm-ext 레포 참조 추가, Phase 3 마일스톤 Go/Helm 반영, ADR Follow-ups 갱신, 로드맵(09) 네비게이션 연결 | PM (주용수) |
 | 0.4 | 2026-04-02 | **Phase 1 W1 실측 결과 반영**: OQ-4 Go 결정(32B+30B 동시 서빙 가능), R3 리스크 해소, 기준선 모델 GPT-OSS 20B→Qwen2.5-32B-AWQ 변경(서버 부재), DEC-03 기준선 확정(35.2초/68.3 tok/s), 운영 환경 반영(vLLM v0.14.0 Docker, Python 3.12), 모델명 7B→30B-MoE 갱신(ENC-01/LIT-02/LIT-06), W1 마일스톤 통과 기록 | PM (주용수) |
 | 0.5 | 2026-04-02 | OQ-11 추가 — AWQ+Tensorizer 역직렬화 호환성 문제 실측 확인, Phase 2 실행 결과 반영 | PM (주용수) |
+| 0.6 | 2026-04-02 | OQ-11 상세화 — 이중 변환 위험 분석, 대안별 실현 가능성·리스크 평가 추가 | PM (주용수) |
