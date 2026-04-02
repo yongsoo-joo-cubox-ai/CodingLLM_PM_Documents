@@ -9,3 +9,6 @@
 # Playwright MCP
 .playwright-mcp/
 .omc/
+
+# 비활성화된 외부 참조 프로젝트
+_public/claw-code/

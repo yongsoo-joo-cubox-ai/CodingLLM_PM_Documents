@@ -13,7 +13,8 @@
       "Bash(python3:*)",
       "mcp__plugin_oh-my-claudecode_t__state_list_active",
       "Bash(bash .claude/scripts/scan-packages.sh --health-check)",
-      "Bash(bash .claude/scripts/scan-packages.sh internal/api)"
+      "Bash(bash .claude/scripts/scan-packages.sh internal/api)",
+      "Bash(git add:*)"
     ],
     "additionalDirectories": [
       "/Users/ysjoo/Library/CloudStorage/GoogleDrive-yongsoo.joo@cubox.ai/공유 드라이브/CodingLLM_Project"
