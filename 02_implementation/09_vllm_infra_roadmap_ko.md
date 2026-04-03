@@ -169,7 +169,7 @@ secern-vllm-ext/
 
 | 단계 | 기간 | 내용 | secern-vllm-ext 컴포넌트 | PRD 매핑 | 상태 |
 |------|------|------|--------------------|---------|------|
-| **Infra-S0** | 2026-04~05 | 모델 가중치 암호화 | python/secernai_crypto + cmd/keygen | PRD §4.1 (P0) | **Phase 4 진행 중** — Day 1 GO(ProcessPool 19.4s), DEC-01 PASS, DEC-02 PASS, DEC-03 보수적 PASS(79.1초) (2026-04-02) |
+| **Infra-S0** | 2026-04~05 | 모델 가중치 암호화 | python/secernai_crypto + cmd/keygen | PRD §4.1 (P0) | **Phase 4 완료, Phase 5 계획 수립·실행 대기** — DEC-01~04 전 PASS. Phase 5 코드 작성 완료(keygen rotate/backup/restore, E2E 스크립트, Dockerfile), 서버 E2E 검증 대기 (2026-04-03) |
 | **Infra-S1** | 2026-05~06 | LiteLLM 멀티 모델 + K8s 배포 | deploy/ (Helm, Docker, config) | PRD §4.2 (P1) | 계획 |
 | **Infra-S2** | 2026-07~09 | 인증/RBAC 게이트웨이 (Go) | cmd/gateway + internal/ | PRD §4.3 (Go 수정) | 계획 |
 | **Infra-S3** | 2026 Q4+ | 엔터프라이즈 보안 강화 | secernai_crypto 확장 | PRD OQ-1 | 조건부 |
