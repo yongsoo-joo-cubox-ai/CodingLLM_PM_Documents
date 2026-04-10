@@ -47,6 +47,7 @@ CodingLLM_PM_Documents/
 | [[01_strategy/02_competitive_strategy_ko\|competitive_strategy]] | 경쟁 전략 - 상세 경쟁사 분석 및 차별화 전략 |
 | [[01_strategy/03_regulatory_environment_ko\|regulatory_environment]] | 규제 환경 - 국내 AI 규제 및 컴플라이언스 |
 | [[01_strategy/04_product_overview_ko\|product_overview]] | 제품 기능 소개 - 투트랙 제품군 정의 |
+| [[01_strategy/07_project_review_2026Q1_ko\|project_review_Q1]] | **Q1 종합 점검 보고서** - 경영진 대상, 의사결정 매트릭스 포함 |
 
 ### 02_implementation/ - 구현 문서
 

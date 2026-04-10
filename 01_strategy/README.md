@@ -11,6 +11,9 @@ Coco / IntraGenX 프로젝트의 전략 분석 문서입니다.
 | 3 | [03_regulatory_environment_ko.md](./03_regulatory_environment_ko.md) | 국내 AI 규제 환경 및 컴플라이언스 | 2026-03-19 (v3.1) |
 | 4 | [04_product_overview_ko.md](./04_product_overview_ko.md) | Coco 제품 구성, 기능 소개, 투트랙 확장 로드맵 | 2026-03-19 (v3.1) |
 
+| 5 | [06_go_vs_ts_adr_ko.md](./06_go_vs_ts_adr_ko.md) | Track 2 기술 선택 ADR: Go vs TypeScript | 2026-03-26 (v1.0) |
+| **6** | **[07_project_review_2026Q1_ko.md](./07_project_review_2026Q1_ko.md)** | **Q1 종합 점검 보고서 — 경영진/의사결정자 대상** | **2026-04-07 (v1.0)** |
+
 ### 참고 문서
 
 | 문서 | 설명 | 비고 |

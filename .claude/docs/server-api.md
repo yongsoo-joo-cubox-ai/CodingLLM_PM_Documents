@@ -28,16 +28,17 @@
 
 > **주의**: Docker 내 DNS가 불안정하므로 `HF_HUB_OFFLINE=1` 환경변수 필수.
 
-### GPU 할당 현황 (2026-04-01 기준)
+### GPU 할당 현황 (2026-04-06 실측)
 
-| GPU | 컨테이너명 | 모델 | 포트 | 비고 |
-|-----|-----------|------|------|------|
-| 0, 1 | vllm-qwen-coder | Qwen2.5-Coder-32B-AWQ (TP=2) | 8000 | 코드 생성용 |
-| 2 | vllm-secern | Qwen3-8B + LoRA Secern-Coder-Reason | 8001 | SecernCode용 |
-| 3 | (비할당) | - | - | 벤치마크 전용 |
-| 4, 5, 6, 7 | vllm-glm47 | GLM-4.7-AWQ (TP=4) | 8003 | - |
+| GPU | 컨테이너명 | 모델 | API 모델 ID | 포트 | max_model_len | 비고 |
+|-----|-----------|------|------------|------|---------------|------|
+| 0, 1 | vllm-qwen-coder | Qwen/Qwen2.5-Coder-32B-Instruct-AWQ (TP=2) | `qwen2.5-coder` | 8000 | 32,768 | 코드 생성용 |
+| 2 | vllm-secern | Qwen/Qwen3-8B + LoRA | `Qwen/Qwen3-8B`, `Secern-Coder-Reason` | 8001 | 20,480 | SecernCode용 |
+| 3 | (비할당) | - | - | - | - | 벤치마크 전용 |
+| 4, 5, 6, 7 | vllm-glm47 | QuantTrio/GLM-4.7-AWQ (TP=4) | `glm-4.7` | 8003 | 131,072 | - |
 
 > GPU 3만 벤치마크/테스트에 사용 가능. 다른 GPU는 운영 중인 서비스에 할당됨.
+> 개발자 연동 가이드: [vllm_connection_guide.md](../../03_development/vllm_connection_guide.md)
 
 ---
 
