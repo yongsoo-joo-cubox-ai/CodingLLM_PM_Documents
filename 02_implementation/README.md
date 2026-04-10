@@ -37,6 +37,9 @@ Coco / IntraGenX 프로젝트의 구현 계획 및 기술 문서입니다.
 | [stage0_spec.md](../secern-vllm-ext/docs/stage0_spec.md) | Infra-S0 구현 기획서 — 모델 가중치 암호화 | 기술 상세 |
 | [stage1_spec.md](../secern-vllm-ext/docs/stage1_spec.md) | Infra-S1 구현 기획서 — LiteLLM + K8s 배포 | 기술 상세 |
 | [stage2_spec.md](../secern-vllm-ext/docs/stage2_spec.md) | Infra-S2 구현 기획서 — Go 인증 게이트웨이 | 기술 상세 |
+| [phase5_track3_plan.md](../secern-vllm-ext/docs/phase5_track3_plan.md) | Phase 5 Track 3 실행 계획서 — License Agent LicenseSDK 통합 (D1~D6, Step 0~6) | 구현 상세 (2026-04-10 실측 완료) |
+| [mlx_phase5_licensesdk_integration.md](../secern-vllm-ext/docs/mlx_phase5_licensesdk_integration.md) | Phase 5 Track 3 설계서 — 해석 C, SDK 빌드, 하이브리드 아키텍처 | 아키텍처 설계 |
+| [mlx_encrypted_loader_plan.md](../secern-vllm-ext/docs/mlx_encrypted_loader_plan.md) | MLX 암호화 로더 계획 (Apple Silicon Phase 1+) | 기술 상세 |
 
 > **참고**: secern-vllm-ext 문서는 별도 서브모듈(`secern-vllm-ext/`)에서 관리되며, 변경 시 서브모듈 커밋이 별도로 필요하다.
 
