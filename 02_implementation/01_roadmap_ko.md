@@ -5,7 +5,7 @@
 | **문서번호** | SAI-IMPL-2026-001 |
 | **작성일** | 2026년 1월 21일 |
 | **개정일** | 2026년 4월 11일 |
-| **버전** | v6.6 |
+| **버전** | v6.7 |
 | **보안등급** | 대외비 |
 | **작성** | Secern AI |
 
@@ -173,7 +173,7 @@
 
 | 단계 | 기간 | 내용 | 핵심 기술 | 상태 |
 |------|------|------|----------|------|
-| **Infra-S0** | 2026-03~06 | 모델 가중치 암호화 + 라이선스 키 관리 + MLX 로컬 서빙 | Tensorizer, libsodium, Go keygen, License Agent (LicenseSDK 통합), MLX 암호화 스트리밍 로더 | ✅ Phase 1~6 + Phase A(MLX 로컬 3자 E2E) 완료 (2026-04-11, ADR-8 포함). Phase B(번들 패키징, 문기봉 상무 전달) 예정 |
+| **Infra-S0** | 2026-03~06 | 모델 가중치 암호화 + 라이선스 키 관리 + MLX 로컬 서빙 | Tensorizer, libsodium, Go keygen, License Agent (LicenseSDK 통합), MLX 암호화 스트리밍 로더 | ✅ Phase 1~6 + Phase A(MLX 로컬 3자 E2E) + **Phase B(macOS arm64 번들) 빌드+smoke test PASS** (2026-04-11). M2 맥북 최종 실측 예정 (AC-B16) |
 | **Infra-S1** | 2026-05~06 | LiteLLM 멀티 모델 + K8s 배포 | LiteLLM, Helm chart, Docker | 계획 |
 | **Infra-S2** | 2026-07~09 | 인증/RBAC 게이트웨이 (Go) | Go gateway, Redis, JWT | 계획 |
 | **Infra-S3** | 2026 Q4+ | 엔터프라이즈 보안 강화 (조건부) | HSM, 국정원 인증 | 조건부 |
@@ -370,7 +370,7 @@ $ coco models health
 | 트랙 2 Stage 1 | (신규) | **2026.04~05** | eGovFrame RAG 통합 + Qwen3-Coder tool parser + 벤치마크 자동화 | 📋 착수 예정 |
 | 트랙 2 Stage 2 | (신규) | **2026.06~07** | SI용 MCP 서버(Jira, Git) + Plan/Build/Test 에이전트 분리 + auto-fix 루프 | 📋 계획 |
 | 트랙 2 Alpha | (신규) | **2026.12** | 내부 테스트 + 파일럿 제안 (달성 가능성 상향) | 📋 계획 |
-| vLLM Infra-S0 | (신규) | **2026.03~06** | 모델 가중치 암호화 + 라이선스 키 관리 + MLX 로컬 서빙 (Tensorizer + libsodium + Go keygen + License Agent LicenseSDK 통합 + MLX 암호화 스트리밍 로더) | ✅ Phase 1~6 + Phase A(MLX 로컬 3자 E2E) 완료 (2026-04-11, ADR-8 포함). Phase B(번들 패키징, 문기봉 상무 전달) 예정 |
+| vLLM Infra-S0 | (신규) | **2026.03~06** | 모델 가중치 암호화 + 라이선스 키 관리 + MLX 로컬 서빙 + Phase B 번들 패키징 (macOS arm64, Core+Model 3종, LIC-06, LMS key 주입) | ✅ Phase 1~6 + Phase A(MLX 로컬 3자 E2E) + Phase B 빌드+smoke test PASS (2026-04-11). M2 맥북 최종 실측(AC-B16) 예정 |
 | vLLM Infra-S1 | (신규) | **2026.05~06** | LiteLLM 멀티 모델 + Helm chart + K8s 배포 | 📋 계획 |
 | vLLM Infra-S2 | (신규) | **2026.07~09** | Go 인증/RBAC 게이트웨이 (secernai-gateway) | 📋 계획 |
 
@@ -408,3 +408,4 @@ $ coco models health
 | 6.4 | 2026-04-07 | Infra-S0 상태 갱신 — "계획" → "Phase 1~5 완료, Phase 6 계획 수립". 기간 2026-03~06으로 수정. Q1 종합 점검 보고서(07_project_review_2026Q1_ko.md) 팩트 동기화 | PM (주용수) |
 | 6.5 | 2026-04-10 | Infra-S0 Phase 5 Track 3 완료 반영 — License Agent LicenseSDK 통합(cgo + D1~D6 결정, 12/12 시나리오 실측 처리, R-BUG-1/2/3 수정). 상세: secern-vllm-ext/docs/phase5_track3_plan.md, mlx_phase5_licensesdk_integration.md | PM (주용수) |
 | 6.6 | 2026-04-11 | Infra-S0 Phase 6 완료 + Phase A(MLX 로컬 3자 E2E) 완료 반영 + Infra-S0 범위에 "MLX 로컬 서빙" 명시적 추가. Phase 6: License Agent + KeyProvider + 3계층 라이선스 53 tests PASS (2026-04-06). Phase A: K-6 embedded license_key(LIC-06), mlx_loader 경로 B 서빙 통합 + RAM disk 경로 제거, F1(SecernCode CanReason:false + tools strip), F2-followup sdk_cgo.go LMS 응답 data 필드 추출 fix, F3 bf16 cold boot PASS(72.6s/7.4GB/swap 0), ADR-8(SDK 1006-1008 하드웨어 불일치 자동 재발급 금지 — 보안 허점 차단), license-agent system_info 자동 생성(net.Interfaces)으로 외부 파일 의존 제거. Phase B(번들 패키징, 문기봉 상무 전달 — macOS arm64, tar.gz+uv, 4bit/8bit/bf16 분할) 예정 | PM (주용수) |
+| 6.7 | 2026-04-11 | Infra-S0 Phase B 번들 패키징 완료 반영. Core(26MB, SecernCode+license-agent+mlx_loader+start_mlx_serve.py) + Model 3종(4bit 4.3G / 8bit 8.1G / bf16 15G) tar.gz 빌드 완료. 개발자 Mac smoke test 3/3 PASS (license-agent LMS 발급, mlx-serve 암호화 모델 로딩+SSE 스트리밍, 폐쇄망 오프라인 폴백). code-reviewer HIGH 4건 + critic 이슈 9건 수정. M2 맥북 최종 실측(AC-B16) 예정 | PM (주용수) |
