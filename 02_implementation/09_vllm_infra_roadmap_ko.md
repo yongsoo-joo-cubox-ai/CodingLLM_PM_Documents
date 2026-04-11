@@ -5,7 +5,7 @@
 | **문서번호** | SAI-IMPL-2026-009 |
 | **작성일** | 2026년 3월 31일 |
 | **개정일** | 2026년 4월 11일 |
-| **버전** | v1.5 |
+| **버전** | v1.7 |
 | **보안등급** | 대외비 |
 | **작성** | Secern AI |
 
@@ -441,3 +441,4 @@ PRD OQ-1~7에 추가로 K8s 관련 OQ-8~10을 포함한다.
 | 1.4 | 2026-04-10 | Infra-S0 Phase 5 Track 3 실측 완료 — License Agent LicenseSDK 통합 Step 0~6 전부 실측 PASS. 12/12 시나리오 처리 (실측 완전 6 + 실측 보완 2 + grep/코드 3 + PRD 정정 1). 실측 중 R-BUG-1(Timestamp 타입) + R-BUG-2(LMS endpoint path 미구성) + R-BUG-3(method="POST") 발견 및 수정. 시나리오 4 (MLX 암호화 모델 실제 추론) 16.6s fibonacci 생성 성공. Architect STANDARD 2-pass APPROVED. 상세: secern-vllm-ext/.omc/plans/phase5-track3-progress.md | PM (주용수) |
 | 1.5 | 2026-04-11 | Infra-S0 Phase 6 완료 반영 + Phase A(MLX 로컬 3자 E2E) 완료 반영 + Phase B(번들 패키징) 계획 추가. Infra-S0 범위에 "MLX 로컬 서빙" 명시적 추가(옵션 1). Phase 6: License Agent + KeyProvider + 3계층 라이선스 53 tests PASS (2026-04-06). Phase A: K-6 embedded license_key(LIC-06), mlx_loader 경로 B 전환, F1/F2-followup/F3 fix, ADR-8 (SDK 1006-1008 하드웨어 불일치 자동 재발급 금지 — license_key 유출만으로 임의 기기 자동 발급 차단 보안 허점 수정), license-agent system_info 자동 생성(net.Interfaces)으로 외부 파일 의존 제거 | PM (주용수) |
 | 1.6 | 2026-04-11 | Phase B(번들 패키징) 완료 반영. Phase B 행 상태 갱신 — ✅ 빌드+개발자 smoke test PASS (3/3 온라인+폐쇄망). Core(26MB)+Model 3종(4bit/8bit/bf16) tar.gz 빌드 완료. code-reviewer HIGH 4건 + critic 이슈 9건 수정. M2 맥북 최종 실측(AC-B16) 예정. build_bundle.sh portable Python 버전 3.11.15/20260408 업데이트 | PM (주용수) |
+| 1.7 | 2026-04-11 | Phase B 실사용 테스트 + enable_thinking=false 적용 반영. compact 즉시 트리거 버그 해결 (start_mlx_serve.py 서버 레벨 설정). 3모델 벤치마크 결과: 4bit 7s / 8bit 13s / bf16 24s (3회 연속 대화, content 3/3 정상). 권장 사양 도출 및 TROUBLESHOOTING.md Q10.5 추가. patch-guide-v0.1.1.md 신규. Core v0.1 정식 릴리즈 (45MB, portable Python 3.11.15 포함) | PM (주용수) |

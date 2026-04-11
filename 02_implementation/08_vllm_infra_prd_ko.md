@@ -4,7 +4,7 @@
 |------|------|
 | **문서번호** | SAI-IMPL-2026-008 |
 | **작성일** | 2026년 3월 30일 |
-| **버전** | v1.1 |
+| **버전** | v1.2 |
 | **개정일** | 2026년 4월 11일 |
 | **보안등급** | 대외비 |
 | **작성** | Secern AI |
@@ -627,3 +627,4 @@ vLLM의 공식 확장 포인트(Tensorizer, --middleware, register_model_loader)
 | v0.9 | 2026-04-02 | Phase 4 DEC-03 Track B 실측값 반영 (79.1초, 보수적 PASS) | PM (주용수) |
 | v1.0 | 2026-04-06 | §4.1.4 라이선스 보호(LIC-01~05) 추가 — Phase 6 KeyProvider 추상화, License Agent, 3계층 라이선스 검증, Key Wrapping, 듀얼 모드. IDP-02와의 범위 구분 명시 | PM (주용수) |
 | v1.1 | 2026-04-11 | §4.1.4 Phase 6 완료 반영 + LIC-06(K-6 Embedded License Key) 추가 + ADR-8(SDK 1006-1008 자동 재발급 금지) 추가. Phase 6 License Agent + KeyProvider + 3계층 라이선스 53 tests PASS (2026-04-06). Phase A MLX 로컬 3자 E2E 완료 (2026-04-11 — F1 SecernCode CanReason/tools strip, F2-followup sdk_cgo.go JSON parse fix, F3 bf16 cold boot PASS, ADR-8 보안 허점 차단). 상세: secern-vllm-ext/.omc/plans/phase-a-progress.md, phase-a-lessons-learned.md | PM (주용수) |
+| v1.2 | 2026-04-11 | Phase B 실사용 테스트 결과 반영. enable_thinking=false 운영 사항 추가: Qwen3 reasoning 모델 연동 시 서버 레벨 설정 필수 (HTTP 파라미터 무효). 3모델 권장 사양: 4bit(16GB+)/8bit(24GB+)/bf16(32GB+). TROUBLESHOOTING.md Q10.5 (compact 해결) + patch-guide-v0.1.1.md 신규 문서. Core v0.1 정식 릴리즈 (45MB) | PM (주용수) |
